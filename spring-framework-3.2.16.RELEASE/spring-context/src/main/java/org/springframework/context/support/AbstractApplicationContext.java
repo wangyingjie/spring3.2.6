@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -442,52 +442,53 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		return new StandardEnvironment();
 	}
 
+
+	/**
+	 * Spring Bean 解析的核心处理方法
+	 * @throws BeansException
+	 * @throws IllegalStateException
+	 */
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
-			// Prepare this context for refreshing.
+			// Prepare this context for refreshing.  刷新上下文
 			prepareRefresh();
 
-			// Tell the subclass to refresh the internal bean factory.
+			// Tell the subclass to refresh the internal bean factory. 初始化bean工厂 并进行xml文件读取
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-			// Prepare the bean factory for use in this context.
+			// Prepare the bean factory for use in this context. 对bean工厂进行填充
 			prepareBeanFactory(beanFactory);
 
 			try {
-				// Allows post-processing of the bean factory in context subclasses.
+				// Allows post-processing of the bean factory in context subclasses. 子类覆盖方法做额外的处理
 				postProcessBeanFactory(beanFactory);
 
-				// Invoke factory processors registered as beans in the context.
+				// Invoke factory processors registered as beans in the context. 激活各种beanFactory处理
 				invokeBeanFactoryPostProcessors(beanFactory);
 
-				// Register bean processors that intercept bean creation.
+				// Register bean processors that intercept bean creation.注册拦截 bean 创建的bean处理器，这里只是注册，真正的调用在 getBean 时候
 				registerBeanPostProcessors(beanFactory);
 
-				// Initialize message source for this context.
+				// Initialize message source for this context.国际化处理
 				initMessageSource();
 
-				// Initialize event multicaster for this context.
+				// Initialize event multicaster for this context.初始化消息广播器
 				initApplicationEventMulticaster();
 
-				// Initialize other special beans in specific context subclasses.
+				// Initialize other special beans in specific context subclasses. 子类初始化其他的bean
 				onRefresh();
 
-				// Check for listener beans and register them.
+				// Check for listener beans and register them.  在所有注册bean中查找  Listener bean 注册到消息广播器中
 				registerListeners();
 
-				// Instantiate all remaining (non-lazy-init) singletons.
+				// Instantiate all remaining (non-lazy-init) singletons. 初始化剩下的单实例 非惰性
 				finishBeanFactoryInitialization(beanFactory);
 
-				// Last step: publish corresponding event.
+				// Last step: publish corresponding event. 完成刷新过程，通知生命周期处理器 lifeCycleProcessor
 				finishRefresh();
 			}
 
 			catch (BeansException ex) {
-				if (logger.isWarnEnabled()) {
-					logger.warn("Exception encountered during context initialization - " +
-							"cancelling refresh attempt: " + ex);
-				}
-
 				// Destroy already created singletons to avoid dangling resources.
 				destroyBeans();
 
@@ -887,12 +888,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		for (ApplicationListener<?> listener : getApplicationListeners()) {
 			getApplicationEventMulticaster().addApplicationListener(listener);
 		}
-
 		// Do not initialize FactoryBeans here: We need to leave all regular beans
 		// uninitialized to let post-processors apply to them!
 		String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
-		for (String listenerBeanName : listenerBeanNames) {
-			getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
+		for (String lisName : listenerBeanNames) {
+			getApplicationEventMulticaster().addApplicationListenerBean(lisName);
 		}
 	}
 
@@ -1263,7 +1263,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected MessageSource getInternalParentMessageSource() {
 		return (getParent() instanceof AbstractApplicationContext) ?
-			((AbstractApplicationContext) getParent()).messageSource : getParent();
+				((AbstractApplicationContext) getParent()).messageSource : getParent();
 	}
 
 
@@ -1291,7 +1291,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	}
 
 	public boolean isRunning() {
-		return (this.lifecycleProcessor != null && this.lifecycleProcessor.isRunning());
+		return getLifecycleProcessor().isRunning();
 	}
 
 

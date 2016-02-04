@@ -460,6 +460,8 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
 		try {
 			this.webApplicationContext = initWebApplicationContext();
+
+			// 子类扩展处理
 			initFrameworkServlet();
 		}
 		catch (ServletException ex) {
