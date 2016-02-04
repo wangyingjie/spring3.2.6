@@ -122,6 +122,8 @@ public class XmlWebApplicationContext extends AbstractRefreshableWebApplicationC
 		String[] configLocations = getConfigLocations();
 		if (configLocations != null) {
 			for (String configLocation : configLocations) {
+
+				// 加载到 web.xml 中配置的spring总配置文件  开始加载bean
 				reader.loadBeanDefinitions(configLocation);
 			}
 		}

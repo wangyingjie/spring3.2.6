@@ -83,10 +83,11 @@ public class DefaultResourceLoader implements ResourceLoader {
 		return (this.classLoader != null ? this.classLoader : ClassUtils.getDefaultClassLoader());
 	}
 
-
+	//web.xml  classpath:srping-config.xml 配置文件加载
 	public Resource getResource(String location) {
 		Assert.notNull(location, "Location must not be null");
 		if (location.startsWith(CLASSPATH_URL_PREFIX)) {
+			//new  一个ClassPathResource 资源
 			return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
 		}
 		else {
