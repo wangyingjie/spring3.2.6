@@ -19,7 +19,8 @@ pom.xml
 /build
 buildSrc/build
 /spring-*/build
-target/
+## 本目标文件需要注释掉，否则aop/src/ 的target包名不能提交到github上
+#target/
 
 # Eclipse artifacts, including WTP generated manifests
 .classpath
