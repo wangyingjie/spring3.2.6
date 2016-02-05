@@ -184,7 +184,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 	@Override
 	protected boolean isExistingTransaction(Object transaction) {
-		//ÅĞ¶Ïµ±Ç°threadÊÇ·ñÒÑ¾­ÓĞÊÂÎï  ÆäÖĞÁ´½Ó²»Îªnull && transactionActive==true
+		//åˆ¤æ–­å½“å‰threadæ˜¯å¦å·²ç»æœ‰äº‹ç‰©  å…¶ä¸­é“¾æ¥ä¸ä¸ºnull && transactionActive==true
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
 		return (txObject.getConnectionHolder() != null && txObject.getConnectionHolder().isTransactionActive());
 	}
@@ -214,31 +214,31 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			txObject.setPreviousIsolationLevel(previousIsolationLevel);
 
 
-			//±ØÒªÊ±ÇĞ»»µ½ÊÖ¶¯Ìá½»¡£ÕâÊÇ·Ç³£°º¹óµÄÔÚÒ»Ğ©JDBCÇı¶¯³ÌĞò,
+			//å¿…è¦æ—¶åˆ‡æ¢åˆ°æ‰‹åŠ¨æäº¤ã€‚è¿™æ˜¯éå¸¸æ˜‚è´µçš„åœ¨ä¸€äº›JDBCé©±åŠ¨ç¨‹åº,
 			// Switch to manual commit if necessary. This is very expensive in some JDBC drivers,
 			// so we don't want to do it unnecessarily (for example if we've explicitly
 			// configured the connection pool to set it already).
-			if (con.getAutoCommit()) {//ÓÉspring¿ØÖÆ×Ô¶¯Ìá½»
+			if (con.getAutoCommit()) {//ç”±springæ§åˆ¶è‡ªåŠ¨æäº¤
 				txObject.setMustRestoreAutoCommit(true);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Switching JDBC Connection [" + con + "] to manual commit");
 				}
-				//×Ô¶¯Ìá½»ÉèÖÃÎªfalse
+				//è‡ªåŠ¨æäº¤è®¾ç½®ä¸ºfalse
 				con.setAutoCommit(false);
 			}
 
-			//ÉèÖÃµ±Ç°Ïß³ÌÊÇ·ñ´æÔÚÊÂÎïµÄÒÀ¾İ
+			//è®¾ç½®å½“å‰çº¿ç¨‹æ˜¯å¦å­˜åœ¨äº‹ç‰©çš„ä¾æ®
 			txObject.getConnectionHolder().setTransactionActive(true);
 
 			int timeout = determineTimeout(definition);
 			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
-				//ÉèÖÃ ³¬Ê±Ê±¼ä
+				//è®¾ç½® è¶…æ—¶æ—¶é—´
 				txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
 			}
 
 			// Bind the session holder to the thread.
 			if (txObject.isNewConnectionHolder()) {
-				// ½«Êı¾İÔ´¡¢Á´½Ó°ó¶¨µ½µ±Ç°Ïß³Ì  threadLocal
+				// å°†æ•°æ®æºã€é“¾æ¥ç»‘å®šåˆ°å½“å‰çº¿ç¨‹  threadLocal
 				TransactionSynchronizationManager.bindResource(getDataSource(), txObject.getConnectionHolder());
 			}
 		}
@@ -263,14 +263,14 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 	@Override
 	protected void doResume(Object transaction, Object suspendedResources) {
-		//»Ö¸´¹ÒÆğµÄÊÂÎï
+		//æ¢å¤æŒ‚èµ·çš„äº‹ç‰©
 		ConnectionHolder conHolder = (ConnectionHolder) suspendedResources;
 		TransactionSynchronizationManager.bindResource(this.dataSource, conHolder);
 	}
 
 	@Override
 	protected void doCommit(DefaultTransactionStatus status) {
-		//Êı¾İ¿âµÄ×îÖÕÌá½»£¬spring ×ª¸øÁËµ×²ãÊı¾İ¿âµÄ²Ù×÷API
+		//æ•°æ®åº“çš„æœ€ç»ˆæäº¤ï¼Œspring è½¬ç»™äº†åº•å±‚æ•°æ®åº“çš„æ“ä½œAPI
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) status.getTransaction();
 		Connection con = txObject.getConnectionHolder().getConnection();
 		if (status.isDebug()) {
@@ -316,19 +316,19 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		// Remove the connection holder from the thread, if exposed.
 		if (txObject.isNewConnectionHolder()) {
 
-			//Êı¾İ¿âÁ¬½Ó´Óµ±Ç°Ïß³Ì½â°ó×ÊÔ´
+			//æ•°æ®åº“è¿æ¥ä»å½“å‰çº¿ç¨‹è§£ç»‘èµ„æº
 			TransactionSynchronizationManager.unbindResource(this.dataSource);
 		}
 
 		// Reset connection.
 		Connection con = txObject.getConnectionHolder().getConnection();
 		try {
-			//ÖØÖÃautoCommit
+			//é‡ç½®autoCommit
 			if (txObject.isMustRestoreAutoCommit()) {
 				con.setAutoCommit(true);
 			}
 
-			//ÖØÖÃÊı¾İ¿âÁ¬½Ó
+			//é‡ç½®æ•°æ®åº“è¿æ¥
 			DataSourceUtils.resetConnectionAfterTransaction(con, txObject.getPreviousIsolationLevel());
 		}
 		catch (Throwable ex) {
@@ -339,7 +339,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			if (logger.isDebugEnabled()) {
 				logger.debug("Releasing JDBC Connection [" + con + "] after transaction");
 			}
-			//µ±Ç°ÊÂÎïÊÇ¶ÀÁ¢µÄ´´ĞÂÊÂÎïÔòÔÚÊÂÎïÍê³ÉÊ±ÊÍ·ÅÊı¾İ¿âÁ¬½Ó
+			//å½“å‰äº‹ç‰©æ˜¯ç‹¬ç«‹çš„åˆ›æ–°äº‹ç‰©åˆ™åœ¨äº‹ç‰©å®Œæˆæ—¶é‡Šæ”¾æ•°æ®åº“è¿æ¥
 			DataSourceUtils.releaseConnection(con, this.dataSource);
 		}
 
