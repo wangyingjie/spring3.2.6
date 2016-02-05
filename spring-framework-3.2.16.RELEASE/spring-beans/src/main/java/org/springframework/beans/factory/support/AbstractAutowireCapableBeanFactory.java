@@ -518,6 +518,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		try {
 			populateBean(beanName, mbd, instanceWrapper);
 			if (exposedObject != null) {
+
+				// spring Bean 初始化
 				exposedObject = initializeBean(beanName, exposedObject, mbd);
 			}
 		}
