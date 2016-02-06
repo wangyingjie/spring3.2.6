@@ -42,6 +42,8 @@ public interface ConnectionProxy extends Connection {
 	 * or a wrapper from a connection pool.
 	 * @return the underlying Connection (never {@code null})
 	 */
+	// 定义了 ConnectionProxy 属于JDBC Connection 的代理类
+	// 代理的方法只有一个 获取代理的目标链接 getTargetConnection
 	Connection getTargetConnection();
 
 }

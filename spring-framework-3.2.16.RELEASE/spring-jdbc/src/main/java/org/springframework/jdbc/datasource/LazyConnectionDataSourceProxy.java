@@ -274,7 +274,7 @@ public class LazyConnectionDataSourceProxy extends DelegatingDataSource {
 		}
 
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			// Invocation on ConnectionProxy interface coming in...
+			// Invocation on ConnectionProxy interface coming in... 在链接代理接口来调用
 
 			if (method.getName().equals("equals")) {
 				// We must avoid fetching a target Connection for "equals".
@@ -298,7 +298,7 @@ public class LazyConnectionDataSourceProxy extends DelegatingDataSource {
 				}
 			}
 			else if (method.getName().equals("getTargetConnection")) {
-				// Handle getTargetConnection method: return underlying connection.
+				// Handle getTargetConnection method: return underlying connection.  返回一个潜在的代理链接
 				return getTargetConnection(method);
 			}
 
