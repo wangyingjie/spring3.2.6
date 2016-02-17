@@ -57,6 +57,7 @@ class TxAdviceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
 	private static final String READ_ONLY_ATTRIBUTE = "read-only";
 
+	//传播  蔓延  事务传播特性
 	private static final String PROPAGATION_ATTRIBUTE = "propagation";
 
 	private static final String ISOLATION_ATTRIBUTE = "isolation";

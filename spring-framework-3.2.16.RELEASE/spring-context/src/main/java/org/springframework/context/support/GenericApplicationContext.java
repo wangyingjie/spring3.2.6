@@ -288,7 +288,7 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 
 	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
 			throws BeanDefinitionStoreException {
-
+		//注册Bean定义
 		this.beanFactory.registerBeanDefinition(beanName, beanDefinition);
 	}
 
