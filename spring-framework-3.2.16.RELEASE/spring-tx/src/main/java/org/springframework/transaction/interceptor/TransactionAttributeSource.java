@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 public interface TransactionAttributeSource {
 
 	/**
+	 *  返回给定方法的事务属性，如果方法是非事务性的，则{“码”空}。
 	 * Return the transaction attribute for the given method,
 	 * or {@code null} if the method is non-transactional.
 	 * @param method the method to introspect

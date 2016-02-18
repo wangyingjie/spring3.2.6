@@ -83,17 +83,24 @@ public class TransactionInterceptor extends TransactionAspectSupport implements 
 		setTransactionAttributeSource(tas);
 	}
 
-
+	/**
+	 * 事务处理拦截器 invoke 方法
+	 *
+	 * @param invocation
+	 * @return
+	 * @throws Throwable
+	 */
 	public Object invoke(final MethodInvocation invocation) throws Throwable {
 		// Work out the target class: may be {@code null}.
 		// The TransactionAttributeSource should be passed the target class
-		// as well as the method, which may be from an interface.
+		// as well as the method, which may be from an interface.  获取目前class
 		Class<?> targetClass = (invocation.getThis() != null ? AopUtils.getTargetClass(invocation.getThis()) : null);
 
 		// Adapt to TransactionAspectSupport's invokeWithinTransaction...
 		return invokeWithinTransaction(invocation.getMethod(), targetClass, new InvocationCallback() {
+			//InvocationCallback 作为回调处理接口，proceedWithInvocation 回调方法
 			public Object proceedWithInvocation() throws Throwable {
-				// 执行被增强的方法
+				// 执行被增强的方法  该返回值为最终 invoke 的返回值
 				return invocation.proceed();
 			}
 		});

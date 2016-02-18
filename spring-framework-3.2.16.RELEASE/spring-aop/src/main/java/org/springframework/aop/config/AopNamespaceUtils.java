@@ -24,6 +24,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.ParserContext;
 
 /**
+ *   用于内部使用的自动代理的注册程序的实用程序类   由“{ }”@代码AOP命名空间标签。
+ *
  * Utility class for handling registration of auto-proxy creators used internally
  * by the '{@code aop}' namespace tags.
  *
@@ -46,7 +48,7 @@ public abstract class AopNamespaceUtils {
 	 */
 	public static final String PROXY_TARGET_CLASS_ATTRIBUTE = "proxy-target-class";
 
-	/**
+	/**  揭露代理
 	 * The {@code expose-proxy} attribute as found on AOP-related XML tags.
 	 */
 	private static final String EXPOSE_PROXY_ATTRIBUTE = "expose-proxy";
@@ -55,8 +57,10 @@ public abstract class AopNamespaceUtils {
 	public static void registerAutoProxyCreatorIfNecessary(
 			ParserContext parserContext, Element sourceElement) {
 
+		// 注册 InfrastructureAdvisorAutoProxyCreator
 		BeanDefinition beanDefinition = AopConfigUtils.registerAutoProxyCreatorIfNecessary(
 				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
+
 		useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
 		registerComponentIfNecessary(beanDefinition, parserContext);
 	}

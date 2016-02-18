@@ -246,44 +246,51 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			throws Throwable {
 
 		// If the transaction attribute is null, the method is non-transactional.
-		// 获取事物属性
+		//1、获取事物属性  事务属性是在解析事务自定义标签的过程中解析构造的，AnnotationTransactionAttributeSource#findTransactionAttribute
+		//   最终处理类为  SpringTransactionAnnotationParser#parseTransactionAnnotation 方法
 		final TransactionAttribute txAttr = getTransactionAttributeSource().getTransactionAttribute(method, targetClass);
-		//获取 TransactionManager
+		//2、获取 TransactionManager  事务管理器由开发人员通过配置文件注入
 		final PlatformTransactionManager tm = determineTransactionManager(txAttr);
-		//
+		//构造方法唯一标识（类.方法）
 		final String joinpointIdentification = methodIdentification(method, targetClass);
 
+		// 3、不同的事务处理使用不同的逻辑
 		//声明式事物
 		if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
 			// Standard transaction demarcation with getTransaction and commit/rollback calls.
-			// 创建事物信息
+			// 4、创建事物信息 TransactionInfo 中包含了
+			//    TransactionAttribute 事务属性、 PlatformTransactionManager事务管理器、TransactionStatus 事务状态
 			TransactionInfo txInfo = createTransactionIfNecessary(tm, txAttr, joinpointIdentification);
 			Object retVal = null;
 			try {
 				// This is an around advice: Invoke the next interceptor in the chain.
 				// This will normally result in a target object being invoked.
-				// 执行被增强的方法
+				// 5、执行被增强的方法，目标方法
 				retVal = invocation.proceedWithInvocation();
 			}
 			catch (Throwable ex) {
 				// target invocation exception
-				// 异常回滚
+				// 6、异常回滚  spring 只处理：RuntimeException  or  error 异常的事务回滚
 				completeTransactionAfterThrowing(txInfo, ex);
 				throw ex;
 			}
 			finally {
-				// 清除信息
+				// 7、提交事务前的事务信息清除
 				cleanupTransactionInfo(txInfo);
 			}
 
-			//事物提交
+			//8、事物提交
 			commitTransactionAfterReturning(txInfo);
+
+			//9、返回值为回调函数返回值
 			return retVal;
 		}
 
 		else {
 			// It's a CallbackPreferringPlatformTransactionManager: pass a TransactionCallback in.
 			// 编程式事物
+			// 1·编程式的事务处理是不需要事务属性的
+			// 2.CallbackPreferringPlatformTransactionManager 实现了 PlatformTransactionManager 接口
 			try {
 				Object result = ((CallbackPreferringPlatformTransactionManager) tm).execute(txAttr,
 						new TransactionCallback<Object>() {
@@ -415,6 +422,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			PlatformTransactionManager tm, TransactionAttribute txAttr, final String joinpointIdentification) {
 
 		// If no name specified, apply method identification as transaction name.
+		//  如果未指定名称，将方法标识为事务名。
 		if (txAttr != null && txAttr.getName() == null) {
 			//包装一下事物属性
 			txAttr = new DelegatingTransactionAttribute(txAttr) {
@@ -442,7 +450,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			}
 		}
 
-		//根据属性、status准备一个TransactionInfo
+		//根据属性、status 构建一个TransactionInfo 被返回
 		return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
 	}
 

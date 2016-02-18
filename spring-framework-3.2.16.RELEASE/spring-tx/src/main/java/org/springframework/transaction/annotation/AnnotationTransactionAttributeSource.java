@@ -132,8 +132,9 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	}
 
 	/**
+	 *   获取给定方法或类的事务属
 	 * Determine the transaction attribute for the given method or class.
-	 * <p>This implementation delegates to configured
+	 * <p>This implementation delegates to configured    实现委托给了配置
 	 * {@link TransactionAnnotationParser TransactionAnnotationParsers}
 	 * for parsing known annotations into Spring's metadata attribute class.
 	 * Returns {@code null} if it's not transactional.
@@ -143,9 +144,12 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	 * or {@code null} if none was found
 	 */
 	protected TransactionAttribute determineTransactionAttribute(AnnotatedElement ae) {
+
+		// annotationParsers 在AnnotationTransactionAttributeSource 初始化的时候初始处理
 		for (TransactionAnnotationParser annotationParser : this.annotationParsers) {
 
-			//解析事物注解
+			//解析事物注解  ae 代表的是一个注解的方法或者是类
+			// 获取属性的时候，实际上是通过 SpringTransactionAnnotationParser#parseTransactionAnnotation 方法进行解析的
 			TransactionAttribute attr = annotationParser.parseTransactionAnnotation(ae);
 			if (attr != null) {
 				return attr;

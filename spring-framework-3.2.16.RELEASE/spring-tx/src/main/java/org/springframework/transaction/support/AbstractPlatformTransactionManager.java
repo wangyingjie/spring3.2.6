@@ -197,6 +197,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 	/**
 	 * Return whether nested transactions are allowed.
+	 *   返回嵌套事务是否允许
 	 */
 	public final boolean isNestedTransactionAllowed() {
 		return this.nestedTransactionAllowed;
@@ -334,7 +335,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 */
 	public final TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException {
 
-		// 获取transaction
+		// 获取transaction  重要的获取事务的方法
 		Object transaction = doGetTransaction();
 
 		// Cache debug flag to avoid repeated checks.
@@ -347,7 +348,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
-			//已经存在事务  事务的嵌套处理
+			//当前线程已经存在事务  事务的嵌套处理
 			return handleExistingTransaction(definition, transaction, debugEnabled);
 		}
 
@@ -358,10 +359,12 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		}
 
 		// No existing transaction found -> check propagation behavior to find out how to proceed.
+		// 当前线程不存在事务，但是PropagationBehavior 被声明为 PROPAGATION_MANDATORY 抛出异常
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
 			throw new IllegalTransactionStateException(
 					"No existing transaction found for transaction marked with propagation 'mandatory'");
 		}
+		// 一下事务行为都需要新建事务
 		else if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
 				definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
 			definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
@@ -403,16 +406,21 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 	/**
 	 * Create a TransactionStatus for an existing transaction.
+	 *
+	 * 处理已经存在的事务信息
+	 *
 	 */
 	private TransactionStatus handleExistingTransaction(
 			TransactionDefinition definition, Object transaction, boolean debugEnabled)
 			throws TransactionException {
 
+		//不支持事务则抛出异常
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NEVER) {
 			throw new IllegalTransactionStateException(
 					"Existing transaction found for transaction marked with propagation 'never'");
 		}
 
+		//  不持当前的事务；而始终执行非事务性。*类似于同名的EJB事务属性。
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NOT_SUPPORTED) {
 			if (debugEnabled) {
 				logger.debug("Suspending current transaction");
@@ -423,13 +431,14 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 					definition, null, false, newSynchronization, debugEnabled, suspendedResources);
 		}
 
+		//PROPAGATION_REQUIRES_NEW 当前方法必须在他自己的事务里面运行，一个新的事务将被启动 如果有事务正在运行，则在这个方法运行期间被挂起
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW) {
 			if (debugEnabled) {
 				logger.debug("Suspending current transaction, creating new transaction with name [" +
 						definition.getName() + "]");
 			}
 
-			//新事务的建立
+			//新事务的建立   suspend 方法将原事务挂起 主要目的是记录原事务的状态，以便于后续的操作对事物的恢复
 			SuspendedResourcesHolder suspendedResources = suspend(transaction);
 			try {
 				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
@@ -449,7 +458,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			}
 		}
 
-		//嵌套事务处理
+		//嵌入式事务处理
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
 			if (!isNestedTransactionAllowed()) {
 				throw new NestedTransactionNotSupportedException(
@@ -758,7 +767,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			}
 			return;
 		}
-
+		// 事务提交流程
 		processCommit(defStatus);
 	}
 
@@ -821,6 +830,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				if (!beforeCompletionInvoked) {
 					triggerBeforeCompletion(status);
 				}
+				//提交过程中出现异常，则回滚
 				doRollbackOnCommitException(status, ex);
 				throw ex;
 			}
@@ -869,6 +879,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		}
 
 		DefaultTransactionStatus defStatus = (DefaultTransactionStatus) status;
+		// 处理回滚逻辑
 		processRollback(defStatus);
 	}
 

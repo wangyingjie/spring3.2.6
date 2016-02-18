@@ -152,6 +152,7 @@ public abstract class DataSourceUtils {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Setting JDBC Connection [" + con + "] read-only");
 				}
+				// …Ë÷√÷ª∂¡ Ù–‘
 				con.setReadOnly(true);
 			}
 			catch (SQLException ex) {

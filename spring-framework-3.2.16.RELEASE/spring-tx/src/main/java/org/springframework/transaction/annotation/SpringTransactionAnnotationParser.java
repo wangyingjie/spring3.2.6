@@ -47,13 +47,27 @@ public class SpringTransactionAnnotationParser implements TransactionAnnotationP
 		}
 	}
 
+	/**
+	 * 完成事务标签的最终解析
+	 * @param ann
+	 * @return
+	 */
 	public TransactionAttribute parseTransactionAnnotation(Transactional ann) {
+
+		//存储Transactional 事务的配置属性
 		RuleBasedTransactionAttribute rbta = new RuleBasedTransactionAttribute();
+		//解析事务传播特性
 		rbta.setPropagationBehavior(ann.propagation().value());
+		//解析事务隔离级别
 		rbta.setIsolationLevel(ann.isolation().value());
+		//解析事务超时时间
 		rbta.setTimeout(ann.timeout());
+		//解析 readOnly 属性
 		rbta.setReadOnly(ann.readOnly());
+		//解析 Qualifier 资格属性
 		rbta.setQualifier(ann.value());
+
+		//解析回滚规则
 		ArrayList<RollbackRuleAttribute> rollBackRules = new ArrayList<RollbackRuleAttribute>();
 		Class[] rbf = ann.rollbackFor();
 		for (Class rbRule : rbf) {
@@ -76,6 +90,8 @@ public class SpringTransactionAnnotationParser implements TransactionAnnotationP
 			rollBackRules.add(rule);
 		}
 		rbta.getRollbackRules().addAll(rollBackRules);
+
+		//返回事务属性
 		return rbta;
 	}
 

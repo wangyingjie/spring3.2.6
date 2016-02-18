@@ -313,14 +313,19 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	}
 
 	/**
+	 *   如果bean是确定为一个代理类的创建与配置拦截器代理。
 	 * Create a proxy with the configured interceptors if the bean is
 	 * identified as one to proxy by the subclass.
 	 * @see #getAdvicesAndAdvisorsForBean
 	 */
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean != null) {
+			//构建缓存key
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
+			//是否由于避免循环依赖而创建的Bean代理
 			if (!this.earlyProxyReferences.containsKey(cacheKey)) {
+
+				//对指定Bean进行封装
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}
@@ -339,6 +344,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	}
 
 	/**
+	 * 封装指定的Bean 如果必要，即如果它是合格的代理。
+	 *
+	 * 1.找出指定bean对应的增强器
+	 * 2.根据找出的增强器创建代理对象
+	 *
 	 * Wrap the given bean if necessary, i.e. if it is eligible for being proxied.
 	 * @param bean the raw bean instance
 	 * @param beanName the name of the bean
@@ -346,6 +356,8 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	 * @return a proxy wrapping the bean, or the raw bean instance as-is
 	 */
 	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+
+		//如果已经处理过
 		if (beanName != null && this.targetSourcedBeans.containsKey(beanName)) {
 			return bean;
 		}
@@ -357,7 +369,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 			return bean;
 		}
 
-		// Create proxy if we have advice.
+		// Create proxy if we have advice.  如果有advice 则创建一个代理  要找出增强器、同时要判断是否满足需要
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);

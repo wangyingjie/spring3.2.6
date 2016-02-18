@@ -40,9 +40,13 @@ public class TransactionAttributeSourceAdvisor extends AbstractPointcutAdvisor {
 
 	private TransactionInterceptor transactionInterceptor;
 
+	// 事务的切入点   ransactionAttributeSource
 	private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {
 		@Override
 		protected TransactionAttributeSource getTransactionAttributeSource() {
+
+			//从事务拦截器  TransactionInterceptor  中获取 TransactionAttributeSource# getTransactionAttributeSource
+			//  transactionAttributeSource  是在解析 tx 自定义标签中完成注入的
 			return (transactionInterceptor != null ? transactionInterceptor.getTransactionAttributeSource() : null);
 		}
 	};

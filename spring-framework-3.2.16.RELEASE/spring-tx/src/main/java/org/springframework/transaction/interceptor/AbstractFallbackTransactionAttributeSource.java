@@ -130,6 +130,8 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 	 * Same signature as {@link #getTransactionAttribute}, but doesn't cache the result.
 	 * {@link #getTransactionAttribute} is effectively a caching decorator for this method.
 	 * @see #getTransactionAttribute
+	 *
+	 * 推断事务属性
 	 */
 	private TransactionAttribute computeTransactionAttribute(Method method, Class<?> targetClass) {
 		// Don't allow no-public methods as required.
@@ -141,31 +143,32 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 		Class<?> userClass = ClassUtils.getUserClass(targetClass);
 		// The method may be on an interface, but we need attributes from the target class.
 		// If the target class is null, the method will be unchanged.
+		// method 代表接口中的方法 specificMethod代表实现类中的方法
 		Method specificMethod = ClassUtils.getMostSpecificMethod(method, userClass);
 		// If we are dealing with method with generic parameters, find the original method.
 		specificMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
 
-		//findTransactionAttribute 获取事物处理流程   方法--》类--》接口---》接口对应类
-
-		// First try is the method in the target class.
+		//findTransactionAttribute 获取事物处理流程   方法-->类-->接口--->接口对应实现类
+		// First try is the method in the target class.  目标类的方法上获取事务属性
 		TransactionAttribute txAtt = findTransactionAttribute(specificMethod);
 		if (txAtt != null) {
 			return txAtt;
 		}
 
-		// Second try is the transaction attribute on the target class.
+		// Second try is the transaction attribute on the target class.   目标类上获取事务属性
 		txAtt = findTransactionAttribute(specificMethod.getDeclaringClass());
 		if (txAtt != null) {
 			return txAtt;
 		}
 
+		// 如果存在接口
 		if (specificMethod != method) {
-			// Fallback is to look at the original method.
+			// Fallback is to look at the original method.  查看接口方法，获取事务属性
 			txAtt = findTransactionAttribute(method);
 			if (txAtt != null) {
 				return txAtt;
 			}
-			// Last fallback is the class of the original method.
+			// Last fallback is the class of the original method.   到接口方法实现类上获取事务属性
 			return findTransactionAttribute(method.getDeclaringClass());
 		}
 		return null;
@@ -173,6 +176,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 
 
 	/**
+	 *   子类需要实现此返回事务属性
 	 * Subclasses need to implement this to return the transaction attribute
 	 * for the given method, if any.
 	 * @param method the method to retrieve the attribute for
@@ -182,6 +186,8 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 	protected abstract TransactionAttribute findTransactionAttribute(Method method);
 
 	/**
+	 *
+	 * 子类需要实现此返回事务属性
 	 * Subclasses need to implement this to return the transaction attribute
 	 * for the given class, if any.
 	 * @param clazz the class to retrieve the attribute for
