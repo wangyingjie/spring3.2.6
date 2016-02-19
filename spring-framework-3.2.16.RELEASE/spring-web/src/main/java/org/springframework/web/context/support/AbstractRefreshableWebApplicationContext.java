@@ -198,11 +198,18 @@ public abstract class AbstractRefreshableWebApplicationContext extends AbstractR
 	/**
 	 * {@inheritDoc}
 	 * <p>Replace {@code Servlet}-related property sources.
+	 *
 	 */
 	@Override
 	protected void initPropertySources() {
 		ConfigurableEnvironment env = getEnvironment();
 		if (env instanceof ConfigurableWebEnvironment) {
+			/**
+			 * initServletProperSources,顾名思义，就是初始化propertySources这个容器，那我们应该可以想到， 它应该是往容器里塞点东西，
+			 * 再看后面2个参数，
+			 *     一个是servletContext,一个是servletConfig,那么我们知道了，它这个初始化，
+			 *     其实是想把servletContext、servletConfig这两个对象给存到容器的propertySources容器里去
+			 */
 			((ConfigurableWebEnvironment) env).initPropertySources(this.servletContext, this.servletConfig);
 		}
 	}

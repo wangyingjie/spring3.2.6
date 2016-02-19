@@ -228,6 +228,8 @@ public abstract class WebApplicationContextUtils {
 	 * @see #initServletPropertySources(MutablePropertySources, ServletContext, ServletConfig)
 	 */
 	public static void initServletPropertySources(MutablePropertySources propertySources, ServletContext servletContext) {
+		//servletContext就被propertySources接管了，它用replace方法，将servletContext存放了进来，
+		// key是一个常量，value是一个ServetPropertySource对象，ServetPropertySource就类似一个Entry.
 		initServletPropertySources(propertySources, servletContext, null);
 	}
 
@@ -248,18 +250,27 @@ public abstract class WebApplicationContextUtils {
 	 * servlet config property source} has already been initialized)
 	 * @see org.springframework.core.env.PropertySource.StubPropertySource
 	 * @see org.springframework.core.env.ConfigurableEnvironment#getPropertySources()
+	 *
+	 * 注意该方法执行结束之后：
+	 * 		servletContext就被propertySources接管了，它用replace方法，将servletContext存放了进来，
+	 * 		key是一个常量，value是一个ServetPropertySource对象，ServetPropertySource就类似一个Entry.
 	 */
 	public static void initServletPropertySources(
 			MutablePropertySources propertySources, ServletContext servletContext, ServletConfig servletConfig) {
 
 		Assert.notNull(propertySources, "propertySources must not be null");
+		// propertySources 放置servletContext， key是常量，value是一个PropertySource,
 		if (servletContext != null && propertySources.contains(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME) &&
 				propertySources.get(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME) instanceof StubPropertySource) {
+
+			//用PropertySource存储 # servletContext
 			propertySources.replace(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME,
 					new ServletContextPropertySource(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME, servletContext));
 		}
 		if (servletConfig != null && propertySources.contains(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME) &&
 				propertySources.get(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME) instanceof StubPropertySource) {
+
+			//用PropertySource存储 # servletConfig
 			propertySources.replace(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME,
 					new ServletConfigPropertySource(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME, servletConfig));
 		}

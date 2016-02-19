@@ -213,6 +213,20 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	/**
+	 *
+	 * GetBean 的大概过程：
+	 *   1.先试着从单例缓存对象里获取。
+	 *   2.从父容器里取定义，有则由父容器创建。
+	 *   3.如果是单例，则走单例对象的创建过程：在 spring 容器里单例对象和非单例对象的创建过程是一样的,都会调用父类 AbstractAutowireCapableBeanFactory
+	 *     @see AbstractAutowireCapableBeanFactory#createBean 方法。不同的是单例对象只创建一次并且需要缓存起来。
+	 *     DefaultListableBeanFactory 的父类 DefaultSingletonBeanRegistry 提供了对单例对象缓存等支持工作。
+	 *     所以是单例对象的话会调用 DefaultSingletonBeanRegistry 的 getSingleton 方法，
+	 *      @see DefaultSingletonBeanRegistry#getSingleton
+	 *     它会间接调用AbstractAutowireCapableBeanFactory
+	 *     @see AbstractAutowireCapableBeanFactory#createBean 方法。
+	 *     如果是 Prototype 多例则直接调用父类 AbstractAutowireCapableBeanFactory
+	 *     @see  AbstractAutowireCapableBeanFactory#createBean 方法。
+	 *
 	 * Return an instance, which may be shared or independent, of the specified bean.
 	 * @param name the name of the bean to retrieve
 	 * @param requiredType the required type of the bean to retrieve
@@ -232,6 +246,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
+		// 所以是单例对象的话会调用 DefaultSingletonBeanRegistry 的 getSingleton 方法，
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isDebugEnabled()) {
@@ -285,11 +300,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					}
 				}
 
+				// 对单例bean的处理：Singleton
 				// Create bean instance.
 				if (mbd.isSingleton()) {
+					//单例对象创建过程,间接通过getSingleton方法来创建，里面会实现将单例对象缓存
+					//todo  ObjectFactory  以一个回调工厂传入 getSingleton 实际创建Bean 是通过 getObject方法完成的
 					sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
 						public Object getObject() throws BeansException {
 							try {
+								// createBean 为一个模板方法，将由子类  AbstractAutowireCapableBeanFactory 实现创建 Bean 的操作
 								return createBean(beanName, mbd, args);
 							}
 							catch (BeansException ex) {
@@ -303,12 +322,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					});
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
-
+				// 对原型bean的处理：Prototype
 				else if (mbd.isPrototype()) {
 					// It's a prototype -> create a new instance.
 					Object prototypeInstance = null;
 					try {
 						beforePrototypeCreation(beanName);
+						// 直接调用创建一个新的实例
 						prototypeInstance = createBean(beanName, mbd, args);
 					}
 					finally {

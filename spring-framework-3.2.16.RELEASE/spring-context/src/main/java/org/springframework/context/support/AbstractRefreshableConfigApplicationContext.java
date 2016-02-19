@@ -75,6 +75,8 @@ public abstract class AbstractRefreshableConfigApplicationContext extends Abstra
 	 * <p>If not set, the implementation may use a default as appropriate.
 	 */
 	public void setConfigLocations(String[] locations) {
+		// 可以看到AbstractRefreshableConfigApplicationContext的一个成员数组configLocations中记录了：web.xml 配置的spring配置文件信息
+		// 这里先mark一下，因为这里它放进去，是为了后续取出来去加载bean用的，所以记牢
 		if (locations != null) {
 			Assert.noNullElements(locations, "Config locations must not be null");
 			this.configLocations = new String[locations.length];

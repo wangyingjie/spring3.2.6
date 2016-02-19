@@ -602,6 +602,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		return (this.configurationFrozen || super.isBeanEligibleForMetadataCaching(beanName));
 	}
 
+	/**
+	 * 容器初始化的时候会预先对单例和非延迟加载的对象进行预先初始化。
+	 * 其他的都是延迟加载是在第一次调用getBean 的时候被创建。
+	 * 从 DefaultListableBeanFactory 的 preInstantiateSingletons 里可以看到这个规则的实现。
+	 * @throws BeansException
+	 */
 	public void preInstantiateSingletons() throws BeansException {
 		if (this.logger.isInfoEnabled()) {
 			this.logger.info("Pre-instantiating singletons in " + this);
@@ -617,6 +623,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		// Trigger initialization of all non-lazy singleton beans...
 		for (String beanName : beanNames) {
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+
+			//对非抽象、单例的和非延迟加载的对象进行实例化。
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 				if (isFactoryBean(beanName)) {
 					final FactoryBean<?> factory = (FactoryBean<?>) getBean(FACTORY_BEAN_PREFIX + beanName);

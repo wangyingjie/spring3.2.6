@@ -164,6 +164,7 @@ public class PropertyPlaceholderConfigurer extends PlaceholderConfigurerSupport 
 		if (propVal == null && systemPropertiesMode == SYSTEM_PROPERTIES_MODE_FALLBACK) {
 			propVal = resolveSystemProperty(placeholder);
 		}
+		//postProcessBeanFactory();
 		return propVal;
 	}
 

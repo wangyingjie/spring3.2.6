@@ -54,6 +54,9 @@ import org.springframework.util.ObjectUtils;
  * @see PropertySourcesPropertyResolver
  * @see MutablePropertySources
  * @see org.springframework.context.annotation.PropertySource
+ *
+ * propertySource,是一个用来存放property的keyValue的实体
+ *
  */
 public abstract class PropertySource<T> {
 
@@ -187,6 +190,11 @@ public abstract class PropertySource<T> {
 
 
 	/**
+	 * StubPropertySource是Property的子类，用于充当存根， 实际的PropertySource的初始化工作，
+	 * 不能在容器创建之前进行，所以用存根来充当一个占位符，他用来占用一个预期的propertySource位置，
+	 * 等容器refresh的时候用来进行替换，替换后成一个真正的值
+	 * 它是一个变量，用来占着你的property的位置，等刷新的时候再进行填充。
+	 *
 	 * {@code PropertySource} to be used as a placeholder in cases where an actual
 	 * property source cannot be eagerly initialized at application context
 	 * creation time.  For example, a {@code ServletContext}-based property source
@@ -215,6 +223,8 @@ public abstract class PropertySource<T> {
 
 
 	/**
+	 * ComparisonPropertySource是存根的子类，仅仅用于集合的操作。
+	 *
 	 * @see PropertySource#named(String)
 	 */
 	static class ComparisonPropertySource extends StubPropertySource {

@@ -17,6 +17,11 @@
 package org.springframework.core.env;
 
 /**
+ *
+ * 是propertySource的一个容器接口，具备迭代能力，有2个容器级别的方法，
+ * contains和get,这都是集合中常见的概念，
+ * 它只有一个实现类，MutablePropertySources
+ *
  * Holder containing one or more {@link PropertySource} objects.
  *
  * @author Chris Beams

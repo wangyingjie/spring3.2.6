@@ -200,6 +200,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param singletonFactory the ObjectFactory to lazily create the singleton
 	 * with, if necessary
 	 * @return the registered singleton object
+	 *
+	 * 该方法只有一个地方调用，传入的参数 singletonFactory 为一个回调接口
+	 * @see AbstractBeanFactory#doGetBean
 	 */
 	public Object getSingleton(String beanName, ObjectFactory singletonFactory) {
 		Assert.notNull(beanName, "'beanName' must not be null");
@@ -221,7 +224,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<Exception>();
 				}
 				try {
-					// 获取个体Object方法实例化Bean
+					// 获取个体Object方法实例化Bean   这是一个回调函数的应用
 					singletonObject = singletonFactory.getObject();
 				}
 				catch (BeanCreationException ex) {

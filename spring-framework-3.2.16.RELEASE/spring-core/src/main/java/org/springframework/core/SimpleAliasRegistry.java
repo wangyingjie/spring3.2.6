@@ -155,6 +155,7 @@ public class SimpleAliasRegistry implements AliasRegistry {
 				canonicalName = resolvedName;
 			}
 		}
+		// todo 为何用一个 while 循环  执行语句为一个空语句？
 		while (resolvedName != null);
 		return canonicalName;
 	}

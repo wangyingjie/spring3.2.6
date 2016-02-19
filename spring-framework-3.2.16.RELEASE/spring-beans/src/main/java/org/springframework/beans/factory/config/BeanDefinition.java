@@ -35,6 +35,9 @@ import org.springframework.core.AttributeAccessor;
  * @see ConfigurableListableBeanFactory#getBeanDefinition
  * @see org.springframework.beans.factory.support.RootBeanDefinition
  * @see org.springframework.beans.factory.support.ChildBeanDefinition
+ *
+ *
+ * 从该接口定义可以看出，通过 bean 定义能够得到 bean 的详细信息，如类名子、工厂类名称、 scope 、是否单例、是否抽象、是否延迟加载等等。
  */
 public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 

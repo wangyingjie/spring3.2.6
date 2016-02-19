@@ -445,56 +445,102 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	/**
 	 * Spring Bean 解析的核心处理方法
+	 *
+	 * 问题 1 ： Bean 的创建时机, bean 是在什么时候被创建的，有哪些规则？
+	 *    容器初始化的时候会预先对单例和非延迟加载的对象进行预先初始化。
+	 *    其他的都是延迟加载是在第一次调用getBean 的时候被创建。
+	 *    @see org.springframework.beans.factory.support.DefaultListableBeanFactory#preInstantiateSingletons 里可以看到这个规则的实现。
+	 *		<beans default-autowire="byName">
+	 *			<bean id="otherBean"          class="com.test.OtherBean" scope="prototype"/>
+	 *			<bean id="myBean"          class="com.test.MyBean" lazy-init="true"/>
+	 *			<bean id="singletonBean"          class="com.test.SingletonBean"/>
+	 *		</beans>
+	 *	   以上的配置信息只有：singletonBean 会预先创建
+	 *
+	 * 问题 2：Bean 的创建过程
+	 *    对于 bean 的创建过程其实都是通过调用工厂的 getBean 方法来完成的。这里面将会完成对构造函数的选择、依赖注入等。
+	 *    无论预先创建还是延迟加载都是调用getBean实现，AbstractBeanFactory 定义了 getBean 的过程：
+	 *    @see org.springframework.beans.factory.support.AbstractBeanFactory#getBean
+	 *
+	 * 总结：
+	 *    加载或刷新持久的配置，可能是xml文件，properties文件，或者关系型数据库的概要。
+	 *    做为一个启动方法，如果初始化失败将会销毁已经创建好的单例，避免重复加载配置文件。
+	 *    换句话说，在执行这个方法之后，要不全部加载单例，要不都不加载
+	 *
+	 * Bean的创建过程基本是BeanFactory所要完成的事情.
 	 * @throws BeansException
 	 * @throws IllegalStateException
 	 */
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
-			// Prepare this context for refreshing.  刷新上下文
+
+			// preRefresh预刷新，其实就是把记录一下开始时间，打印一下日志，然后把servletConfig和servletContext放到spring容器的propertySources容器里面
+			// Prepare this context for refreshing. 预先准备 刷新上下文
 			prepareRefresh();
 
+			//创建Bean工厂，如果已经有则销毁，没有则创建
 			// Tell the subclass to refresh the internal bean factory. 初始化bean工厂 并进行xml文件读取
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
+			// 加载类装载器、PostProcessor
 			// Prepare the bean factory for use in this context. 对bean工厂进行填充
 			prepareBeanFactory(beanFactory);
 
 			try {
+
+				//模板方法，在bean定义被装载后，提供一个修改容器 BeanFactory 的入口
 				// Allows post-processing of the bean factory in context subclasses. 子类覆盖方法做额外的处理
 				postProcessBeanFactory(beanFactory);
 
+				// 在Bean未开始实例化是，对Definition定义的修改的入口、常见的PropertyPlaceholderConfigurer就是在这里被调用的
 				// Invoke factory processors registered as beans in the context. 激活各种beanFactory处理
 				invokeBeanFactoryPostProcessors(beanFactory);
 
+				// 执行BeanFactoryPostProcessor（在beanFactory初始化过程中，bean初始化之前，修改beanfactory参数）、
+				// BeanDefinitionRegistryPostProcessor 其实也是继承自BeanFactoryPostProcessor，
+				// 多了对BeanDefinitionRegistry的支持invokeBeanFactoryPostProcessors(beanFactory);
+				// 执行postProcess，那BeanPostProcessor是什么呢，是为了在bean加载过程中修改bean的内容，
+				// 使用分的有两个而方法Before、After分别对应初始化前和初始化后
 				// Register bean processors that intercept bean creation.注册拦截 bean 创建的bean处理器，这里只是注册，真正的调用在 getBean 时候
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.国际化处理
 				initMessageSource();
 
+				// 初始化事件广播ApplicationEventMulticaster，使用观察者模式，对注册的ApplicationEvent时间进行捕捉
 				// Initialize event multicaster for this context.初始化消息广播器
 				initApplicationEventMulticaster();
 
+				// 初始化特殊bean的方法
 				// Initialize other special beans in specific context subclasses. 子类初始化其他的bean
 				onRefresh();
 
+				// 将所有ApplicationEventListener注册到ApplicationEventMulticaster中
 				// Check for listener beans and register them.  在所有注册bean中查找  Listener bean 注册到消息广播器中
 				registerListeners();
 
+				//容器初始化的时候会预先对单例和非延迟加载的对象进行预先初始化。
+				// 其他的都是延迟加载是在第一次调用getBean 的时候被创建。
+				// 从 DefaultListableBeanFactory#preInstantiateSingletons 里可以看到这个规则的实现。
 				// Instantiate all remaining (non-lazy-init) singletons. 初始化剩下的单实例 非惰性
 				finishBeanFactoryInitialization(beanFactory);
 
+				// 初始化lifecycle的bean并启动（例如quartz的定时器等），如果开启JMX则将ApplicationContext注册到上面
 				// Last step: publish corresponding event. 完成刷新过程，通知生命周期处理器 lifeCycleProcessor
 				finishRefresh();
 			}
 
 			catch (BeansException ex) {
+
+				//销毁已经创建单例
 				// Destroy already created singletons to avoid dangling resources.
 				destroyBeans();
 
+				// 将context的状态转换为无效，标示初始化失败
 				// Reset 'active' flag.
 				cancelRefresh(ex);
 
+				// 将异常传播到调用者
 				// Propagate exception to caller.
 				throw ex;
 			}
@@ -504,10 +550,16 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/**
 	 * Prepare this context for refreshing, setting its startup date and
 	 * active flag as well as performing any initialization of property sources.
+	 *
+	 * 原来preRefresh预刷新，其实就是把记录一下开始时间，打印一下日志，然后把servletConfig和servletContext放到spring容器的propertySources容器里面
+	 *
 	 */
 	protected void prepareRefresh() {
+
+		//记录容器启动时间点
 		this.startupDate = System.currentTimeMillis();
 
+		//启动标记
 		synchronized (this.activeMonitor) {
 			this.active = true;
 		}
@@ -517,6 +569,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment
+		// 初始化上下文环境的任何占位符属性来源  然后把servletConfig和servletContext放到spring容器的propertySources容器里面
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable
@@ -697,6 +750,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			Collection<? extends BeanFactoryPostProcessor> postProcessors, ConfigurableListableBeanFactory beanFactory) {
 
 		for (BeanFactoryPostProcessor postProcessor : postProcessors) {
+			// beanFactory 后置处理
 			postProcessor.postProcessBeanFactory(beanFactory);
 		}
 	}
@@ -913,6 +967,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/**
 	 * Finish the initialization of this context's bean factory,
 	 * initializing all remaining singleton beans.
+	 *
+	 * // 完成所有非惰性的单例对象的创建
 	 */
 	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
 		// Initialize conversion service for this context.
@@ -934,6 +990,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Allow for caching all bean definition metadata, not expecting further changes.
 		beanFactory.freezeConfiguration();
 
+		// 完成所有非惰性的单例对象的创建
 		// Instantiate all remaining (non-lazy-init) singletons.
 		beanFactory.preInstantiateSingletons();
 	}
