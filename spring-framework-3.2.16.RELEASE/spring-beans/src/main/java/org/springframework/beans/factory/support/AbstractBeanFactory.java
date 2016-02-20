@@ -214,18 +214,18 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 	/**
 	 *
-	 * GetBean µÄ´ó¸Å¹ı³Ì£º
-	 *   1.ÏÈÊÔ×Å´Óµ¥Àı»º´æ¶ÔÏóÀï»ñÈ¡¡£
-	 *   2.´Ó¸¸ÈİÆ÷ÀïÈ¡¶¨Òå£¬ÓĞÔòÓÉ¸¸ÈİÆ÷´´½¨¡£
-	 *   3.Èç¹ûÊÇµ¥Àı£¬Ôò×ßµ¥Àı¶ÔÏóµÄ´´½¨¹ı³Ì£ºÔÚ spring ÈİÆ÷Àïµ¥Àı¶ÔÏóºÍ·Çµ¥Àı¶ÔÏóµÄ´´½¨¹ı³ÌÊÇÒ»ÑùµÄ,¶¼»áµ÷ÓÃ¸¸Àà AbstractAutowireCapableBeanFactory
-	 *     @see AbstractAutowireCapableBeanFactory#createBean ·½·¨¡£²»Í¬µÄÊÇµ¥Àı¶ÔÏóÖ»´´½¨Ò»´Î²¢ÇÒĞèÒª»º´æÆğÀ´¡£
-	 *     DefaultListableBeanFactory µÄ¸¸Àà DefaultSingletonBeanRegistry Ìá¹©ÁË¶Ôµ¥Àı¶ÔÏó»º´æµÈÖ§³Ö¹¤×÷¡£
-	 *     ËùÒÔÊÇµ¥Àı¶ÔÏóµÄ»°»áµ÷ÓÃ DefaultSingletonBeanRegistry µÄ getSingleton ·½·¨£¬
+	 * GetBean çš„å¤§æ¦‚è¿‡ç¨‹ï¼š
+	 *   1.å…ˆè¯•ç€ä»å•ä¾‹ç¼“å­˜å¯¹è±¡é‡Œè·å–ã€‚
+	 *   2.ä»çˆ¶å®¹å™¨é‡Œå–å®šä¹‰ï¼Œæœ‰åˆ™ç”±çˆ¶å®¹å™¨åˆ›å»ºã€‚
+	 *   3.å¦‚æœæ˜¯å•ä¾‹ï¼Œåˆ™èµ°å•ä¾‹å¯¹è±¡çš„åˆ›å»ºè¿‡ç¨‹ï¼šåœ¨ spring å®¹å™¨é‡Œå•ä¾‹å¯¹è±¡å’Œéå•ä¾‹å¯¹è±¡çš„åˆ›å»ºè¿‡ç¨‹æ˜¯ä¸€æ ·çš„,éƒ½ä¼šè°ƒç”¨çˆ¶ç±» AbstractAutowireCapableBeanFactory
+	 *     @see AbstractAutowireCapableBeanFactory#createBean æ–¹æ³•ã€‚ä¸åŒçš„æ˜¯å•ä¾‹å¯¹è±¡åªåˆ›å»ºä¸€æ¬¡å¹¶ä¸”éœ€è¦ç¼“å­˜èµ·æ¥ã€‚
+	 *     DefaultListableBeanFactory çš„çˆ¶ç±» DefaultSingletonBeanRegistry æä¾›äº†å¯¹å•ä¾‹å¯¹è±¡ç¼“å­˜ç­‰æ”¯æŒå·¥ä½œã€‚
+	 *     æ‰€ä»¥æ˜¯å•ä¾‹å¯¹è±¡çš„è¯ä¼šè°ƒç”¨ DefaultSingletonBeanRegistry çš„ getSingleton æ–¹æ³•ï¼Œ
 	 *      @see DefaultSingletonBeanRegistry#getSingleton
-	 *     Ëü»á¼ä½Óµ÷ÓÃAbstractAutowireCapableBeanFactory
-	 *     @see AbstractAutowireCapableBeanFactory#createBean ·½·¨¡£
-	 *     Èç¹ûÊÇ Prototype ¶àÀıÔòÖ±½Óµ÷ÓÃ¸¸Àà AbstractAutowireCapableBeanFactory
-	 *     @see  AbstractAutowireCapableBeanFactory#createBean ·½·¨¡£
+	 *     å®ƒä¼šé—´æ¥è°ƒç”¨AbstractAutowireCapableBeanFactory
+	 *     @see AbstractAutowireCapableBeanFactory#createBean æ–¹æ³•ã€‚
+	 *     å¦‚æœæ˜¯ Prototype å¤šä¾‹åˆ™ç›´æ¥è°ƒç”¨çˆ¶ç±» AbstractAutowireCapableBeanFactory
+	 *     @see  AbstractAutowireCapableBeanFactory#createBean æ–¹æ³•ã€‚
 	 *
 	 * Return an instance, which may be shared or independent, of the specified bean.
 	 * @param name the name of the bean to retrieve
@@ -246,7 +246,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
-		// ËùÒÔÊÇµ¥Àı¶ÔÏóµÄ»°»áµ÷ÓÃ DefaultSingletonBeanRegistry µÄ getSingleton ·½·¨£¬
+		// æ‰€ä»¥æ˜¯å•ä¾‹å¯¹è±¡çš„è¯ä¼šè°ƒç”¨ DefaultSingletonBeanRegistry çš„ getSingleton æ–¹æ³•ï¼Œ
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isDebugEnabled()) {
@@ -300,15 +300,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					}
 				}
 
-				// ¶Ôµ¥ÀıbeanµÄ´¦Àí£ºSingleton
+				// å¯¹å•ä¾‹beançš„å¤„ç†ï¼šSingleton
 				// Create bean instance.
 				if (mbd.isSingleton()) {
-					//µ¥Àı¶ÔÏó´´½¨¹ı³Ì,¼ä½ÓÍ¨¹ıgetSingleton·½·¨À´´´½¨£¬ÀïÃæ»áÊµÏÖ½«µ¥Àı¶ÔÏó»º´æ
-					//todo  ObjectFactory  ÒÔÒ»¸ö»Øµ÷¹¤³§´«Èë getSingleton Êµ¼Ê´´½¨Bean ÊÇÍ¨¹ı getObject·½·¨Íê³ÉµÄ
+					//å•ä¾‹å¯¹è±¡åˆ›å»ºè¿‡ç¨‹,é—´æ¥é€šè¿‡getSingletonæ–¹æ³•æ¥åˆ›å»ºï¼Œé‡Œé¢ä¼šå®ç°å°†å•ä¾‹å¯¹è±¡ç¼“å­˜
+					//todo  ObjectFactory  ä»¥ä¸€ä¸ªå›è°ƒå·¥å‚ä¼ å…¥ getSingleton å®é™…åˆ›å»ºBean æ˜¯é€šè¿‡ getObjectæ–¹æ³•å®Œæˆçš„
 					sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
 						public Object getObject() throws BeansException {
 							try {
-								// createBean ÎªÒ»¸öÄ£°å·½·¨£¬½«ÓÉ×ÓÀà  AbstractAutowireCapableBeanFactory ÊµÏÖ´´½¨ Bean µÄ²Ù×÷
+								// createBean ä¸ºä¸€ä¸ªæ¨¡æ¿æ–¹æ³•ï¼Œå°†ç”±å­ç±»  AbstractAutowireCapableBeanFactory å®ç°åˆ›å»º Bean çš„æ“ä½œ
 								return createBean(beanName, mbd, args);
 							}
 							catch (BeansException ex) {
@@ -322,13 +322,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					});
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
-				// ¶ÔÔ­ĞÍbeanµÄ´¦Àí£ºPrototype
+				// å¯¹åŸå‹beançš„å¤„ç†ï¼šPrototype
 				else if (mbd.isPrototype()) {
 					// It's a prototype -> create a new instance.
 					Object prototypeInstance = null;
 					try {
 						beforePrototypeCreation(beanName);
-						// Ö±½Óµ÷ÓÃ´´½¨Ò»¸öĞÂµÄÊµÀı
+						// ç›´æ¥è°ƒç”¨åˆ›å»ºä¸€ä¸ªæ–°çš„å®ä¾‹
 						prototypeInstance = createBean(beanName, mbd, args);
 					}
 					finally {
@@ -360,7 +360,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					catch (IllegalStateException ex) {
 						throw new BeanCreationException(beanName,
 								"Scope '" + scopeName + "' is not active for the current thread; " +
-								"consider defining a scoped proxy for this bean if you intend to refer to it from a singleton",
+										"consider defining a scoped proxy for this bean if you intend to refer to it from a singleton",
 								ex);
 					}
 				}
@@ -1192,7 +1192,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 							else {
 								throw new NoSuchBeanDefinitionException(bd.getParentName(),
 										"Parent name '" + bd.getParentName() + "' is equal to bean name '" + beanName +
-										"': cannot be resolved without an AbstractBeanFactory parent");
+												"': cannot be resolved without an AbstractBeanFactory parent");
 							}
 						}
 					}
