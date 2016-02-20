@@ -89,11 +89,11 @@ public class StandardServletEnvironment extends StandardEnvironment implements C
 		super.customizePropertySources(propertySources);
 	}
 
-	//servletContext就被propertySources接管了，它用replace方法，将servletContext存放了进来，
-	// key是一个常量，value是一个ServetPropertySource对象，ServetPropertySource就类似一个Entry.
+	//servletContext灏辫propertySources鎺ョ浜嗭紝瀹冪敤replace鏂规硶锛屽皢servletContext瀛樻斁浜嗚繘鏉ワ紝
+	// key鏄竴涓父閲忥紝value鏄竴涓猄ervetPropertySource瀵硅薄锛孲ervetPropertySource灏辩被浼间竴涓狤ntry.
 	public void initPropertySources(ServletContext servletContext, ServletConfig servletConfig) {
 
-		// getPropertySources() 返回 MutablePropertySources 实例
+		// getPropertySources() 杩斿洖 MutablePropertySources 瀹炰緥
 		WebApplicationContextUtils.initServletPropertySources(getPropertySources(), servletContext, servletConfig);
 	}
 
