@@ -37,6 +37,8 @@ package org.springframework.transaction;
 public interface TransactionStatus extends SavepointManager {
 
 	/**
+	 * 返回当前事务状态是否是新事务
+	 *
 	 * Return whether the present transaction is new (else participating
 	 * in an existing transaction, or potentially not running in an
 	 * actual transaction in the first place).
@@ -44,6 +46,8 @@ public interface TransactionStatus extends SavepointManager {
 	boolean isNewTransaction();
 
 	/**
+	 *
+	 * 返回当前事务是否有保存点
 	 * Return whether this transaction internally carries a savepoint,
 	 * that is, has been created as nested transaction based on a savepoint.
 	 * <p>This method is mainly here for diagnostic purposes, alongside
@@ -57,6 +61,7 @@ public interface TransactionStatus extends SavepointManager {
 	boolean hasSavepoint();
 
 	/**
+	 * 设置当前事务应该回滚
 	 * Set the transaction rollback-only. This instructs the transaction manager
 	 * that the only possible outcome of the transaction may be a rollback, as
 	 * alternative to throwing an exception which would in turn trigger a rollback.
@@ -70,18 +75,22 @@ public interface TransactionStatus extends SavepointManager {
 	void setRollbackOnly();
 
 	/**
+	 * 返回当前事务是否应该回滚
 	 * Return whether the transaction has been marked as rollback-only
 	 * (either by the application or by the transaction infrastructure).
 	 */
 	boolean isRollbackOnly();
 
 	/**
+	 *
+	 * 用于刷新底层会话中的修改到数据库，一般用于刷新如Hibernate/JPA的会话，可能对如JDBC类型的事务无任何影响；
 	 * Flush the underlying session to the datastore, if applicable:
 	 * for example, all affected Hibernate/JPA sessions.
 	 */
 	void flush();
 
 	/**
+	 * 当前事务否已经完成。
 	 * Return whether this transaction is completed, that is,
 	 * whether it has already been committed or rolled back.
 	 * @see PlatformTransactionManager#commit

@@ -119,7 +119,7 @@ public interface  TransactionDefinition {
 	int PROPAGATION_NEVER = 5;
 
 	/**
-	 * ִ����һ��Ƕ�׵�����,�����ǰ�������,
+	 * 执行在一个嵌套的事务,如果当前事务存在,
 	 *
 	 * Execute within a nested transaction if a current transaction exists,
 	 * behave like {@link #PROPAGATION_REQUIRED} else. There is no analogous
@@ -194,6 +194,8 @@ public interface  TransactionDefinition {
 
 
 	/**
+	 * 返回定义的事务传播行为；
+	 *
 	 * Return the propagation behavior.
 	 * <p>Must return one of the {@code PROPAGATION_XXX} constants
 	 * defined on {@link TransactionDefinition this interface}.
@@ -204,6 +206,8 @@ public interface  TransactionDefinition {
 	int getPropagationBehavior();
 
 	/**
+	 *
+	 * 返回定义的事务隔离级别；
 	 * Return the isolation level.
 	 * <p>Must return one of the {@code ISOLATION_XXX} constants
 	 * defined on {@link TransactionDefinition this interface}.
@@ -216,6 +220,8 @@ public interface  TransactionDefinition {
 	int getIsolationLevel();
 
 	/**
+	 * 返回定义的事务超时时间；
+	 *
 	 * Return the transaction timeout.
 	 * <p>Must return a number of seconds, or {@link #TIMEOUT_DEFAULT}.
 	 * <p>Only makes sense in combination with {@link #PROPAGATION_REQUIRED}
@@ -227,6 +233,8 @@ public interface  TransactionDefinition {
 	int getTimeout();
 
 	/**
+	 *
+	 * 返回定义的事务是否是只读的；
 	 * Return whether to optimize as a read-only transaction.
 	 * <p>The read-only flag applies to any transaction context, whether
 	 * backed by an actual resource transaction
@@ -246,6 +254,8 @@ public interface  TransactionDefinition {
 	boolean isReadOnly();
 
 	/**
+	 *
+	 * 返回定义的事务名字。
 	 * Return the name of this transaction. Can be {@code null}.
 	 * <p>This will be used as the transaction name to be shown in a
 	 * transaction monitor, if applicable (for example, WebLogic's).

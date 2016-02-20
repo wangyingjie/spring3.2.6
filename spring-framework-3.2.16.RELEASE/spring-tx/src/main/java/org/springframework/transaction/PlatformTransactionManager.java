@@ -40,6 +40,10 @@ package org.springframework.transaction;
  * @see org.springframework.transaction.support.TransactionTemplate
  * @see org.springframework.transaction.interceptor.TransactionInterceptor
  * @see org.springframework.transaction.interceptor.TransactionProxyFactoryBean
+ *
+ * Spring框架支持事务管理的核心是事务管理器抽象，
+ * 对于不同的数据访问框架（如Hibernate）通过实现策略接口PlatformTransactionManager，从而能支持各种数据访问框架的事务管理，
+ *
  */
 public interface PlatformTransactionManager {
 
@@ -65,6 +69,11 @@ public interface PlatformTransactionManager {
 	 * @see TransactionDefinition#getIsolationLevel
 	 * @see TransactionDefinition#getTimeout
 	 * @see TransactionDefinition#isReadOnly
+	 *
+	 * 返回一个已经激活的事务或创建一个新的事务（根据给定的TransactionDefinition类型参数定义的事务属性），
+	 * 返回的是TransactionStatus对象代表了当前事务的状态，其中该方法抛出TransactionException（未检查异常）
+	 * 表示事务由于某种原因失败。
+	 *
 	 */
 	TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException;
 
@@ -94,6 +103,8 @@ public interface PlatformTransactionManager {
 	 * @throws IllegalTransactionStateException if the given transaction
 	 * is already completed (that is, committed or rolled back)
 	 * @see TransactionStatus#setRollbackOnly
+	 *
+	 * 用于提交TransactionStatus参数代表的事务
 	 */
 	void commit(TransactionStatus status) throws TransactionException;
 
@@ -112,6 +123,9 @@ public interface PlatformTransactionManager {
 	 * (typically caused by fundamental resource failures)
 	 * @throws IllegalTransactionStateException if the given transaction
 	 * is already completed (that is, committed or rolled back)
+	 *
+	 * 用于回滚TransactionStatus参数代表的事务
+	 *
 	 */
 	void rollback(TransactionStatus status) throws TransactionException;
 

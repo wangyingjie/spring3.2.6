@@ -197,7 +197,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 	/**
 	 * Return whether nested transactions are allowed.
-	 *   ·µ»ØÇ¶Ì×ÊÂÎñÊÇ·ñÔÊĞí
+	 *   è¿”å›åµŒå¥—äº‹åŠ¡æ˜¯å¦å…è®¸
 	 */
 	public final boolean isNestedTransactionAllowed() {
 		return this.nestedTransactionAllowed;
@@ -335,7 +335,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 */
 	public final TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException {
 
-		// »ñÈ¡transaction  ÖØÒªµÄ»ñÈ¡ÊÂÎñµÄ·½·¨
+		// è·å–transaction  é‡è¦çš„è·å–äº‹åŠ¡çš„æ–¹æ³•
 		Object transaction = doGetTransaction();
 
 		// Cache debug flag to avoid repeated checks.
@@ -348,28 +348,28 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
-			//µ±Ç°Ïß³ÌÒÑ¾­´æÔÚÊÂÎñ  ÊÂÎñµÄÇ¶Ì×´¦Àí
+			//å½“å‰çº¿ç¨‹å·²ç»å­˜åœ¨äº‹åŠ¡  äº‹åŠ¡çš„åµŒå¥—å¤„ç†
 			return handleExistingTransaction(definition, transaction, debugEnabled);
 		}
 
 		// Check definition settings for new transaction.
-		//ÊÂÎñ³¬Ê±ÉèÖÃÑéÖ¤
+		//äº‹åŠ¡è¶…æ—¶è®¾ç½®éªŒè¯
 		if (definition.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
 			throw new InvalidTimeoutException("Invalid transaction timeout", definition.getTimeout());
 		}
 
 		// No existing transaction found -> check propagation behavior to find out how to proceed.
-		// µ±Ç°Ïß³Ì²»´æÔÚÊÂÎñ£¬µ«ÊÇPropagationBehavior ±»ÉùÃ÷Îª PROPAGATION_MANDATORY Å×³öÒì³£
+		// å½“å‰çº¿ç¨‹ä¸å­˜åœ¨äº‹åŠ¡ï¼Œä½†æ˜¯PropagationBehavior è¢«å£°æ˜ä¸º PROPAGATION_MANDATORY æŠ›å‡ºå¼‚å¸¸
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
 			throw new IllegalTransactionStateException(
 					"No existing transaction found for transaction marked with propagation 'mandatory'");
 		}
-		// Ò»ÏÂÊÂÎñĞĞÎª¶¼ĞèÒªĞÂ½¨ÊÂÎñ
+		// ä¸€ä¸‹äº‹åŠ¡è¡Œä¸ºéƒ½éœ€è¦æ–°å»ºäº‹åŠ¡
 		else if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
 				definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
-			definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
+				definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
 
-			//ĞèÒªĞÂ½¨ÊÂÎñ   ¿Õ¹ÒÆğ
+			//éœ€è¦æ–°å»ºäº‹åŠ¡   ç©ºæŒ‚èµ·
 			SuspendedResourcesHolder suspendedResources = suspend(null);
 			if (debugEnabled) {
 				logger.debug("Creating new transaction with name [" + definition.getName() + "]: " + definition);
@@ -377,14 +377,14 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			try {
 				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
 
-				//¹¹Ôì status
+				//æ„é€  status
 				DefaultTransactionStatus status = newTransactionStatus(
 						definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
 
-				//Èç¹ûÊÇ ĞÂÁ´½Ó°ó¶¨µ½µ±Ç°Ïß³Ì   ÉãÖÆÊı¾İ¿âµÄÁ´½Ó connectionss
+				//å¦‚æœæ˜¯ æ–°é“¾æ¥ç»‘å®šåˆ°å½“å‰çº¿ç¨‹   æ‘„åˆ¶æ•°æ®åº“çš„é“¾æ¥ connectionss
 				doBegin(transaction, definition);
 
-				//ĞÂÍ¬²½ÊÂÎñµÄÉèÖÃ £¬Õë¶Ôµ±Ç°Ïß³ÌµÄÉèÖÃ  threadLocal ´æ´¢ÊÂÎñĞÅÏ¢
+				//æ–°åŒæ­¥äº‹åŠ¡çš„è®¾ç½® ï¼Œé’ˆå¯¹å½“å‰çº¿ç¨‹çš„è®¾ç½®  threadLocal å­˜å‚¨äº‹åŠ¡ä¿¡æ¯
 				prepareSynchronization(status, definition);
 				return status;
 			}
@@ -407,20 +407,20 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	/**
 	 * Create a TransactionStatus for an existing transaction.
 	 *
-	 * ´¦ÀíÒÑ¾­´æÔÚµÄÊÂÎñĞÅÏ¢
+	 * å¤„ç†å·²ç»å­˜åœ¨çš„äº‹åŠ¡ä¿¡æ¯
 	 *
 	 */
 	private TransactionStatus handleExistingTransaction(
 			TransactionDefinition definition, Object transaction, boolean debugEnabled)
 			throws TransactionException {
 
-		//²»Ö§³ÖÊÂÎñÔòÅ×³öÒì³£
+		//ä¸æ”¯æŒäº‹åŠ¡åˆ™æŠ›å‡ºå¼‚å¸¸
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NEVER) {
 			throw new IllegalTransactionStateException(
 					"Existing transaction found for transaction marked with propagation 'never'");
 		}
 
-		//  ²»³Öµ±Ç°µÄÊÂÎñ£»¶øÊ¼ÖÕÖ´ĞĞ·ÇÊÂÎñĞÔ¡£*ÀàËÆÓÚÍ¬ÃûµÄEJBÊÂÎñÊôĞÔ¡£
+		//  ä¸æŒå½“å‰çš„äº‹åŠ¡ï¼›è€Œå§‹ç»ˆæ‰§è¡Œéäº‹åŠ¡æ€§ã€‚*ç±»ä¼¼äºåŒåçš„EJBäº‹åŠ¡å±æ€§ã€‚
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NOT_SUPPORTED) {
 			if (debugEnabled) {
 				logger.debug("Suspending current transaction");
@@ -431,14 +431,14 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 					definition, null, false, newSynchronization, debugEnabled, suspendedResources);
 		}
 
-		//PROPAGATION_REQUIRES_NEW µ±Ç°·½·¨±ØĞëÔÚËû×Ô¼ºµÄÊÂÎñÀïÃæÔËĞĞ£¬Ò»¸öĞÂµÄÊÂÎñ½«±»Æô¶¯ Èç¹ûÓĞÊÂÎñÕıÔÚÔËĞĞ£¬ÔòÔÚÕâ¸ö·½·¨ÔËĞĞÆÚ¼ä±»¹ÒÆğ
+		//PROPAGATION_REQUIRES_NEW å½“å‰æ–¹æ³•å¿…é¡»åœ¨ä»–è‡ªå·±çš„äº‹åŠ¡é‡Œé¢è¿è¡Œï¼Œä¸€ä¸ªæ–°çš„äº‹åŠ¡å°†è¢«å¯åŠ¨ å¦‚æœæœ‰äº‹åŠ¡æ­£åœ¨è¿è¡Œï¼Œåˆ™åœ¨è¿™ä¸ªæ–¹æ³•è¿è¡ŒæœŸé—´è¢«æŒ‚èµ·
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW) {
 			if (debugEnabled) {
 				logger.debug("Suspending current transaction, creating new transaction with name [" +
 						definition.getName() + "]");
 			}
 
-			//ĞÂÊÂÎñµÄ½¨Á¢   suspend ·½·¨½«Ô­ÊÂÎñ¹ÒÆğ Ö÷ÒªÄ¿µÄÊÇ¼ÇÂ¼Ô­ÊÂÎñµÄ×´Ì¬£¬ÒÔ±ãÓÚºóĞøµÄ²Ù×÷¶ÔÊÂÎïµÄ»Ö¸´
+			//æ–°äº‹åŠ¡çš„å»ºç«‹   suspend æ–¹æ³•å°†åŸäº‹åŠ¡æŒ‚èµ· ä¸»è¦ç›®çš„æ˜¯è®°å½•åŸäº‹åŠ¡çš„çŠ¶æ€ï¼Œä»¥ä¾¿äºåç»­çš„æ“ä½œå¯¹äº‹ç‰©çš„æ¢å¤
 			SuspendedResourcesHolder suspendedResources = suspend(transaction);
 			try {
 				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
@@ -458,24 +458,24 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			}
 		}
 
-		//Ç¶ÈëÊ½ÊÂÎñ´¦Àí
+		//åµŒå…¥å¼äº‹åŠ¡å¤„ç†
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
 			if (!isNestedTransactionAllowed()) {
 				throw new NestedTransactionNotSupportedException(
 						"Transaction manager does not allow nested transactions by default - " +
-						"specify 'nestedTransactionAllowed' property with value 'true'");
+								"specify 'nestedTransactionAllowed' property with value 'true'");
 			}
 			if (debugEnabled) {
 				logger.debug("Creating nested transaction with name [" + definition.getName() + "]");
 			}
 
-			//Ê¹ÓÃ±£´æµãÀ´ÊµÏÖÊÂÎñµÄ»Ø¹ö
+			//ä½¿ç”¨ä¿å­˜ç‚¹æ¥å®ç°äº‹åŠ¡çš„å›æ»š
 			if (useSavepointForNestedTransaction()) {
 
-				//´´½¨±£´æµãÔÚÏÖÓĞspring¹ÜÀíÊÂÎñ,
+				//åˆ›å»ºä¿å­˜ç‚¹åœ¨ç°æœ‰springç®¡ç†äº‹åŠ¡,
 				// Create savepoint within existing Spring-managed transaction,
 				// through the SavepointManager API implemented by TransactionStatus.
-				// Usually uses JDBC 3.0 savepoints. Never activates Spring synchronization.  Í¨³£Ê¹ÓÃJDBC 3.0±£´æµã¡£´ÓÀ´Ã»ÓĞ¼¤»îspringÍ¬²½
+				// Usually uses JDBC 3.0 savepoints. Never activates Spring synchronization.  é€šå¸¸ä½¿ç”¨JDBC 3.0ä¿å­˜ç‚¹ã€‚ä»æ¥æ²¡æœ‰æ¿€æ´»springåŒæ­¥
 				DefaultTransactionStatus status =
 						prepareTransactionStatus(definition, transaction, false, false, debugEnabled, null);
 				status.createAndHoldSavepoint();
@@ -486,12 +486,12 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				// Usually only for JTA: Spring synchronization might get activated here
 				// in case of a pre-existing JTA transaction.
 
-				//jta ²»ÄÜÓÃ±£´æµã²Ù×÷£¬ÄÇÃ´¾Í½¨Á¢ĞÂÊÂÎñ
+				//jta ä¸èƒ½ç”¨ä¿å­˜ç‚¹æ“ä½œï¼Œé‚£ä¹ˆå°±å»ºç«‹æ–°äº‹åŠ¡
 				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
 				DefaultTransactionStatus status = newTransactionStatus(
 						definition, transaction, true, newSynchronization, debugEnabled, null);
 
-				//»ñÈ¡ÊÂÎñ
+				//è·å–äº‹åŠ¡
 				doBegin(transaction, definition);
 				prepareSynchronization(status, definition);
 				return status;
@@ -561,7 +561,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) {
 		if (status.isNewSynchronization()) {
 
-			//Ïß³ÌthreadLocal´æ´¢ÊÂÎñĞÅÏ¢
+			//çº¿ç¨‹threadLocalå­˜å‚¨äº‹åŠ¡ä¿¡æ¯
 			TransactionSynchronizationManager.setActualTransactionActive(status.hasTransaction());
 			TransactionSynchronizationManager.setCurrentTransactionIsolationLevel(
 					(definition.getIsolationLevel() != TransactionDefinition.ISOLATION_DEFAULT) ?
@@ -590,7 +590,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 
 	/**
-	 * ÔİÍ£¸ø¶¨µÄÊÂÎñ¡£ÖĞÖ¹ÊÂÎñÍ¬²½,
+	 * æš‚åœç»™å®šçš„äº‹åŠ¡ã€‚ä¸­æ­¢äº‹åŠ¡åŒæ­¥,
 	 * Suspend the given transaction. Suspends transaction synchronization first,
 	 * then delegates to the {@code doSuspend} template method.
 	 * @param transaction the current transaction object
@@ -644,7 +644,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	}
 
 	/**
-	 * Resume: Ğü¸¡µÄ£»ÔİÍ£µÄ£¬»ºÆÚµÄ
+	 * Resume: æ‚¬æµ®çš„ï¼›æš‚åœçš„ï¼Œç¼“æœŸçš„
 	 *
 	 * Resume the given transaction. Delegates to the {@code doResume}
 	 * template method first, then resuming transaction synchronization.
@@ -665,12 +665,12 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			}
 			List<TransactionSynchronization> suspendedSynchronizations = resourcesHolder.suspendedSynchronizations;
 			if (suspendedSynchronizations != null) {
-				//ÊÂÎñĞÅÏ¢°ó¶¨ threadLocal
+				//äº‹åŠ¡ä¿¡æ¯ç»‘å®š threadLocal
 				TransactionSynchronizationManager.setActualTransactionActive(resourcesHolder.wasActive);
 				TransactionSynchronizationManager.setCurrentTransactionIsolationLevel(resourcesHolder.isolationLevel);
 				TransactionSynchronizationManager.setCurrentTransactionReadOnly(resourcesHolder.readOnly);
 				TransactionSynchronizationManager.setCurrentTransactionName(resourcesHolder.name);
-				//»Ö¸´¹ÒÆğ
+				//æ¢å¤æŒ‚èµ·
 				doResumeSynchronization(suspendedSynchronizations);
 			}
 		}
@@ -719,7 +719,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	private void doResumeSynchronization(List<TransactionSynchronization> suspendedSynchronizations) {
 		TransactionSynchronizationManager.initSynchronization();
 		for (TransactionSynchronization synchronization : suspendedSynchronizations) {
-			//»Ö¸´¹ÒÆğÊÂÎñ
+			//æ¢å¤æŒ‚èµ·äº‹åŠ¡
 			synchronization.resume();
 			TransactionSynchronizationManager.registerSynchronization(synchronization);
 		}
@@ -743,17 +743,17 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 		DefaultTransactionStatus defStatus = (DefaultTransactionStatus) status;
 
-		//Èç¹ûÊÂÎñÁ´ÖĞÒÑ¾­±»±ê¼ÇÎª»Ø¹ö£¬ÄÇÃ´²»»á³¢ÊÔÌá½»ÊÂÎñ£¬Ö±½Ó»Ø¹ö
+		//å¦‚æœäº‹åŠ¡é“¾ä¸­å·²ç»è¢«æ ‡è®°ä¸ºå›æ»šï¼Œé‚£ä¹ˆä¸ä¼šå°è¯•æäº¤äº‹åŠ¡ï¼Œç›´æ¥å›æ»š
 		if (defStatus.isLocalRollbackOnly()) {
 			if (defStatus.isDebug()) {
 				logger.debug("Transactional code has requested rollback");
 			}
-			//»Ø¹ö
+			//å›æ»š
 			processRollback(defStatus);
 			return;
 		}
 
-		//È«¾Ö±ê¼Ç»Ø¹ö
+		//å…¨å±€æ ‡è®°å›æ»š
 		if (!shouldCommitOnGlobalRollbackOnly() && defStatus.isGlobalRollbackOnly()) {
 			if (defStatus.isDebug()) {
 				logger.debug("Global transaction is marked as rollback-only but transactional code requested commit");
@@ -767,7 +767,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			}
 			return;
 		}
-		// ÊÂÎñÌá½»Á÷³Ì
+		// äº‹åŠ¡æäº¤æµç¨‹
 		processCommit(defStatus);
 	}
 
@@ -781,24 +781,24 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		try {
 			boolean beforeCompletionInvoked = false;
 			try {
-				//Ô¤ÁôÀ©Õ¹
+				//é¢„ç•™æ‰©å±•
 				prepareForCommit(status);
-				//Ìí¼ÓµÄ TransactionSynchronization ÖĞµÄ¶ÔÓ¦·½·¨µÄµ÷ÓÃ
+				//æ·»åŠ çš„ TransactionSynchronization ä¸­çš„å¯¹åº”æ–¹æ³•çš„è°ƒç”¨
 				triggerBeforeCommit(status);
-				//Ìí¼ÓµÄ TransactionSynchronization ÖĞµÄ¶ÔÓ¦·½·¨µÄµ÷ÓÃ
+				//æ·»åŠ çš„ TransactionSynchronization ä¸­çš„å¯¹åº”æ–¹æ³•çš„è°ƒç”¨
 				triggerBeforeCompletion(status);
 				beforeCompletionInvoked = true;
 				boolean globalRollbackOnly = false;
 				if (status.isNewTransaction() || isFailEarlyOnGlobalRollbackOnly()) {
 					globalRollbackOnly = status.isGlobalRollbackOnly();
 				}
-				if (status.hasSavepoint()) {//Èç¹ûÓĞ±£´æµãÔòÇå¿Õ±£´æµãĞÅÏ¢
+				if (status.hasSavepoint()) {//å¦‚æœæœ‰ä¿å­˜ç‚¹åˆ™æ¸…ç©ºä¿å­˜ç‚¹ä¿¡æ¯
 					if (status.isDebug()) {
 						logger.debug("Releasing transaction savepoint");
 					}
 					status.releaseHeldSavepoint();
 				}
-				else if (status.isNewTransaction()) {//¶ÀÁ¢µÄÊÂÎñÔòÖ±½ÓÌá½»
+				else if (status.isNewTransaction()) {//ç‹¬ç«‹çš„äº‹åŠ¡åˆ™ç›´æ¥æäº¤
 					if (status.isDebug()) {
 						logger.debug("Initiating transaction commit");
 					}
@@ -830,18 +830,18 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				if (!beforeCompletionInvoked) {
 					triggerBeforeCompletion(status);
 				}
-				//Ìá½»¹ı³ÌÖĞ³öÏÖÒì³££¬Ôò»Ø¹ö
+				//æäº¤è¿‡ç¨‹ä¸­å‡ºç°å¼‚å¸¸ï¼Œåˆ™å›æ»š
 				doRollbackOnCommitException(status, ex);
 				throw ex;
 			}
 			catch (Error err) {
 				if (!beforeCompletionInvoked) {
 
-					//Ìí¼ÓµÄ TransactionSynchronization ÖĞµÄ¶ÔÓ¦·½·¨µÄµ÷ÓÃ
+					//æ·»åŠ çš„ TransactionSynchronization ä¸­çš„å¯¹åº”æ–¹æ³•çš„è°ƒç”¨
 					triggerBeforeCompletion(status);
 				}
 
-				//Ìá½»¹ı³Ì³öÏÖÒì³£Ôò»Ø¹ö
+				//æäº¤è¿‡ç¨‹å‡ºç°å¼‚å¸¸åˆ™å›æ»š
 				doRollbackOnCommitException(status, err);
 				throw err;
 			}
@@ -850,7 +850,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			// propagated to callers but the transaction still considered as committed.
 			try {
 
-				//Ìí¼ÓµÄ TransactionSynchronization ÖĞµÄ¶ÔÓ¦·½·¨µÄµ÷ÓÃ
+				//æ·»åŠ çš„ TransactionSynchronization ä¸­çš„å¯¹åº”æ–¹æ³•çš„è°ƒç”¨
 				triggerAfterCommit(status);
 			}
 			finally {
@@ -872,14 +872,14 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 */
 	public final void rollback(TransactionStatus status) throws TransactionException {
 
-		//ÖØ¸´»Ø¹öÔòÅ×³öÒì³£
+		//é‡å¤å›æ»šåˆ™æŠ›å‡ºå¼‚å¸¸
 		if (status.isCompleted()) {
 			throw new IllegalTransactionStateException(
 					"Transaction is already completed - do not call commit or rollback more than once per transaction");
 		}
 
 		DefaultTransactionStatus defStatus = (DefaultTransactionStatus) status;
-		// ´¦Àí»Ø¹öÂß¼­
+		// å¤„ç†å›æ»šé€»è¾‘
 		processRollback(defStatus);
 	}
 
@@ -893,14 +893,14 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		try {
 			try {
 
-				//¼¤»îËùÓĞ  TransactionSyncronizationÖĞ¶ÔÓ¦µÄ·½·¨
+				//æ¿€æ´»æ‰€æœ‰  TransactionSyncronizationä¸­å¯¹åº”çš„æ–¹æ³•
 				triggerBeforeCompletion(status);
 				if (status.hasSavepoint()) {
 					if (status.isDebug()) {
 						logger.debug("Rolling back transaction to savepoint");
 					}
 
-					//ÓĞ±£´æµãÔòÍË»ØÖÁ±£´æµã   µ±Ç°µÄÊÂÎñÎªµ¥¶ÀµÄÏß³Ì
+					//æœ‰ä¿å­˜ç‚¹åˆ™é€€å›è‡³ä¿å­˜ç‚¹   å½“å‰çš„äº‹åŠ¡ä¸ºå•ç‹¬çš„çº¿ç¨‹
 					status.rollbackToHeldSavepoint();
 				}
 				else if (status.isNewTransaction()) {
@@ -908,17 +908,17 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 						logger.debug("Initiating transaction rollback");
 					}
 
-					//µ±Ç°µÄÊÂÎñÎª¶ÀÁ¢µÄĞÂÊÂÎñÔòÖ±½Ó»ØÍË
+					//å½“å‰çš„äº‹åŠ¡ä¸ºç‹¬ç«‹çš„æ–°äº‹åŠ¡åˆ™ç›´æ¥å›é€€
 					doRollback(status);
 				}
 				else if (status.hasTransaction()) {
 
-					// µ±Ç°ÊÂÎñ²»ÊÇ¶ÀÁ¢µÄÊÂÎñ£¬ÄÇÃ´Ö»ÄÜ±ê¼Ç×´Ì¬£¬µÈµ½ÊÂÎñÁ´Ö´ĞĞÍê±ÏºóÍ³Ò»»Ø¹ö
+					// å½“å‰äº‹åŠ¡ä¸æ˜¯ç‹¬ç«‹çš„äº‹åŠ¡ï¼Œé‚£ä¹ˆåªèƒ½æ ‡è®°çŠ¶æ€ï¼Œç­‰åˆ°äº‹åŠ¡é“¾æ‰§è¡Œå®Œæ¯•åç»Ÿä¸€å›æ»š
 					if (status.isLocalRollbackOnly() || isGlobalRollbackOnParticipationFailure()) {
 						if (status.isDebug()) {
 							logger.debug("Participating transaction failed - marking existing transaction as rollback-only");
 						}
-						//±ê¼Ç»á¹İ×´Ì¬  ÓÃ»§ÊÂÎñÁ´µÄ»Ø¹ö
+						//æ ‡è®°ä¼šé¦†çŠ¶æ€  ç”¨æˆ·äº‹åŠ¡é“¾çš„å›æ»š
 						doSetRollbackOnly(status);
 					}
 					else {
@@ -940,12 +940,12 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				throw err;
 			}
 
-			//¼¤»îTransactionSynchronization ÖĞËùÓĞµÄ·½·¨
+			//æ¿€æ´»TransactionSynchronization ä¸­æ‰€æœ‰çš„æ–¹æ³•
 			triggerAfterCompletion(status, TransactionSynchronization.STATUS_ROLLED_BACK);
 		}
 		finally {
 
-			//Çå¿Õ¼ÇÂ¼×ÊÔ´²¢½«¹ÒÆğµÄ×ÊÔ´»Ö¸´
+			//æ¸…ç©ºè®°å½•èµ„æºå¹¶å°†æŒ‚èµ·çš„èµ„æºæ¢å¤
 			cleanupAfterCompletion(status);
 		}
 	}
@@ -1075,22 +1075,22 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 */
 	private void cleanupAfterCompletion(DefaultTransactionStatus status) {
 
-		// ÉèÖÃÍê³É×´Ì¬
+		// è®¾ç½®å®ŒæˆçŠ¶æ€
 		status.setCompleted();
 		if (status.isNewSynchronization()) {
-			// Çå¿ÕthreadLocalĞÅÏ¢
+			// æ¸…ç©ºthreadLocalä¿¡æ¯
 			TransactionSynchronizationManager.clear();
 		}
-		//Èç¹ûÊ½ĞÂµÄÍ¬²½×´Ì¬   °Ñ°ó¶¨µ±Ç°Ïß³ÌµÄÊÂÎñĞÅÏ¢Çå³ı
+		//å¦‚æœå¼æ–°çš„åŒæ­¥çŠ¶æ€   æŠŠç»‘å®šå½“å‰çº¿ç¨‹çš„äº‹åŠ¡ä¿¡æ¯æ¸…é™¤
 		if (status.isNewTransaction()) {
 			doCleanupAfterCompletion(status.getTransaction());
 		}
-		//ĞÂÊÂÎñ×öÇå³ı×ÊÔ´´¦Àí
-		if (status.getSuspendedResources() != null) {//ÓĞÊÂÎñ¹ÒÆğ
+		//æ–°äº‹åŠ¡åšæ¸…é™¤èµ„æºå¤„ç†
+		if (status.getSuspendedResources() != null) {//æœ‰äº‹åŠ¡æŒ‚èµ·
 			if (status.isDebug()) {
 				logger.debug("Resuming suspended transaction after completion of inner transaction");
 			}
-			//ÊÂÎñÖ´ĞĞÇ°ÓĞÊÂÎñ¹ÒÆğ£¬ÔòÊÂÎñÖ´ĞĞ½áÊøÖ®ºóĞèÒª½«Ö®Ç°¹ÒÆğµÄÊÂÎñ»Ö¸´
+			//äº‹åŠ¡æ‰§è¡Œå‰æœ‰äº‹åŠ¡æŒ‚èµ·ï¼Œåˆ™äº‹åŠ¡æ‰§è¡Œç»“æŸä¹‹åéœ€è¦å°†ä¹‹å‰æŒ‚èµ·çš„äº‹åŠ¡æ¢å¤
 			resume(status.getTransaction(), (SuspendedResourcesHolder) status.getSuspendedResources());
 		}
 	}
@@ -1299,7 +1299,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	protected void doSetRollbackOnly(DefaultTransactionStatus status) throws TransactionException {
 		throw new IllegalTransactionStateException(
 				"Participating in existing transactions is not supported - when 'isExistingTransaction' " +
-				"returns true, appropriate 'doSetRollbackOnly' behavior must be provided");
+						"returns true, appropriate 'doSetRollbackOnly' behavior must be provided");
 	}
 
 	/**
@@ -1350,7 +1350,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 
 	/**
-	 * Holder for suspended resources. ±£³ÖÕßÔİÍ£×ÊÔ´¡£
+	 * Holder for suspended resources. ä¿æŒè€…æš‚åœèµ„æºã€‚
 	 * Used internally by {@code suspend} and {@code resume}.
 	 */
 	protected static class SuspendedResourcesHolder {
