@@ -205,10 +205,10 @@ public abstract class AbstractRefreshableWebApplicationContext extends AbstractR
 		ConfigurableEnvironment env = getEnvironment();
 		if (env instanceof ConfigurableWebEnvironment) {
 			/**
-			 * initServletProperSources,¹ËÃûË¼Òå£¬¾ÍÊÇ³õÊ¼»¯propertySourcesÕâ¸öÈİÆ÷£¬ÄÇÎÒÃÇÓ¦¸Ã¿ÉÒÔÏëµ½£¬ ËüÓ¦¸ÃÊÇÍùÈİÆ÷ÀïÈûµã¶«Î÷£¬
-			 * ÔÙ¿´ºóÃæ2¸ö²ÎÊı£¬
-			 *     Ò»¸öÊÇservletContext,Ò»¸öÊÇservletConfig,ÄÇÃ´ÎÒÃÇÖªµÀÁË£¬ËüÕâ¸ö³õÊ¼»¯£¬
-			 *     ÆäÊµÊÇÏë°ÑservletContext¡¢servletConfigÕâÁ½¸ö¶ÔÏó¸ø´æµ½ÈİÆ÷µÄpropertySourcesÈİÆ÷ÀïÈ¥
+			 * initServletProperSources,é¡¾åæ€ä¹‰ï¼Œå°±æ˜¯åˆå§‹åŒ–propertySourcesè¿™ä¸ªå®¹å™¨ï¼Œé‚£æˆ‘ä»¬åº”è¯¥å¯ä»¥æƒ³åˆ°ï¼Œ å®ƒåº”è¯¥æ˜¯å¾€å®¹å™¨é‡Œå¡ç‚¹ä¸œè¥¿ï¼Œ
+			 * å†çœ‹åé¢2ä¸ªå‚æ•°ï¼Œ
+			 *     ä¸€ä¸ªæ˜¯servletContext,ä¸€ä¸ªæ˜¯servletConfig,é‚£ä¹ˆæˆ‘ä»¬çŸ¥é“äº†ï¼Œå®ƒè¿™ä¸ªåˆå§‹åŒ–ï¼Œ
+			 *     å…¶å®æ˜¯æƒ³æŠŠservletContextã€servletConfigè¿™ä¸¤ä¸ªå¯¹è±¡ç»™å­˜åˆ°å®¹å™¨çš„propertySourceså®¹å™¨é‡Œå»
 			 */
 			((ConfigurableWebEnvironment) env).initPropertySources(this.servletContext, this.servletConfig);
 		}

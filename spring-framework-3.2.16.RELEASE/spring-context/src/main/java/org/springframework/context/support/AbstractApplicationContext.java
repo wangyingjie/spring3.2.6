@@ -551,7 +551,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Prepare this context for refreshing, setting its startup date and
 	 * active flag as well as performing any initialization of property sources.
 	 *
-	 * 原来preRefresh预刷新，其实就是把记录一下开始时间，打印一下日志，然后把servletConfig和servletContext放到spring容器的propertySources容器里面
+	 * 原来preRefresh预刷新，其实就是记录一下开始时间，打印一下日志，然后把servletConfig和servletContext放到spring容器的propertySources容器里面
 	 *
 	 */
 	protected void prepareRefresh() {
