@@ -77,6 +77,12 @@ import org.springframework.core.Constants;
  * @author Juergen Hoeller
  * @since 1.1.4
  * @see DataSourceTransactionManager
+ *
+ *
+ * LazyConnectionDataSourceProxy ：包装一个DataSource，用于延迟获取数据库连接，
+ *     只有在真正创建Statement等时才获取连接，因此再说实际项目中最后使用该代理包装原始DataSource
+ *     从而使得只有在真正需要连接时才去获取。
+ *
  */
 public class LazyConnectionDataSourceProxy extends DelegatingDataSource {
 
