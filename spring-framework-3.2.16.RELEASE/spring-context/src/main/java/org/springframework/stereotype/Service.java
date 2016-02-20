@@ -38,6 +38,8 @@ import java.lang.annotation.Target;
  * @since 2.5
  * @see Component
  * @see Repository
+ *
+ * 属于 Component 注解的扩展，自定义注解，可以根据该类来实现
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

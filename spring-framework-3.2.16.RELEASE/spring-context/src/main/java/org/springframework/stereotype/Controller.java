@@ -36,6 +36,8 @@ import java.lang.annotation.Target;
  * @see Component
  * @see org.springframework.web.bind.annotation.RequestMapping
  * @see org.springframework.context.annotation.ClassPathBeanDefinitionScanner
+ *
+ * 属于 Component 注解的扩展，自定义注解，可以根据该类来实现
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
