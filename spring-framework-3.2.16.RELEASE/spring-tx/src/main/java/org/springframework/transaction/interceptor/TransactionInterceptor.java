@@ -45,6 +45,20 @@ import java.util.Properties;
  * @see TransactionProxyFactoryBean
  * @see org.springframework.aop.framework.ProxyFactoryBean
  * @see org.springframework.aop.framework.ProxyFactory
+ *
+ * 事物管理器 AbstractPlatfromTranscationManager 的不同实现类，无论如何配置，
+ * 最终都有 TransactionInterceptor 进行事物代理
+ *
+ *  声明式事务管理是spring对事务管理的最常用的方式，因为这种方式对代码的影响最小，
+ *  因此也符合非侵入性的轻量级容器的概念。Spring的事务管理是通过AOP的方式来实现的，
+ *  因为事务方面的代码与spring的绑定并以一种样板式结构使用。在理解spring声明式事务管理我们首先要理解他是通过AOP怎么具体实现的。
+ *  其中的事务通知由元数据（目前基于xml和注解）驱动。代理对象由元数据结合产生一个新的代理对象。
+ *  他使用一个PlatformTransactionManager实现类配合TransactionInterceptor在方法调用之前实施事务。
+ *
+ *
+ * <!-- 支持  @Transactional 标记 -->
+ *	<tx:annotation-driven transaction-manager="transactionManager"/>
+ *
  */
 @SuppressWarnings("serial")
 public class TransactionInterceptor extends TransactionAspectSupport implements MethodInterceptor, Serializable {

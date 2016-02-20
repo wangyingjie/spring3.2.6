@@ -27,6 +27,22 @@ import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ *
+ *  =======事物代理配置======
+ *
+ *  <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+ *		<property name="beanNames">
+ *			<list>
+ *				<value>*DaoImpl</value>
+ *			</list>
+ *		</property>
+ *		<property name="interceptorNames">
+ *			<list>
+ *				<value>transactionInterceptor</value>
+ *			</list>
+ *		</property>
+ *	</bean>
+ *
  * Auto proxy creator that identifies beans to proxy via a list of names.
  * Checks for direct, "xxx*", and "*xxx" matches.
  *
@@ -41,6 +57,8 @@ import org.springframework.util.StringUtils;
  * @see #isMatch
  * @see #setInterceptorNames
  * @see AbstractAutoProxyCreator
+ *
+ *
  */
 @SuppressWarnings("serial")
 public class BeanNameAutoProxyCreator extends AbstractAutoProxyCreator {

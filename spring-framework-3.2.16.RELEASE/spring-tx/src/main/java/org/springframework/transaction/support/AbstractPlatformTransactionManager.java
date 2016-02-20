@@ -1097,7 +1097,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 
 	//---------------------------------------------------------------------
-	// Template methods to be implemented in subclasses
+	// Template methods to be implemented in subclasses  事物抽象类定义的模板方法，将有子类具体实现
 	//---------------------------------------------------------------------
 
 	/**
