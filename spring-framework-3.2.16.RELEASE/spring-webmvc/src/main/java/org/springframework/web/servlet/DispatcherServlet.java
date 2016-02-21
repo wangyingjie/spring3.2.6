@@ -827,6 +827,17 @@ public class DispatcherServlet extends FrameworkServlet {
 	/**
 	 * Exposes the DispatcherServlet-specific request attributes and delegates to {@link #doDispatch}
 	 * for the actual dispatching.
+	 *
+	 * 核心架构的具体流程步骤如下：
+	 *     1、  首先用户发送请求——>DispatcherServlet，前端控制器收到请求后自己不进行处理，而是委托给其他的解析器进行处理，作为统一访问点，进行全局的流程控制；
+	 *     2、  DispatcherServlet——>HandlerMapping， HandlerMapping将会把请求映射为HandlerExecutionChain对象（包含一个Handler处理器（页面控制器）对象、
+	 *          多个HandlerInterceptor拦截器）对象，通过这种策略模式，很容易添加新的映射策略；
+	 *     3、  DispatcherServlet——>HandlerAdapter，HandlerAdapter将会把处理器包装为适配器，从而支持多种类型的处理器，即适配器设计模式的应用，
+	 *          从而很容易支持很多类型的处理器；
+	 *     4、  HandlerAdapter——>处理器功能处理方法的调用，HandlerAdapter将会根据适配的结果调用真正的处理器的功能处理方法，完成功能处理；
+	 *          并返回一个ModelAndView对象（包含模型数据、逻辑视图名）；
+	 *     5、  ModelAndView的逻辑视图名——> ViewResolver， ViewResolver将把逻辑视图名解析为具体的View，通过这种策略模式，很容易更换其他视图技术；
+	 *
 	 */
 	@Override
 	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -864,6 +875,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		request.setAttribute(FLASH_MAP_MANAGER_ATTRIBUTE, this.flashMapManager);
 
 		try {
+			// Spring mvc 核心分发器处理
 			doDispatch(request, response);
 		}
 		finally {
@@ -886,7 +898,24 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @param request current HTTP request
 	 * @param response current HTTP response
 	 * @throws Exception in case of any kind of processing failure
-	 */
+	 *
+	 * //前端控制器分派方法
+	 *
+	 *    1、  请求如何给前端控制器？这个应该在web.xml中进行部署描述
+	 *    2、  前端控制器如何根据请求信息选择页面控制器进行功能处理？ 我们需要配置HandlerMapping进行映射
+	 *    3、  如何支持多种页面控制器呢？配置HandlerAdapter从而支持多种类型的页面控制器
+	 *    4、  如何页面控制器如何使用业务对象？可以预料到，肯定利用Spring IoC容器的依赖注入功能
+	 *    5、  页面控制器如何返回模型数据？使用ModelAndView返回
+	 *    6、  前端控制器如何根据页面控制器返回的逻辑视图名选择具体的视图进行渲染？ 使用ViewResolver进行解析
+	 *
+ 	 *  在此我们可以看出具体的核心开发步骤：
+	 *     1、  DispatcherServlet在web.xml中的部署描述，从而拦截请求到Spring Web MVC
+	 *     2、  HandlerMapping的配置，从而将请求映射到处理器
+	 *     3、  HandlerAdapter的配置，从而支持多种类型的处理器
+	 *     4、  ViewResolver的配置，从而将逻辑视图名解析为具体视图技术
+	 *     5、  处理器（页面控制器）的配置，从而进行功能处理
+	 *
+ 	 */
 	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpServletRequest processedRequest = request;
 		HandlerExecutionChain mappedHandler = null;
@@ -899,9 +928,11 @@ public class DispatcherServlet extends FrameworkServlet {
 			Exception dispatchException = null;
 
 			try {
+				//步骤1、检查是否是请求是否是multipart（如文件上传），如果是将通过MultipartResolver解析
 				processedRequest = checkMultipart(request);
 				multipartRequestParsed = (processedRequest != request);
 
+				//步骤2、请求到处理器（页面控制器）的映射，通过HandlerMapping进行映射
 				// Determine handler for the current request.
 				mappedHandler = getHandler(processedRequest, false);
 				if (mappedHandler == null || mappedHandler.getHandler() == null) {
@@ -909,6 +940,7 @@ public class DispatcherServlet extends FrameworkServlet {
 					return;
 				}
 
+				//步骤3、处理器适配，即将我们的处理器包装成相应的适配器（从而支持多种类型的处理器）
 				// Determine handler adapter for the current request.
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
@@ -916,6 +948,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				String method = request.getMethod();
 				boolean isGet = "GET".equals(method);
 				if (isGet || "HEAD".equals(method)) {
+					// 304 Not Modified缓存支持
 					long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
 					if (logger.isDebugEnabled()) {
 						logger.debug("Last-Modified value for [" + getRequestUri(request) + "] is: " + lastModified);
@@ -925,10 +958,12 @@ public class DispatcherServlet extends FrameworkServlet {
 					}
 				}
 
+				// 执行处理器相关的拦截器的预处理（HandlerInterceptor.preHandle）
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
+				// 步骤4、由适配器执行处理器（调用处理器相应功能处理方法）
 				// Actually invoke the handler.
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
@@ -937,11 +972,17 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				applyDefaultViewName(request, mv);
+
+				// 执行处理器相关的拦截器的后处理（HandlerInterceptor.postHandle）
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
 				dispatchException = ex;
 			}
+
+			//步骤5 步骤6、解析视图并进行视图的渲染
+			//步骤5 由ViewResolver解析View（viewResolver.resolveViewName(viewName, locale)）
+			//步骤6 视图在渲染时会把Model传入（view.render(mv.getModelInternal(), request, response);）
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {
@@ -952,6 +993,8 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 		finally {
 			if (asyncManager.isConcurrentHandlingStarted()) {
+
+				// 执行处理器相关的拦截器的完成后处理（HandlerInterceptor.afterCompletion）
 				// Instead of postHandle and afterCompletion
 				if (mappedHandler != null) {
 					mappedHandler.applyAfterConcurrentHandlingStarted(processedRequest, response);
@@ -967,6 +1010,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/**
+	 * 需要查看名称翻译
 	 * Do we need view name translation?
 	 */
 	private void applyDefaultViewName(HttpServletRequest request, ModelAndView mv) throws Exception {
@@ -1177,6 +1221,8 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/**
+	 * //步骤6 视图在渲染时会把Model传入（view.render(mv.getModelInternal(), request, response);）
+	 *
 	 * Render the given ModelAndView.
 	 * <p>This is the last stage in handling a request. It may involve resolving the view by name.
 	 * @param mv the ModelAndView to render
@@ -1192,6 +1238,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		View view;
 		if (mv.isReference()) {
+			//步骤5 由ViewResolver解析View（viewResolver.resolveViewName(viewName, locale)）
 			// We need to resolve the view name.
 			view = resolveViewName(mv.getViewName(), mv.getModelInternal(), locale, request);
 			if (view == null) {
@@ -1213,6 +1260,8 @@ public class DispatcherServlet extends FrameworkServlet {
 			logger.debug("Rendering view [" + view + "] in DispatcherServlet with name '" + getServletName() + "'");
 		}
 		try {
+
+			//步骤6 视图在渲染时会把Model传入（view.render(mv.getModelInternal(), request, response);）
 			view.render(mv.getModelInternal(), request, response);
 		}
 		catch (Exception ex) {
@@ -1252,6 +1301,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			HttpServletRequest request) throws Exception {
 
 		for (ViewResolver viewResolver : this.viewResolvers) {
+			//步骤5 由ViewResolver解析View（viewResolver.resolveViewName(viewName, locale)）
 			View view = viewResolver.resolveViewName(viewName, locale);
 			if (view != null) {
 				return view;
@@ -1280,6 +1330,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/**
+	 *   存储处理后的请求属性。
 	 * Restore the request attributes after an include.
 	 * @param request current HTTP request
 	 * @param attributesSnapshot the snapshot of the request attributes before the include
@@ -1308,6 +1359,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				request.removeAttribute(attrName);
 			}
 			else if (attrValue != request.getAttribute(attrName)) {
+				//设置request信息
 				request.setAttribute(attrName, attrValue);
 			}
 		}

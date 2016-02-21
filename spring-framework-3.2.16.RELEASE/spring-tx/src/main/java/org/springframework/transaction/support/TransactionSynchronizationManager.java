@@ -77,7 +77,7 @@ public abstract class TransactionSynchronizationManager {
 
 	private static final Log logger = LogFactory.getLog(TransactionSynchronizationManager.class);
 
-	//当前线程资源变量
+	//褰撳墠绾跨▼璧勬簮鍙橀噺
 	private static final ThreadLocal<Map<Object, Object>> resources =
 			new NamedThreadLocal<Map<Object, Object>>("Transactional resources");
 
@@ -182,7 +182,7 @@ public abstract class TransactionSynchronizationManager {
 			resources.set(map);
 		}
 
-		//将数据库的链接、datasource 放入threadLocal 里面
+		//灏嗘暟鎹簱鐨勯摼鎺ャ�乨atasource 鏀惧叆threadLocal 閲岄潰
 		Object oldValue = map.put(actualKey, value);
 		// Transparently suppress a ResourceHolder that was marked as void...
 		if (oldValue instanceof ResourceHolder && ((ResourceHolder) oldValue).isVoid()) {

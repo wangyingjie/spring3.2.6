@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+       <bean id="masterdataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+              <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+              <property name="url" value="jdbc:mysql://127.0.0.1:3306/shop" />
+              <property name="username" value="root" />
+              <property name="password" value="yangyanping0615" />
+       </bean>
+
+        <!--两行合并一行的快捷点：ctrl + shift + J -->
+       <bean id="slavedataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+              <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+              <property name="url" value="jdbc:mysql://127.0.0.1:3306/test" />
+              <property name="username" value="root" />
+              <property name="password" value="yangyanping0615" />
+       </bean>
+
+       <bean id="dataSource" class="org.springframework.jdbc.datasource.lookup.abstractds.DynamicDataSource">
+              <property name="targetDataSources">
+                     <map key-type="java.lang.String">
+                            <!-- write -->
+                            <entry key="master" value-ref="masterdataSource"/>
+                            <!-- read -->
+                            <entry key="slave" value-ref="slavedataSource"/>
+                     </map>
+              </property>
+              <property name="defaultTargetDataSource" ref="masterdataSource"/>
+       </bean>
+
+       <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+              <property name="dataSource" ref="dataSource" />
+       </bean>
+
+
+       <!-- 配置SqlSessionFactoryBean -->
+       <!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+              <property name="dataSource" ref="dataSource" />
+              <property name="configLocation" value="classpath:config/mybatis-config.xml" />
+       </bean>-->
+
+
+    <!-- 配置数据库注解aop -->
+   <!-- <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+    <beans:bean id="manyDataSourceAspect" class="com.air.shop.proxy.DataSourceAspect" />
+    <aop:config>
+        <aop:aspect id="c" ref="manyDataSourceAspect">
+            <aop:pointcut id="tx" expression="execution(* com.air.shop.mapper.*.*(..))"/>
+            <aop:before pointcut-ref="tx" method="before"/>
+        </aop:aspect>
+    </aop:config>-->
+    <!-- 配置数据库注解aop -->
+
+
+</beans>

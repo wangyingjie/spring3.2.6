@@ -107,6 +107,10 @@ public abstract class AbstractRoutingDataSource extends AbstractDataSource imple
 	}
 
 
+	/**
+	 * 数据源初始化的时候，将所有的数据源加载到：resolvedDataSources map里取出对应的DataSource
+	 *
+	 */
 	public void afterPropertiesSet() {
 		if (this.targetDataSources == null) {
 			throw new IllegalArgumentException("Property 'targetDataSources' is required");
@@ -187,6 +191,11 @@ public abstract class AbstractRoutingDataSource extends AbstractDataSource imple
 	 * falls back to the specified
 	 * {@link #setDefaultTargetDataSource default target DataSource} if necessary.
 	 * @see #determineCurrentLookupKey()
+	 *
+	 * 这里用到了我们需要进行实现的抽象方法determineCurrentLookupKey()，
+	 * 该方法返回需要使用的DataSource的key值，然后根据这个key从resolvedDataSources
+	 * 这个map里取出对应的DataSource，如果找不到，则用默认的resolvedDefaultDataSource
+	 *
 	 */
 	protected DataSource determineTargetDataSource() {
 		Assert.notNull(this.resolvedDataSources, "DataSource router not initialized");
@@ -207,6 +216,8 @@ public abstract class AbstractRoutingDataSource extends AbstractDataSource imple
 	 * <p>Allows for arbitrary keys. The returned key needs
 	 * to match the stored lookup key type, as resolved by the
 	 * {@link #resolveSpecifiedLookupKey} method.
+	 *
+	 * 模板方法，路由具体的数据源配置的 map 映射key
 	 */
 	protected abstract Object determineCurrentLookupKey();
 

@@ -182,6 +182,7 @@ public class HandlerExecutionChain {
 	void applyAfterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response) {
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
+			// 后置处理倒着遍历
 			for (int i = interceptors.length - 1; i >= 0; i--) {
 				if (interceptors[i] instanceof AsyncHandlerInterceptor) {
 					try {
