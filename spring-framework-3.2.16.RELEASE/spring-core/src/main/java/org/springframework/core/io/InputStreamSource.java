@@ -37,6 +37,11 @@ import java.io.InputStream;
  * @see Resource
  * @see InputStreamResource
  * @see ByteArrayResource
+ *
+ * 每次调用都将返回一个新鲜的资源对应的java.io. InputStream字节流，调用者在使用完毕后必须关闭该资源。
+ *
+ * Source 接口、 Resource 实现类
+ *
  */
 public interface InputStreamSource {
 

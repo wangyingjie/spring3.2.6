@@ -35,6 +35,9 @@ import java.util.Arrays;
  * @see java.io.ByteArrayInputStream
  * @see InputStreamResource
  * @see org.springframework.mail.javamail.MimeMessageHelper#addAttachment(String, InputStreamSource)
+ *
+ *   ByteArrayResource可多次读取数组资源，即isOpen ()永远返回false。
+ *
  */
 public class ByteArrayResource extends AbstractResource {
 

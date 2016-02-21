@@ -58,6 +58,9 @@ import org.springframework.core.io.ResourceLoader;
  * @see org.springframework.core.io.DefaultResourceLoader
  * @see org.springframework.core.io.support.PathMatchingResourcePatternResolver
  * @see org.springframework.context.support.ReloadableResourceBundleMessageSource
+ *
+ * ResourceLoaderAware是一个标记接口，用于通过ApplicationContext上下文注入ResourceLoader
+ *
  */
 public interface ResourceLoaderAware extends Aware {
 

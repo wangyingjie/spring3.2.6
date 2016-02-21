@@ -46,6 +46,9 @@ import org.springframework.web.util.WebUtils;
  * @see javax.servlet.ServletContext#getResourceAsStream
  * @see javax.servlet.ServletContext#getResource
  * @see javax.servlet.ServletContext#getRealPath
+ *
+ * ServletContextResource代表web应用资源，用于简化servlet容器的ServletContext接口的getResource操作和getResourceAsStream操作
+ *
  */
 public class ServletContextResource extends AbstractFileResolvingResource implements ContextResource {
 

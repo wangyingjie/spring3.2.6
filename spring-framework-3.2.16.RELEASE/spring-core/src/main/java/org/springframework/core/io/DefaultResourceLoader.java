@@ -37,6 +37,12 @@ import org.springframework.util.StringUtils;
  * @since 10.03.2004
  * @see FileSystemResourceLoader
  * @see org.springframework.context.support.ClassPathXmlApplicationContext
+ *
+ * Spring提供了一个适用于所有环境的DefaultResourceLoader实现，
+ * 可以返回ClassPathResource、UrlResource；
+ * 还提供一个用于web环境的ServletContextResourceLoader，
+ * 它继承了DefaultResourceLoader的所有功能，又额外提供了获取ServletContextResource的支持。
+ *
  */
 public class DefaultResourceLoader implements ResourceLoader {
 
@@ -87,7 +93,7 @@ public class DefaultResourceLoader implements ResourceLoader {
 	public Resource getResource(String location) {
 		Assert.notNull(location, "Location must not be null");
 		if (location.startsWith(CLASSPATH_URL_PREFIX)) {
-			//new  一个ClassPathResource 资源
+			//new  一个ClassPathResource 资源   DefaultResourceLoader默认实现可以加载classpath资源
 			return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
 		}
 		else {

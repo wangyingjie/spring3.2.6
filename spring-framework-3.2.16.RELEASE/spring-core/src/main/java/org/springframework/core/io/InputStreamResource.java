@@ -78,6 +78,9 @@ public class InputStreamResource extends AbstractResource {
 
 	/**
 	 * This implementation always returns {@code true}.
+	 *
+	 * 只能读取一次该字节流，即“isOpen”永远返回true
+	 *
 	 */
 	@Override
 	public boolean isOpen() {

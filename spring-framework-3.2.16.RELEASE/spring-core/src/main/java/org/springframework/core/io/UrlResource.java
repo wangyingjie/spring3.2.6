@@ -38,6 +38,14 @@ import org.springframework.util.StringUtils;
  * @author Juergen Hoeller
  * @since 28.12.2003
  * @see java.net.URL
+ *
+ * UrlResource代表URL资源，用于简化URL资源访问。“isOpen”永远返回false，表示可多次读取资源。
+ *
+ * UrlResource一般支持如下资源访问：
+ *		http：通过标准的http协议访问web资源，如new UrlResource(“http://地址”)；
+ *		ftp：通过ftp协议访问资源，如new UrlResource(“ftp://地址”)；
+ *		file：通过file协议访问本地文件系统资源，如new UrlResource(“file:d:/test.txt”)；
+ *
  */
 public class UrlResource extends AbstractFileResolvingResource {
 

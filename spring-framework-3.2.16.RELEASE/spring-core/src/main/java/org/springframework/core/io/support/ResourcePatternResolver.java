@@ -50,6 +50,13 @@ import org.springframework.core.io.ResourceLoader;
  * @see org.springframework.core.io.ResourceLoader
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
+ *
+ * Spring在加载类路径资源时除了提供前缀“classpath:”的来支持加载一个Resource，
+ * 还提供一个前缀“classpath*:”来支持加载所有匹配的类路径Resource。
+ * Spring提供ResourcePatternResolver接口来加载多个Resource，
+ * 该接口继承了ResourceLoader并添加了
+ * Resource[] getResources(String locationPattern)  用来加载多个Resource
+ *
  */
 public interface ResourcePatternResolver extends ResourceLoader {
 
@@ -70,6 +77,9 @@ public interface ResourcePatternResolver extends ResourceLoader {
 	 * @param locationPattern the location pattern to resolve
 	 * @return the corresponding Resource objects
 	 * @throws IOException in case of I/O errors
+	 *
+	 * 用来加载多个Resource
+	 *
 	 */
 	Resource[] getResources(String locationPattern) throws IOException;
 

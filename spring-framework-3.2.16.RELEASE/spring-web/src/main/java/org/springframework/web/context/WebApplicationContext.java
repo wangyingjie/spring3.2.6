@@ -40,6 +40,10 @@ import org.springframework.context.ApplicationContext;
  * @author Juergen Hoeller
  * @since January 19, 2001
  * @see ServletContextAware#setServletContext
+ *
+ * 不指定前缀将返回ServletContextResource，否则将根据前缀来加载资源；
+ *
+ *
  */
 public interface WebApplicationContext extends ApplicationContext {
 

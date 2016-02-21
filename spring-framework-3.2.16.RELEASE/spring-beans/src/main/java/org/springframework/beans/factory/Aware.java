@@ -17,6 +17,11 @@
 package org.springframework.beans.factory;
 
 /**
+ *
+ *
+ * 标记父类接口表明Bean可以通知特定框架的对象 Spring容器通过回调方式。
+ * 实际的方法签名是决定独特的子类接口，但是通常应该只有一个返回void的方法 接受一个单一的参数。
+ *
  * Marker superinterface indicating that a bean is eligible to be
  * notified by the Spring container of a particular framework object
  * through a callback-style method. Actual method signature is
@@ -33,6 +38,12 @@ package org.springframework.beans.factory;
  *
  * @author Chris Beams
  * @since 3.1
+ *
+ *   Aware:
+ *       英 [əˈweə(r)]   美 [əˈwer]
+ *       adj.
+ *       意识到的; 知道的; 觉察到的;
+ *
  */
 public interface Aware {
 

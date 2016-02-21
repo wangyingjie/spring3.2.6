@@ -39,6 +39,14 @@ import org.springframework.util.StringUtils;
  * @since 28.12.2003
  * @see ClassLoader#getResourceAsStream(String)
  * @see Class#getResourceAsStream(String)
+ *
+ *
+ * 代表classpath路径的资源，将使用ClassLoader进行加载资源。classpath 资源存在于类路径中的文件系统中或jar包里，
+ * 且“isOpen”永远返回false，表示可多次读取资源。ClassPathResource加载资源替代了
+ * Class类和ClassLoader类的“getResource(String name)”和“getResourceAsStream(String name)”
+ * 两个加载类路径资源方法，提供一致的访问方式。
+ *
+ *
  */
 public class ClassPathResource extends AbstractFileResolvingResource {
 
@@ -58,6 +66,9 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * @param path the absolute path within the class path
 	 * @see java.lang.ClassLoader#getResourceAsStream(String)
 	 * @see org.springframework.util.ClassUtils#getDefaultClassLoader()
+	 *
+	 * 使用默认的ClassLoader加载“path”类路径资源；
+	 *
 	 */
 	public ClassPathResource(String path) {
 		this(path, (ClassLoader) null);
@@ -71,6 +82,12 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * @param classLoader the class loader to load the resource with,
 	 * or {@code null} for the thread context class loader
 	 * @see ClassLoader#getResourceAsStream(String)
+	 *
+	 * 使用指定的ClassLoader加载“path”类路径资源；
+	 * 比如当前类路径是“cn.javass.spring.chapter4.ResourceTest”，
+	 * 而需要加载的资源路径是“cn/javass/spring/chapter4/test1.properties”，
+	 * 则将加载的资源在“cn/javass/spring/chapter4/test1.properties”；
+	 *
 	 */
 	public ClassPathResource(String path, ClassLoader classLoader) {
 		Assert.notNull(path, "Path must not be null");
@@ -89,6 +106,15 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * @param path relative or absolute path within the class path
 	 * @param clazz the class to load resources with
 	 * @see java.lang.Class#getResourceAsStream
+	 *
+	 * 使用指定的类加载“path”类路径资源，将加载相对于当前类的路径的资源；
+	 * 比如当前类路径是“cn.javass.spring.chapter4.ResourceTest”，
+	 * 而需要加载的资源路径是“cn/javass/spring/chapter4/test1.properties”，
+	 * 则将加载的资源在“cn/javass/spring/chapter4/cn/javass/spring/chapter4/test1.properties”；
+	 * 而如果需要 加载的资源路径为“test1.properties”，将加载的资源为“cn/javass/spring/chapter4/test1.propertie
+	 *
+	 * 根据参数 path 的不同，加载的资源的路径就有所不同了
+	 *
 	 */
 	public ClassPathResource(String path, Class<?> clazz) {
 		Assert.notNull(path, "Path must not be null");

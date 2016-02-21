@@ -53,6 +53,13 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * @see ConfigurableApplicationContext
  * @see org.springframework.beans.factory.BeanFactory
  * @see org.springframework.core.io.ResourceLoader
+ *
+ *  对于目前所有ApplicationContext都实现了ResourceLoader，因此可以使用其来加载资源。
+ *   ClassPathXmlApplicationContext：不指定前缀将返回默认的ClassPathResource资源，否则将根据前缀来加载资源；
+ *   FileSystemXmlApplicationContext：不指定前缀将返回FileSystemResource，否则将根据前缀来加载资源；
+ *   WebApplicationContext：不指定前缀将返回ServletContextResource，否则将根据前缀来加载资源；
+ *   其他：不指定前缀根据当前上下文返回Resource实现，否则将根据前缀来加载资源。
+ *
  */
 public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
 		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {

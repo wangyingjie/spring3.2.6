@@ -73,6 +73,8 @@ public abstract class AbstractResource implements Resource {
 
 	/**
 	 * This implementation always returns {@code false}.
+	 *
+	 * isOpen 永远返回false，从而表示可多次读取底层文件的字节流。
 	 */
 	public boolean isOpen() {
 		return false;

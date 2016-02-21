@@ -37,6 +37,14 @@ import org.springframework.util.ResourceUtils;
  * @see org.springframework.core.io.support.ResourcePatternResolver
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
+ *
+ * ResourceLoader 接口用于返回Resource对象；其实现可以看作是一个生产Resource的工厂类。
+ * ResourceLoader在进行加载资源时需要使用前缀来
+ * 指定需要加载：
+ *     “classpath:path”表示返回ClasspathResource，
+ *     “http://path”和“file:path”表示返回UrlResource资源，
+ * 如果不加前缀则需要根据当前上下文来决定，DefaultResourceLoader默认实现可以加载classpath资源
+ *
  */
 public interface ResourceLoader {
 
@@ -62,6 +70,9 @@ public interface ResourceLoader {
 	 * @see #CLASSPATH_URL_PREFIX
 	 * @see org.springframework.core.io.Resource#exists
 	 * @see org.springframework.core.io.Resource#getInputStream
+	 *
+	 * 接口用于根据提供的location参数返回相应的Resource对象；
+	 *
 	 */
 	Resource getResource(String location);
 
@@ -73,6 +84,9 @@ public interface ResourceLoader {
 	 * @return the ClassLoader (only {@code null} if even the system
 	 * ClassLoader isn't accessible)
 	 * @see org.springframework.util.ClassUtils#getDefaultClassLoader()
+	 *
+	 * getClassLoader则返回加载这些Resource的ClassLoader
+	 *
 	 */
 	ClassLoader getClassLoader();
 

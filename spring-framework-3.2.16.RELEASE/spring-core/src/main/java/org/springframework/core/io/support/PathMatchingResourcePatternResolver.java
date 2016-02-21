@@ -168,6 +168,11 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.util.AntPathMatcher
  * @see org.springframework.core.io.ResourceLoader#getResource(String)
  * @see ClassLoader#getResources(String)
+ *
+ * Spring提供了一个ResourcePatternResolver实现PathMatchingResourcePatternResolver，
+ * 它是基于模式匹配的，默认使用AntPathMatcher进行路径匹配，它除了支持ResourceLoader支持的前缀外，
+ * 还额外支持“classpath*:”用于加载所有匹配的类路径Resource，ResourceLoader不支持前缀“classpath*:”：
+ *
  */
 public class PathMatchingResourcePatternResolver implements ResourcePatternResolver {
 
