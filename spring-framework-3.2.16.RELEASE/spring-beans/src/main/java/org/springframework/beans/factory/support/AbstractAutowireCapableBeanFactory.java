@@ -393,6 +393,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		Object result = existingBean;
 		for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+
+			// bean 初始化之前的前至处理
 			result = beanProcessor.postProcessBeforeInitialization(result, beanName);
 			if (result == null) {
 				return result;
@@ -407,6 +409,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		Object result = existingBean;
 		for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+			// Bean 初始化之后的处理
 			result = beanProcessor.postProcessAfterInitialization(result, beanName);
 			if (result == null) {
 				return result;
@@ -538,13 +541,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		Object exposedObject = bean;
 		try {
 
-			//填充bean实例在给定的属性值的bean定义BeanWrapper。
+			//  填充bean实例在给定的属性值的bean定义BeanWrapper。   bean的生成和依赖注入完成以后
 			populateBean(beanName, mbd, instanceWrapper);
 			if (exposedObject != null) {
 
 				//判断是否实现了 BeanNameAware 、 BeanClassLoaderAware 等 spring 提供的接口，如果实现了，进行默认的注入。
 				// 同时判断是否实现了 InitializingBean 接口，如果是的话，调用 afterPropertySet 方法。
-				// spring Bean 初始化  包括两类方法的初始化
+				//开始对 spring Bean 初始化  包括两类方法的初始化
 				exposedObject = initializeBean(beanName, exposedObject, mbd);
 			}
 		}
@@ -921,6 +924,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (mbd.hasBeanClass() && !mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 				bean = applyBeanPostProcessorsBeforeInstantiation(mbd.getBeanClass(), beanName);
 				if (bean != null) {
+					//
 					bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
 				}
 			}
@@ -1556,12 +1560,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
-			// Bean 初始化之前处理
+			// 1  Bean 初始化之前处理
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
 		}
 
 		try {
-			// Bean的初始化方法执行，此处包括两类方法的处理：1、init 配置； 2、实现InitializingBean#afterPropertiesSet
+			// 2  Bean的初始化方法执行，此处包括两类方法的处理：1、init 配置； 2、实现InitializingBean#afterPropertiesSet
 			invokeInitMethods(beanName, wrappedBean, mbd);
 		} catch (Throwable ex) {
 			throw new BeanCreationException(
@@ -1570,7 +1574,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (mbd == null || !mbd.isSynthetic()) {
-			// Bean 初始化之后处理
+			// 3  Bean 初始化之后处理
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
 		return wrappedBean;
@@ -1637,7 +1641,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			String initMethodName = mbd.getInitMethodName();
 			if (initMethodName != null && !(isInitializingBean && "afterPropertiesSet".equals(initMethodName)) &&
 					!mbd.isExternallyManagedInitMethod(initMethodName)) {
-				// 用户自定义初始化方法的调用
+				// 用户自定义初始化方法的调用  用户自定义的  init-method 方法执行
 				invokeCustomInitMethod(beanName, bean, mbd);
 			}
 		}

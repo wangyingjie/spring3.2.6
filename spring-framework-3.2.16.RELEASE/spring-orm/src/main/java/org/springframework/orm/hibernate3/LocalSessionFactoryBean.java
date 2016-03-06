@@ -547,10 +547,12 @@ public class LocalSessionFactoryBean extends AbstractSessionFactoryBean implemen
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected SessionFactory buildSessionFactory() throws Exception {
+	protected SessionFactory buildSessionFactory() throws Exception {//SessionFactory对象创建过程
+		// 构建  Configuration 配置对象
 		// Create Configuration instance.
 		Configuration config = newConfiguration();
 
+		// 将ds 与 tx 和当前线程绑定
 		DataSource dataSource = getDataSource();
 		if (dataSource != null) {
 			// Make given DataSource available for SessionFactory configuration.
@@ -561,6 +563,7 @@ public class LocalSessionFactoryBean extends AbstractSessionFactoryBean implemen
 			configTimeTransactionManagerHolder.set(this.jtaTransactionManager);
 		}
 		if (this.cacheRegionFactory != null) {
+			// Hibernate 缓存提供器
 			// Make Spring-provided Hibernate RegionFactory available.
 			configTimeRegionFactoryHolder.set(this.cacheRegionFactory);
 		}
@@ -641,17 +644,20 @@ public class LocalSessionFactoryBean extends AbstractSessionFactoryBean implemen
 
 			if (this.configLocations != null) {
 				for (Resource resource : this.configLocations) {
+					// 载入Hibernate的配置信息，该配置信息在制定的资源位置中
 					// Load Hibernate configuration from given location.
 					config.configure(resource.getURL());
 				}
 			}
 
 			if (this.hibernateProperties != null) {
+				// 将hibernate的属性信息加入到配置中去
 				// Add given Hibernate properties to Configuration.
 				config.addProperties(this.hibernateProperties);
 			}
 
 			if (dataSource != null) {
+				// 包含了 数据源链接的提供方法
 				Class<?> providerClass = LocalDataSourceConnectionProvider.class;
 				if (isUseTransactionAwareDataSource() || dataSource instanceof TransactionAwareDataSourceProxy) {
 					providerClass = TransactionAwareDataSourceConnectionProvider.class;
@@ -659,11 +665,13 @@ public class LocalSessionFactoryBean extends AbstractSessionFactoryBean implemen
 				else if (config.getProperty(Environment.TRANSACTION_MANAGER_STRATEGY) != null) {
 					providerClass = LocalJtaDataSourceConnectionProvider.class;
 				}
+				// 将使用spring提供的数据源， 设置Hibernate的　ConnectionProvider
 				// Set Spring-provided DataSource as Hibernate ConnectionProvider.
 				config.setProperty(Environment.CONNECTION_PROVIDER, providerClass.getName());
 			}
 
 			if (this.cacheRegionFactory != null) {
+				// 设置缓存提供器
 				// Expose Spring-provided Hibernate RegionFactory.
 				config.setProperty(Environment.CACHE_REGION_FACTORY,
 						"org.springframework.orm.hibernate3.LocalRegionFactoryProxy");
@@ -702,6 +710,7 @@ public class LocalSessionFactoryBean extends AbstractSessionFactoryBean implemen
 				}
 			}
 
+			// 资源文件
 			if (this.mappingDirectoryLocations != null) {
 				// Register all Hibernate mapping definitions in the given directories.
 				for (Resource resource : this.mappingDirectoryLocations) {
@@ -755,6 +764,7 @@ public class LocalSessionFactoryBean extends AbstractSessionFactoryBean implemen
 			}
 
 			if (this.eventListeners != null) {
+				// 设置Hibernate 的事件监听器
 				// Register specified Hibernate event listeners.
 				for (Map.Entry<String, Object> entry : this.eventListeners.entrySet()) {
 					String listenerType = entry.getKey();
@@ -778,11 +788,14 @@ public class LocalSessionFactoryBean extends AbstractSessionFactoryBean implemen
 
 			// Build SessionFactory instance.
 			logger.info("Building new Hibernate SessionFactory");
+
+			// 创建一个 SessionFactory
 			this.configuration = config;
 			return newSessionFactory(config);
 		}
 
 		finally {
+			//清空线程中的资源
 			if (dataSource != null) {
 				configTimeDataSourceHolder.remove();
 			}
@@ -860,6 +873,7 @@ public class LocalSessionFactoryBean extends AbstractSessionFactoryBean implemen
 	 * @see org.hibernate.cfg.Configuration#buildSessionFactory
 	 */
 	protected SessionFactory newSessionFactory(Configuration config) throws HibernateException {
+		// 调用Hibernate 自己的核心包 创建一个 SessionFactory 对象
 		return config.buildSessionFactory();
 	}
 

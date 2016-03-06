@@ -230,6 +230,7 @@ public abstract class SessionFactoryUtils {
 			SQLExceptionTranslator jdbcExceptionTranslator) throws DataAccessResourceFailureException {
 
 		try {
+			//获取session
 			return doGetSession(sessionFactory, entityInterceptor, jdbcExceptionTranslator, true);
 		}
 		catch (HibernateException ex) {
@@ -272,6 +273,9 @@ public abstract class SessionFactoryUtils {
 	 * @throws HibernateException if the Session couldn't be created
 	 * @throws IllegalStateException if no thread-bound Session found and
 	 * "allowCreate" is {@code false}
+	 *
+	 * 获取Session
+	 *
 	 */
 	private static Session doGetSession(
 			SessionFactory sessionFactory, Interceptor entityInterceptor,
@@ -280,11 +284,13 @@ public abstract class SessionFactoryUtils {
 
 		Assert.notNull(sessionFactory, "No SessionFactory specified");
 
+		// 获取和当前线程绑定的 SessionHolder 对象
 		Object resource = TransactionSynchronizationManager.getResource(sessionFactory);
 		if (resource instanceof Session) {
 			return (Session) resource;
 		}
 		SessionHolder sessionHolder = (SessionHolder) resource;
+		// 当前线程已经存在 SessionHolder 则说明在前面的线程的执行中已经创建过了 session了
 		if (sessionHolder != null && !sessionHolder.isEmpty()) {
 			// pre-bound Hibernate Session
 			Session session = null;
@@ -292,6 +298,7 @@ public abstract class SessionFactoryUtils {
 					sessionHolder.doesNotHoldNonDefaultSession()) {
 				// Spring transaction management is active ->
 				// register pre-bound Session with it for transactional flushing.
+				// 在spring的Transaction管理中，使用的是当前事物绑定的 session
 				session = sessionHolder.getValidatedSession();
 				if (session != null && !sessionHolder.isSynchronizedWithTransaction()) {
 					logger.debug("Registering Spring transaction synchronization for existing Hibernate Session");
@@ -309,6 +316,7 @@ public abstract class SessionFactoryUtils {
 				}
 			}
 			else {
+				//返回已有的session 这种情况下，不需要创建新的 session
 				// No Spring transaction management active -> try JTA transaction synchronization.
 				session = getJtaSynchronizedSession(sessionHolder, sessionFactory, jdbcExceptionTranslator);
 			}
@@ -317,12 +325,14 @@ public abstract class SessionFactoryUtils {
 			}
 		}
 
+		// 创建新的 session ，因为当前线程还没有创建过session
 		logger.debug("Opening Hibernate Session");
 		Session session = (entityInterceptor != null ?
 				sessionFactory.openSession(entityInterceptor) : sessionFactory.openSession());
 
 		// Use same Session for further Hibernate actions within the transaction.
 		// Thread object will get removed by synchronization at transaction completion.
+		// 这里把新创建的session与线程绑定，并同时根据根据事物管理器设置进行设置
 		if (TransactionSynchronizationManager.isSynchronizationActive()) {
 			// We're within a Spring-managed transaction, possibly from JtaTransactionManager.
 			logger.debug("Registering Spring transaction synchronization for new Hibernate Session");
@@ -340,6 +350,7 @@ public abstract class SessionFactoryUtils {
 					new SpringSessionSynchronization(holderToUse, sessionFactory, jdbcExceptionTranslator, true));
 			holderToUse.setSynchronizedWithTransaction(true);
 			if (holderToUse != sessionHolder) {
+				// 绑定当前线程
 				TransactionSynchronizationManager.bindResource(sessionFactory, holderToUse);
 			}
 		}

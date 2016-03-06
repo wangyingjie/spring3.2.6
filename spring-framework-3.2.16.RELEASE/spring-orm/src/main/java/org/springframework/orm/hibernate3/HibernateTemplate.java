@@ -104,6 +104,10 @@ import org.springframework.util.Assert;
  * @see org.springframework.transaction.jta.JtaTransactionManager
  * @see org.springframework.orm.hibernate3.support.OpenSessionInViewFilter
  * @see org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor
+ *
+ * HibernateTemplate 的作用就是对Hibernate API 的封装，通过这一层的封装来简化了Hibernate的使用
+ * 其具体的封装实现在：HibernateCallback毁掉函数里面来完成
+ *
  */
 public class HibernateTemplate extends HibernateAccessor implements HibernateOperations {
 
@@ -390,8 +394,12 @@ public class HibernateTemplate extends HibernateAccessor implements HibernateOpe
 
 		Assert.notNull(action, "Callback object must not be null");
 
+		// 通过 SessionFactoryUtils.getNewSession 获取session 对象
+		// 判断是否强制需要新的session，如果需要，则直接打开个新的Session
 		Session session = (enforceNewSession ?
 				SessionFactoryUtils.getNewSession(getSessionFactory(), getEntityInterceptor()) : getSession());
+
+		//判断Transaction是否已经存在，如果式，那么使用的就是当前Transaction的Session
 		boolean existingTransaction = (!enforceNewSession &&
 				(!isAllowCreate() || SessionFactoryUtils.isSessionTransactional(session, getSessionFactory())));
 		if (existingTransaction) {
@@ -404,7 +412,9 @@ public class HibernateTemplate extends HibernateAccessor implements HibernateOpe
 			enableFilters(session);
 			Session sessionToExpose =
 					(enforceNativeSession || isExposeNativeSession() ? session : createSessionProxy(session));
+			// HibernateCallback 回调方法执行数据库操作   session作为参数传入
 			T result = action.doInHibernate(sessionToExpose);
+			// 必要的刷新session
 			flushIfNecessary(session, existingTransaction);
 			return result;
 		}
@@ -419,6 +429,7 @@ public class HibernateTemplate extends HibernateAccessor implements HibernateOpe
 			throw ex;
 		}
 		finally {
+			// 存在事物  则回调使用完 session 后，不关闭这个session
 			if (existingTransaction) {
 				logger.debug("Not closing pre-bound Hibernate Session after HibernateTemplate");
 				disableFilters(session);
@@ -426,7 +437,7 @@ public class HibernateTemplate extends HibernateAccessor implements HibernateOpe
 					session.setFlushMode(previousFlushMode);
 				}
 			}
-			else {
+			else {// 如果不存在事物，那么关闭当前的session
 				// Never use deferred close for an explicitly new Session.
 				if (isAlwaysUseNewSession()) {
 					SessionFactoryUtils.closeSession(session);
@@ -910,7 +921,9 @@ public class HibernateTemplate extends HibernateAccessor implements HibernateOpe
 	}
 
 	public List find(final String queryString, final Object... values) throws DataAccessException {
+		//方法执行入口
 		return executeWithNativeSession(new HibernateCallback<List>() {
+			// 提供回调函数
 			public List doInHibernate(Session session) throws HibernateException {
 				Query queryObject = session.createQuery(queryString);
 				prepareQuery(queryObject);

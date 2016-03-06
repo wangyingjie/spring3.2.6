@@ -209,7 +209,7 @@ public abstract class AopUtils {
 			return false;
 		}
 
-		//´Ë´¦µÄpc ±íÊ¾£ºTransactionAttributeSourcePointcut   pc.getMethodMatcher()·µ»ØµÄÊÇ×ÔÉí
+		//æ­¤å¤„çš„pc è¡¨ç¤ºï¼šTransactionAttributeSourcePointcut   pc.getMethodMatcher()è¿”å›çš„æ˜¯è‡ªèº«
 		MethodMatcher methodMatcher = pc.getMethodMatcher();
 		IntroductionAwareMethodMatcher introductionAwareMethodMatcher = null;
 		if (methodMatcher instanceof IntroductionAwareMethodMatcher) {
@@ -223,7 +223,7 @@ public abstract class AopUtils {
 			for (Method method : methods) {
 				if ((introductionAwareMethodMatcher != null &&
 						introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions)) ||
-						//methodMatcher.matches  »áÊ¹ÓÃ TransactionAttributeSourcePointcut
+						//methodMatcher.matches  ä¼šä½¿ç”¨ TransactionAttributeSourcePointcut
 						methodMatcher.matches(method, targetClass)) {
 					return true;
 				}
@@ -260,11 +260,11 @@ public abstract class AopUtils {
 			return ((IntroductionAdvisor) advisor).getClassFilter().matches(targetClass);
 		}
 
-		// ÊÂÎñÔöÇ¿Æ÷ BeanFactoryTransactionAttributeSourceAdvisor ÊµÏÖÁË PointcutAdvisor ½Ó¿Ú
+		// äº‹åŠ¡å¢å¼ºå™¨ BeanFactoryTransactionAttributeSourceAdvisor å®ç°äº† PointcutAdvisor æ¥å£
 		else if (advisor instanceof PointcutAdvisor) {
 			PointcutAdvisor pca = (PointcutAdvisor) advisor;
 
-			//pca.getPointcut()   ·µ»Ø Pointcut ----> TransactionAttributeSourcePointcut
+			//pca.getPointcut()   è¿”å› Pointcut ----> TransactionAttributeSourcePointcut
 			return canApply(pca.getPointcut(), targetClass, hasIntroductions);
 		}
 		else {
@@ -286,21 +286,21 @@ public abstract class AopUtils {
 			return candidateAdvisors;
 		}
 		List<Advisor> eligibleAdvisors = new LinkedList<Advisor>();
-		//Ê×ÏÈ´¦ÀíÒı½éÔöÇ¿
+		//é¦–å…ˆå¤„ç†å¼•ä»‹å¢å¼º
 		for (Advisor candidate : candidateAdvisors) {
-			//Òı½éÔöÇ¿
+			//å¼•ä»‹å¢å¼º
 			if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) {
 				eligibleAdvisors.add(candidate);
 			}
 		}
 		boolean hasIntroductions = !eligibleAdvisors.isEmpty();
 		for (Advisor candidate : candidateAdvisors) {
-			//Òı½éÔöÇ¿ÒÑ´¦Àí
+			//å¼•ä»‹å¢å¼ºå·²å¤„ç†
 			if (candidate instanceof IntroductionAdvisor) {
 				// already processed
 				continue;
 			}
-			// ¶ÔÓÚÆÕÍ¨bean´¦Àí
+			// å¯¹äºæ™®é€šbeanå¤„ç†
 			if (canApply(candidate, clazz, hasIntroductions)) {
 				eligibleAdvisors.add(candidate);
 			}

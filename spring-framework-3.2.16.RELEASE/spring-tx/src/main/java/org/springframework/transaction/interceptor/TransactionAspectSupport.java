@@ -173,6 +173,8 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 	 *
 	 */
 	public void setTransactionAttributes(Properties transactionAttributes) {
+
+		// 创建 TransactionInterceptor 时会创建个 TransactionAttribute
 		NameMatchTransactionAttributeSource tas = new NameMatchTransactionAttributeSource();
 		tas.setProperties(transactionAttributes);
 		this.transactionAttributeSource = tas;
@@ -264,7 +266,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 
 		// 3、不同的事务处理使用不同的逻辑
 		//声明式事物
-		if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
+		if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) { //非回调方式的事物管理器处理方法
 			// Standard transaction demarcation with getTransaction and commit/rollback calls.
 			// 4、创建事物信息并开启事物， TransactionInfo 中包含了
 			//    TransactionAttribute 事务属性、 PlatformTransactionManager事务管理器、TransactionStatus 事务状态
@@ -273,7 +275,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			try {
 				// This is an around advice: Invoke the next interceptor in the chain.
 				// This will normally result in a target object being invoked.
-				// 5、执行被增强的目标业务事物方法，即被代理的目标方法
+				// 5、执行被增强的目标业务事物方法，即被代理的目标方法  （很可能是一个拦截器链的调用过程，最后会执行到目标方法）
 				retVal = invocation.proceedWithInvocation();
 			}
 			catch (Throwable ex) {

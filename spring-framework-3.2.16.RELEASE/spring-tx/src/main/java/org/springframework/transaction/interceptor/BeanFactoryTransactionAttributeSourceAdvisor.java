@@ -35,11 +35,11 @@ public class BeanFactoryTransactionAttributeSourceAdvisor extends AbstractBeanFa
 
 	private TransactionAttributeSource transactionAttributeSource;
 
-	// ÊÂÎñµÄÇĞÈëµã   ransactionAttributeSource    pointcut
+	// äº‹åŠ¡çš„åˆ‡å…¥ç‚¹   ransactionAttributeSource    pointcut
 	private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {
 		@Override
 		protected TransactionAttributeSource getTransactionAttributeSource() {
-			//»ñÈ¡ TransactionAttributeSource transactionAttributeSource  ÊÇÔÚ½âÎö tx ×Ô¶¨Òå±êÇ©ÖĞÍê³É×¢ÈëµÄ
+			//è·å– TransactionAttributeSource transactionAttributeSource  æ˜¯åœ¨è§£æ tx è‡ªå®šä¹‰æ ‡ç­¾ä¸­å®Œæˆæ³¨å…¥çš„
 			return transactionAttributeSource;
 		}
 	};

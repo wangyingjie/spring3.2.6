@@ -51,7 +51,8 @@ import java.util.Properties;
  *
  *  声明式事务管理是spring对事务管理的最常用的方式，因为这种方式对代码的影响最小，
  *  因此也符合非侵入性的轻量级容器的概念。Spring的事务管理是通过AOP的方式来实现的，
- *  因为事务方面的代码与spring的绑定并以一种样板式结构使用。在理解spring声明式事务管理我们首先要理解他是通过AOP怎么具体实现的。
+ *  因为事务方面的代码与spring的绑定并以一种样板式结构使用。
+ *  在理解spring声明式事务管理我们首先要理解他是通过AOP怎么具体实现的。
  *  其中的事务通知由元数据（目前基于xml和注解）驱动。代理对象由元数据结合产生一个新的代理对象。
  *  他使用一个PlatformTransactionManager实现类配合TransactionInterceptor在方法调用之前实施事务。
  *
@@ -107,7 +108,7 @@ public class TransactionInterceptor extends TransactionAspectSupport implements 
 	public Object invoke(final MethodInvocation invocation) throws Throwable {
 		// Work out the target class: may be {@code null}.
 		// The TransactionAttributeSource should be passed the target class
-		// as well as the method, which may be from an interface.  获取目前class
+		// as well as the method, which may be from an interface.  获取目目标对象，并将事物属性传递给目标对象
 		Class<?> targetClass = (invocation.getThis() != null ? AopUtils.getTargetClass(invocation.getThis()) : null);
 
 		// Adapt to TransactionAspectSupport's invokeWithinTransaction...

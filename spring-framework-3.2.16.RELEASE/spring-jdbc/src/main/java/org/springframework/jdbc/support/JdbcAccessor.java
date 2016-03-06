@@ -34,6 +34,9 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Juergen Hoeller
  * @since 28.11.2003
  * @see org.springframework.jdbc.core.JdbcTemplate
+ *
+ * 用于管理数据源  ds 的
+ *
  */
 public abstract class JdbcAccessor implements InitializingBean {
 

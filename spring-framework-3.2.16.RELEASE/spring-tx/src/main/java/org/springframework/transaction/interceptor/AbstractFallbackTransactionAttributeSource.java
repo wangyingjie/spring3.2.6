@@ -85,7 +85,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 		Object cacheKey = getCacheKey(method, targetClass);
 		Object cached = this.attributeCache.get(cacheKey);
 
-		if (cached != null) {//´Ó»º´æÈ¡
+		if (cached != null) {//ä»ç¼“å­˜å–
 			// Value will either be canonical value indicating there is no transaction attribute,
 			// or an actual transaction attribute.
 			if (cached == NULL_TRANSACTION_ATTRIBUTE) {
@@ -96,7 +96,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 			}
 		}
 		else {
-			// We need to work it out.  »ñÈ¡ÊÂÎïÊôĞÔ
+			// We need to work it out.  è·å–äº‹ç‰©å±æ€§
 			TransactionAttribute txAtt = computeTransactionAttribute(method, targetClass);
 			// Put it in the cache.
 			if (txAtt == null) {
@@ -131,7 +131,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 	 * {@link #getTransactionAttribute} is effectively a caching decorator for this method.
 	 * @see #getTransactionAttribute
 	 *
-	 * ÍÆ¶ÏÊÂÎñÊôĞÔ
+	 * æ¨æ–­äº‹åŠ¡å±æ€§
 	 */
 	private TransactionAttribute computeTransactionAttribute(Method method, Class<?> targetClass) {
 		// Don't allow no-public methods as required.
@@ -143,32 +143,32 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 		Class<?> userClass = ClassUtils.getUserClass(targetClass);
 		// The method may be on an interface, but we need attributes from the target class.
 		// If the target class is null, the method will be unchanged.
-		// method ´ú±í½Ó¿ÚÖĞµÄ·½·¨ specificMethod´ú±íÊµÏÖÀàÖĞµÄ·½·¨
+		// method ä»£è¡¨æ¥å£ä¸­çš„æ–¹æ³• specificMethodä»£è¡¨å®ç°ç±»ä¸­çš„æ–¹æ³•
 		Method specificMethod = ClassUtils.getMostSpecificMethod(method, userClass);
 		// If we are dealing with method with generic parameters, find the original method.
 		specificMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
 
-		//findTransactionAttribute »ñÈ¡ÊÂÎï´¦ÀíÁ÷³Ì   ·½·¨-->Àà-->½Ó¿Ú--->½Ó¿Ú¶ÔÓ¦ÊµÏÖÀà
-		// First try is the method in the target class.  Ä¿±êÀàµÄ·½·¨ÉÏ»ñÈ¡ÊÂÎñÊôĞÔ
+		//findTransactionAttribute è·å–äº‹ç‰©å¤„ç†æµç¨‹   æ–¹æ³•-->ç±»-->æ¥å£--->æ¥å£å¯¹åº”å®ç°ç±»
+		// First try is the method in the target class.  ç›®æ ‡ç±»çš„æ–¹æ³•ä¸Šè·å–äº‹åŠ¡å±æ€§
 		TransactionAttribute txAtt = findTransactionAttribute(specificMethod);
 		if (txAtt != null) {
 			return txAtt;
 		}
 
-		// Second try is the transaction attribute on the target class.   Ä¿±êÀàÉÏ»ñÈ¡ÊÂÎñÊôĞÔ
+		// Second try is the transaction attribute on the target class.   ç›®æ ‡ç±»ä¸Šè·å–äº‹åŠ¡å±æ€§
 		txAtt = findTransactionAttribute(specificMethod.getDeclaringClass());
 		if (txAtt != null) {
 			return txAtt;
 		}
 
-		// Èç¹û´æÔÚ½Ó¿Ú
+		// å¦‚æœå­˜åœ¨æ¥å£
 		if (specificMethod != method) {
-			// Fallback is to look at the original method.  ²é¿´½Ó¿Ú·½·¨£¬»ñÈ¡ÊÂÎñÊôĞÔ
+			// Fallback is to look at the original method.  æŸ¥çœ‹æ¥å£æ–¹æ³•ï¼Œè·å–äº‹åŠ¡å±æ€§
 			txAtt = findTransactionAttribute(method);
 			if (txAtt != null) {
 				return txAtt;
 			}
-			// Last fallback is the class of the original method.   µ½½Ó¿Ú·½·¨ÊµÏÖÀàÉÏ»ñÈ¡ÊÂÎñÊôĞÔ
+			// Last fallback is the class of the original method.   åˆ°æ¥å£æ–¹æ³•å®ç°ç±»ä¸Šè·å–äº‹åŠ¡å±æ€§
 			return findTransactionAttribute(method.getDeclaringClass());
 		}
 		return null;
@@ -176,7 +176,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 
 
 	/**
-	 *   ×ÓÀàĞèÒªÊµÏÖ´Ë·µ»ØÊÂÎñÊôĞÔ
+	 *   å­ç±»éœ€è¦å®ç°æ­¤è¿”å›äº‹åŠ¡å±æ€§
 	 * Subclasses need to implement this to return the transaction attribute
 	 * for the given method, if any.
 	 * @param method the method to retrieve the attribute for
@@ -187,7 +187,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 
 	/**
 	 *
-	 * ×ÓÀàĞèÒªÊµÏÖ´Ë·µ»ØÊÂÎñÊôĞÔ
+	 * å­ç±»éœ€è¦å®ç°æ­¤è¿”å›äº‹åŠ¡å±æ€§
 	 * Subclasses need to implement this to return the transaction attribute
 	 * for the given class, if any.
 	 * @param clazz the class to retrieve the attribute for

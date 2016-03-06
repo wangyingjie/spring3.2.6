@@ -34,19 +34,24 @@ import org.springframework.aop.support.AbstractPointcutAdvisor;
  * @author Juergen Hoeller
  * @see #setTransactionInterceptor
  * @see TransactionProxyFactoryBean
+ *
+ * Aop 通知器，Spring使用这个通知器来完成对事物处理属性值得处理，将事物属性转化为 TransactionAttribute表示的对象中
+ *
  */
 @SuppressWarnings("serial")
 public class TransactionAttributeSourceAdvisor extends AbstractPointcutAdvisor {
 
+	// 事物拦截器
 	private TransactionInterceptor transactionInterceptor;
 
-	// ����������   ransactionAttributeSource
+	// 事务的切入点   transactionAttributeSource  ## TransactionAttributeSourcePointcut 本身是一个抽象类
+	// 此处用 匿名内部类 的方式来对其进行依赖
 	private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {
 		@Override
 		protected TransactionAttributeSource getTransactionAttributeSource() {
 
-			//������������  TransactionInterceptor  �л�ȡ TransactionAttributeSource# getTransactionAttributeSource
-			//  transactionAttributeSource  ���ڽ��� tx �Զ����ǩ�����ע���
+			//从事务拦截器  TransactionInterceptor  中获取 TransactionAttributeSource# getTransactionAttributeSource
+			//  transactionAttributeSource  是在解析 tx 自定义标签中完成注入的
 			return (transactionInterceptor != null ? transactionInterceptor.getTransactionAttributeSource() : null);
 		}
 	};

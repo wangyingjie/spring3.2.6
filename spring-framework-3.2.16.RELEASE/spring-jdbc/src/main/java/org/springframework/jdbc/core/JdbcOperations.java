@@ -40,6 +40,9 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @see JdbcTemplate
+ *
+ * 定义了数据库的基本操作
+ *
  */
 public interface JdbcOperations {
 

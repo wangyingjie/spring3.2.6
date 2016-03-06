@@ -290,6 +290,7 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
 		}
 
 		try {
+			// 创建sqlmapClient 入口
 			this.sqlMapClient = buildSqlMapClient(this.configLocations, this.mappingLocations, this.sqlMapClientProperties);
 
 			// Tell the SqlMapClient to use the given DataSource, if any.
@@ -301,6 +302,8 @@ public class SqlMapClientFactoryBean implements FactoryBean<SqlMapClient>, Initi
 				}
 				transactionConfig.setDataSource(dataSourceToUse);
 				transactionConfig.initialize(this.transactionConfigProperties);
+
+				//为sqlmapClent 设置 ds、tx 属性
 				applyTransactionConfig(this.sqlMapClient, transactionConfig);
 			}
 		}

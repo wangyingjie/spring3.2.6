@@ -110,13 +110,16 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @see TransactionInterceptor
  * @see org.springframework.aop.framework.ProxyFactoryBean
  *
- * 事物代理工厂
+ * 事物代理工厂包含了： TransactionInterceptor  Pointcut  PlatformTransactionManager
  *
+ * TransactionProxyFactoryBean 利用 ProxyFactory 来完成Aop的基本功能
  */
 @SuppressWarnings("serial")
 public class TransactionProxyFactoryBean extends AbstractSingletonProxyFactoryBean
 		implements BeanFactoryAware {
 
+	// 对TransactionInterceptor进行依赖，而事物拦截器 TransactionInterceptor 依赖于 PlatformTransactionManager
+	// 该拦截器是通过 Aop 发挥作用
 	private final TransactionInterceptor transactionInterceptor = new TransactionInterceptor();
 
 	private Pointcut pointcut;
@@ -127,6 +130,7 @@ public class TransactionProxyFactoryBean extends AbstractSingletonProxyFactoryBe
 	 * transaction management: This class is just a way of invoking it.
 	 * @see TransactionInterceptor#setTransactionManager
 	 */
+	//  通过依赖注入将 PlatformTransactionManager 注入给 TransactionProxyFactoryBean
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionInterceptor.setTransactionManager(transactionManager);
 	}
@@ -143,6 +147,9 @@ public class TransactionProxyFactoryBean extends AbstractSingletonProxyFactoryBe
 	 * @see TransactionInterceptor#setTransactionAttributes
 	 * @see TransactionAttributeEditor
 	 * @see NameMatchTransactionAttributeSource
+	 *
+	 * //  通过依赖注入spring 的事物属性
+	 * 将从BeanDefinition中读到的事物管理的属性注入到 TransactionInterceptor 中
 	 */
 	public void setTransactionAttributes(Properties transactionAttributes) {
 		this.transactionInterceptor.setTransactionAttributes(transactionAttributes);
@@ -190,12 +197,14 @@ public class TransactionProxyFactoryBean extends AbstractSingletonProxyFactoryBe
 	 * Creates an advisor for this FactoryBean's TransactionInterceptor.
 	 */
 	@Override
+	// 创建spring aop 对事物处理的advisor
 	protected Object createMainInterceptor() {
 		this.transactionInterceptor.afterPropertiesSet();
 		if (this.pointcut != null) {
 			return new DefaultPointcutAdvisor(this.pointcut, this.transactionInterceptor);
 		}
 		else {
+			// Aop 通知器，Spring使用这个通知器来完成对事物处理属性值得处理，将事物属性转化为 TransactionAttribute表示的对象中
 			// Rely on default pointcut.
 			return new TransactionAttributeSourceAdvisor(this.transactionInterceptor);
 		}

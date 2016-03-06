@@ -92,6 +92,9 @@ import org.springframework.util.LinkedCaseInsensitiveMap;
  * @see RowCallbackHandler
  * @see RowMapper
  * @see org.springframework.jdbc.support.SQLExceptionTranslator
+ *
+ * JdbcTemplate 是对 JdbcOperations基本操作的框架实现
+ *
  */
 public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 

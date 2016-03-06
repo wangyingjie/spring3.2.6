@@ -129,6 +129,7 @@ public abstract class AbstractSingletonProxyFactoryBean extends ProxyConfig
 	}
 
 
+	// 初始化执行
 	public void afterPropertiesSet() {
 		if (this.target == null) {
 			throw new IllegalArgumentException("Property 'target' is required");
@@ -140,6 +141,8 @@ public abstract class AbstractSingletonProxyFactoryBean extends ProxyConfig
 			this.proxyClassLoader = ClassUtils.getDefaultClassLoader();
 		}
 
+		// 创建代理工厂ProxyFactory  TransactionProxyFactoryBean 利用 ProxyFactory 来完成Aop的基本功能
+		//ProxyFactory 提供了Proxy对象，并将 TransactionInterceptor 设置为target方法调用的拦截器
 		ProxyFactory proxyFactory = new ProxyFactory();
 
 		if (this.preInterceptors != null) {
@@ -148,6 +151,7 @@ public abstract class AbstractSingletonProxyFactoryBean extends ProxyConfig
 			}
 		}
 
+		// 添加 advisor Aop的通知处理器
 		// Add the main interceptor (typically an Advisor).
 		proxyFactory.addAdvisor(this.advisorAdapterRegistry.wrap(createMainInterceptor()));
 
@@ -159,6 +163,7 @@ public abstract class AbstractSingletonProxyFactoryBean extends ProxyConfig
 
 		proxyFactory.copyFrom(this);
 
+		// 创建代理目标对象
 		TargetSource targetSource = createTargetSource(this.target);
 		proxyFactory.setTargetSource(targetSource);
 
@@ -166,11 +171,13 @@ public abstract class AbstractSingletonProxyFactoryBean extends ProxyConfig
 			proxyFactory.setInterfaces(this.proxyInterfaces);
 		}
 		else if (!isProxyTargetClass()) {
+			// 设置接口代理
 			// Rely on AOP infrastructure to tell us what interfaces to proxy.
 			proxyFactory.setInterfaces(
 					ClassUtils.getAllInterfacesForClass(targetSource.getTargetClass(), this.proxyClassLoader));
 		}
 
+		// 获取代理对象
 		this.proxy = proxyFactory.getProxy(this.proxyClassLoader);
 	}
 
@@ -190,6 +197,7 @@ public abstract class AbstractSingletonProxyFactoryBean extends ProxyConfig
 	}
 
 
+	// 返回的是一个Proxy 这个Proxy是ProxyFactory生成的Aop代理，已经被封装了对事物处理的拦截器配置
 	public Object getObject() {
 		if (this.proxy == null) {
 			throw new FactoryBeanNotInitializedException();

@@ -82,10 +82,16 @@ import org.springframework.util.Assert;
  * @see com.ibatis.sqlmap.client.SqlMapExecutor
  * @deprecated as of Spring 3.2, in favor of the native Spring support
  * in the Mybatis follow-up project (http://code.google.com/p/mybatis/)
+ *
+ *  回调方法内部其实是封装了 ibtais 的API 接口，spring 的Template只是对ibtais操作接口本身的包装
+ *
+ *  SqlMapClientTemplate 属于 spring 整合ibtais的接口实现类
+ *
  */
 @Deprecated
 public class SqlMapClientTemplate extends JdbcAccessor implements SqlMapClientOperations {
 
+	// SqlMapClient 类是属于 ibtais 的Api操作接口类， XXXTemplate 是对其进行了封装
 	private SqlMapClient sqlMapClient;
 
 
@@ -179,6 +185,9 @@ public class SqlMapClientTemplate extends JdbcAccessor implements SqlMapClientOp
 
 			// Obtain JDBC Connection to operate on...
 			try {
+				// 这里是获取 Connection ，如果已经在 spring的事物管理之下，则可以直接使用，否则使用  DataSourceUtils.doGetConnection
+				// 来产生需要的 Connection ，并将得到的 Connection 置于spring的书屋管理器中
+
 				ibatisCon = session.getCurrentConnection();
 				if (ibatisCon == null) {
 					springCon = (transactionAware ?
@@ -200,6 +209,7 @@ public class SqlMapClientTemplate extends JdbcAccessor implements SqlMapClientOp
 
 			// Execute given callback...
 			try {
+				// 执行 SqlMapClientCallback 的回调方法
 				return action.doInSqlMapClient(session);
 			}
 			catch (SQLException ex) {
@@ -226,7 +236,7 @@ public class SqlMapClientTemplate extends JdbcAccessor implements SqlMapClientOp
 		finally {
 			// Only close SqlMapSession if we know we've actually opened it
 			// at the present level.
-			if (ibatisCon == null) {
+			if (ibatisCon == null) {// 资源关闭
 				session.close();
 			}
 		}
@@ -269,6 +279,7 @@ public class SqlMapClientTemplate extends JdbcAccessor implements SqlMapClientOp
 			throws DataAccessException {
 
 		return execute(new SqlMapClientCallback<Object>() {
+			// 回调方法内部其实是封装了 ibtais 的API 接口，spring 的Template只是对ibtais操作接口本身的包装
 			public Object doInSqlMapClient(SqlMapExecutor executor) throws SQLException {
 				return executor.queryForObject(statementName, parameterObject);
 			}

@@ -89,7 +89,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 	 * Obtain an object to expose from the given FactoryBean.
 	 * @param factory the FactoryBean instance
 	 * @param beanName the name of the bean
-	 * @param shouldPostProcess whether the bean is subject to post-processing    bean�Ƿ��Ǻ���
+	 * @param shouldPostProcess whether the bean is subject to post-processing    bean是否是后处理
 	 * @return the object obtained from the FactoryBean
 	 * @throws BeanCreationException if FactoryBean object creation failed
 	 * @see org.springframework.beans.factory.FactoryBean#getObject()
@@ -100,7 +100,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 				Object object = this.factoryBeanObjectCache.get(beanName);
 				if (object == null) {
 
-					//����Bean
+					//创建Bean
 					object = doGetObjectFromFactoryBean(factory, beanName);
 					// Only post-process and store if not put there already during getObject() call above
 					// (e.g. because of circular reference processing triggered by custom getBean calls)
@@ -156,15 +156,16 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 				try {
 					object = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 						public Object run() throws Exception {
-								return factory.getObject();
-							}
-						}, acc);
+							return factory.getObject();
+						}
+					}, acc);
 				}
 				catch (PrivilegedActionException pae) {
 					throw pae.getException();
 				}
 			}
 			else {
+				// 从回调 接口 FactoryBean 中获取bean对象
 				object = factory.getObject();
 			}
 		}

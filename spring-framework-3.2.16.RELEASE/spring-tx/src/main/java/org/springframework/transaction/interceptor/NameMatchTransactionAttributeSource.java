@@ -37,6 +37,9 @@ import org.springframework.util.PatternMatchUtils;
  * @since 21.08.2003
  * @see #isMatch
  * @see MethodMapTransactionAttributeSource
+ *
+ * 根据方法名匹配事物属下，支持通配符的处理
+ *
  */
 @SuppressWarnings("serial")
 public class NameMatchTransactionAttributeSource implements TransactionAttributeSource, Serializable {
