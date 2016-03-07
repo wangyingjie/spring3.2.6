@@ -377,11 +377,12 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 
 	//-------------------------------------------------------------------------
 	// Methods dealing with static SQL (java.sql.Statement)
+	// 处理静态SQL方法
 	//-------------------------------------------------------------------------
 
 	public <T> T execute(StatementCallback<T> action) throws DataAccessException {
 		Assert.notNull(action, "Callback object must not be null");
-
+		//DataSourceUtils 获取数据源链接的工具类
 		Connection con = DataSourceUtils.getConnection(getDataSource());
 		Statement stmt = null;
 		try {

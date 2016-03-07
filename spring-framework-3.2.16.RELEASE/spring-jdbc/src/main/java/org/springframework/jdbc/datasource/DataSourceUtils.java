@@ -96,6 +96,7 @@ public abstract class DataSourceUtils {
 	public static Connection doGetConnection(DataSource dataSource) throws SQLException {
 		Assert.notNull(dataSource, "No DataSource specified");
 
+		// å…ˆä»threadlocalé‡Œè·å–
 		ConnectionHolder conHolder = (ConnectionHolder) TransactionSynchronizationManager.getResource(dataSource);
 		if (conHolder != null && (conHolder.hasConnection() || conHolder.isSynchronizedWithTransaction())) {
 			conHolder.requested();
@@ -108,7 +109,7 @@ public abstract class DataSourceUtils {
 		// Else we either got no holder or an empty thread-bound holder here.
 
 		logger.debug("Fetching JDBC Connection from DataSource");
-		Connection con = dataSource.getConnection();
+		Connection con = dataSource.getConnection();//è·å–çœŸå®çš„DataSourceé“¾æ¥
 
 		if (TransactionSynchronizationManager.isSynchronizationActive()) {
 			logger.debug("Registering transaction synchronization for JDBC Connection");
@@ -146,13 +147,13 @@ public abstract class DataSourceUtils {
 
 		Assert.notNull(con, "No Connection specified");
 
-		// Set read-only flag.  ÉèÖÃÊı¾İÁ¬½ÓµÄÖ»¶Á±êÖ¾
+		// Set read-only flag.  // äº‹åŠ¡åªè¯»
 		if (definition != null && definition.isReadOnly()) {
 			try {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Setting JDBC Connection [" + con + "] read-only");
 				}
-				// ÉèÖÃÖ»¶ÁÊôĞÔ
+				// äº‹åŠ¡åªè¯»
 				con.setReadOnly(true);
 			}
 			catch (SQLException ex) {
@@ -192,7 +193,7 @@ public abstract class DataSourceUtils {
 			if (currentIsolation != definition.getIsolationLevel()) {
 				previousIsolationLevel = currentIsolation;
 
-				//ÉèÖÃÊı¾İ¿âÁ¬½Ó¸ôÀë¼¶±ğ
+				//è®¾ç½®äº‹åŠ¡éš”ç¦»çº§åˆ«
 				con.setTransactionIsolation(definition.getIsolationLevel());
 			}
 		}
@@ -429,7 +430,7 @@ public abstract class DataSourceUtils {
 
 		@Override
 		public void suspend() {
-			if (this.holderActive) {
+			if (this.holderActive) {//æš‚åœ æŒ‚èµ·
 				TransactionSynchronizationManager.unbindResource(this.dataSource);
 				if (this.connectionHolder.hasConnection() && !this.connectionHolder.isOpen()) {
 					// Release Connection on suspend if the application doesn't keep
@@ -443,7 +444,7 @@ public abstract class DataSourceUtils {
 		}
 
 		@Override
-		public void resume() {
+		public void resume() {//é‡æ–°å¼€å§‹
 			if (this.holderActive) {
 				TransactionSynchronizationManager.bindResource(this.dataSource, this.connectionHolder);
 			}

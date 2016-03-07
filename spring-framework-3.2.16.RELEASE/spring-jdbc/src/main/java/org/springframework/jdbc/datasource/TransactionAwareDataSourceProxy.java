@@ -69,6 +69,21 @@ import org.springframework.util.Assert;
  * {@link org.springframework.jdbc.support.nativejdbc.NativeJdbcExtractor}
  * or JDBC 4's {@link Connection#unwrap} to retrieve the native JDBC Connection.
  *
+ * 总结流程:
+ * Spring 对DataSource进行事务管理的关键在于ConnectionHolder和TransactionSynchronizationManager。
+ * 0.先从TransactionSynchronizationManager中尝试获取连接
+ * 1.如果前一步失败则在每个线程上，对每个DataSouce只创建一个Connection
+ * 2.这个Connection用ConnectionHolder包装起来，由TransactionSynchronizationManager管理
+ * 3.再次请求同一个连接的时候，从TransactionSynchronizationManager返回已经创建的ConnectionHolder，然后调用ConnectionHolder的request将引用计数+1
+ * 4.释放连接时要调用ConnectionHolder的released，将引用计数-1
+ * 5.当事物完成后，将ConnectionHolder从TransactionSynchronizationManager中解除。当谁都不用，这个连接被close
+ *
+ * 以上所有都是可以调用DataSourceUtils化简代码，而JdbcTemplate又是调用DataSourceUtils的。所以在Spring文档中要求尽量首先使用JdbcTemplate，
+ * 其次是用DataSourceUtils来获取和释放连接。至于TransactionAwareDataSourceProxy，那是下策的下策。不过可以将Spring事务管理和遗留代码无缝集成。
+ *
+ * 所以如某位朋友说要使用Spring的事务管理，但是又不想用JdbcTemplate，那么可以考虑TransactionAwareDataSourceProxy。这个类是原来DataSource的代理。
+ *
+ *
  * @author Juergen Hoeller
  * @since 1.1
  * @see javax.sql.DataSource#getConnection()
@@ -119,11 +134,14 @@ public class TransactionAwareDataSourceProxy extends DelegatingDataSource {
 	 * @return a transactional Connection if any, a new one else
 	 * @see DataSourceUtils#doGetConnection
 	 * @see ConnectionProxy#getTargetConnection
+	 *
+	 * 获取数据源链接，万变不离其宗，最终都是从  DataSourceUtils#doGetConnection  获取
 	 */
 	@Override
 	public Connection getConnection() throws SQLException {
 		DataSource ds = getTargetDataSource();
 		Assert.state(ds != null, "'targetDataSource' is required");
+		//获取代理链接
 		return getTransactionAwareConnectionProxy(ds);
 	}
 
@@ -136,6 +154,7 @@ public class TransactionAwareDataSourceProxy extends DelegatingDataSource {
 	 * @see DataSourceUtils#doReleaseConnection
 	 */
 	protected Connection getTransactionAwareConnectionProxy(DataSource targetDataSource) {
+		//返回的是jdk的动态代理
 		return (Connection) Proxy.newProxyInstance(
 				ConnectionProxy.class.getClassLoader(),
 				new Class[] {ConnectionProxy.class},
@@ -221,15 +240,18 @@ public class TransactionAwareDataSourceProxy extends DelegatingDataSource {
 					throw new SQLException("Connection handle already closed");
 				}
 				if (shouldObtainFixedConnection(this.targetDataSource)) {
+					// 数据源链接获取工具
 					this.target = DataSourceUtils.doGetConnection(this.targetDataSource);
 				}
 			}
 			Connection actualTarget = this.target;
 			if (actualTarget == null) {
+				// 数据源链接获取工具
 				actualTarget = DataSourceUtils.doGetConnection(this.targetDataSource);
 			}
 
 			if (method.getName().equals("getTargetConnection")) {
+				// underlying 潜在的链接
 				// Handle getTargetConnection method: return underlying Connection.
 				return actualTarget;
 			}

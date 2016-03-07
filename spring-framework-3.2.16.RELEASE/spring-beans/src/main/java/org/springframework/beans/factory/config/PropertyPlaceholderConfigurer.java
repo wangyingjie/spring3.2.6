@@ -180,6 +180,9 @@ public class PropertyPlaceholderConfigurer extends PlaceholderConfigurerSupport 
 	 * @param props the merged properties of this configurer
 	 * @return the resolved value, of {@code null} if none
 	 * @see #setSystemPropertiesMode
+	 *
+	 * placeholder£ºÕ¼Î»·û
+	 *
 	 */
 	protected String resolvePlaceholder(String placeholder, Properties props) {
 		return props.getProperty(placeholder);
