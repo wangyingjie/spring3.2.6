@@ -295,12 +295,12 @@ final class CglibAopProxy implements AopProxy, Serializable {
 				new StaticDispatcher(this.advised.getTargetSource().getTarget()) : new SerializableNoOp();
 
 		Callback[] mainCallbacks = new Callback[]{
-			aopInterceptor, // for normal advice
-			targetInterceptor, // invoke target without considering advice, if optimized
-			new SerializableNoOp(), // no override for methods mapped to this
-			targetDispatcher, this.advisedDispatcher,
-			new EqualsInterceptor(this.advised),
-			new HashCodeInterceptor(this.advised)
+				aopInterceptor, // for normal advice
+				targetInterceptor, // invoke target without considering advice, if optimized
+				new SerializableNoOp(), // no override for methods mapped to this
+				targetDispatcher, this.advisedDispatcher,
+				new EqualsInterceptor(this.advised),
+				new HashCodeInterceptor(this.advised)
 		};
 
 		Callback[] callbacks;
@@ -600,7 +600,7 @@ final class CglibAopProxy implements AopProxy, Serializable {
 			this.advised = advised;
 		}
 
-		// cglib ��̬������ʵ�ַ�ʽ
+		// cglib 动态代理的实现方式
 		public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
 			Object oldProxy = null;
 			boolean setProxyContext = false;
@@ -618,10 +618,12 @@ final class CglibAopProxy implements AopProxy, Serializable {
 				if (target != null) {
 					targetClass = target.getClass();
 				}
+				// 获取通知
 				List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 				Object retVal;
 				// Check whether we only have one InvokerInterceptor: that is,
 				// no real advice, but just reflective invocation of the target.
+				// 拦截器是空的，并且是 public 方法则执行目标方法
 				if (chain.isEmpty() && Modifier.isPublic(method.getModifiers())) {
 					// We can skip creating a MethodInvocation: just invoke the target directly.
 					// Note that the final invoker must be an InvokerInterceptor, so we know
@@ -631,8 +633,10 @@ final class CglibAopProxy implements AopProxy, Serializable {
 				}
 				else {
 					// We need to create a method invocation...
+					// 构造 CglibMethodInvocation 来启动 advice  调用了方法：## proceed()
 					retVal = new CglibMethodInvocation(proxy, target, method, args, targetClass, chain, methodProxy).proceed();
 				}
+				//
 				retVal = processReturnType(proxy, target, method, retVal);
 				return retVal;
 			}
@@ -682,7 +686,7 @@ final class CglibAopProxy implements AopProxy, Serializable {
 		private boolean protectedMethod;
 
 		public CglibMethodInvocation(Object proxy, Object target, Method method, Object[] arguments,
-				Class<?> targetClass, List<Object> interceptorsAndDynamicMethodMatchers, MethodProxy methodProxy) {
+									 Class<?> targetClass, List<Object> interceptorsAndDynamicMethodMatchers, MethodProxy methodProxy) {
 			super(proxy, target, method, arguments, targetClass, interceptorsAndDynamicMethodMatchers);
 			this.methodProxy = methodProxy;
 			this.protectedMethod = Modifier.isProtected(method.getModifiers());

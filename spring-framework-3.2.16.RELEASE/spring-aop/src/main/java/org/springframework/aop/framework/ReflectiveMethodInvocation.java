@@ -144,11 +144,12 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	}
 
 
-
+	// 可能是通过 Jdk  or Gglib 两种代理方式实现的，  但是最终的执行都是通过  invokeJoinpoint() 方法
 	public Object proceed() throws Throwable {
 		// 执行完最后一个拦截器之后则执行切点方法
 		//	We start with an index of -1 and increment early.
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
+			// 只有当所有的拦截器方法都执行结束之后才会执行以下目标方法
 			return invokeJoinpoint();
 		}
 
@@ -159,15 +160,18 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 			// been evaluated and found to match.
 			InterceptorAndDynamicMethodMatcher dm =
 					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
+			//动态匹配切入点 PointCut  如果匹配上了，那么advice 将被执行到
 			if (dm.methodMatcher.matches(this.method, this.targetClass, this.arguments)) {
 				return dm.interceptor.invoke(this);
 			} else {
+				//如果不匹配则递归
 				// Dynamic matching failed.
 				// Skip this interceptor and invoke the next in the chain.
 				//此方法为递归调用方法
 				return proceed();
 			}
 		} else {
+			// 如果式一个interceptor 则直接调用 Interceptor 对应的方法
 			// It's an interceptor, so we just invoke it: The pointcut will have
 			// been evaluated statically before this object was constructed.
 			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);
