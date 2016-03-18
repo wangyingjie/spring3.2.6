@@ -162,6 +162,9 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
 			//动态匹配切入点 PointCut  如果匹配上了，那么advice 将被执行到
 			if (dm.methodMatcher.matches(this.method, this.targetClass, this.arguments)) {
+
+				// 调用了具体封装类 AfterReturningAdviceInterceptor/MethodBeforeAdviceInterceptor/ThrowsAdviceInterceptor
+				// 的 invoke 方法
 				return dm.interceptor.invoke(this);
 			} else {
 				//如果不匹配则递归

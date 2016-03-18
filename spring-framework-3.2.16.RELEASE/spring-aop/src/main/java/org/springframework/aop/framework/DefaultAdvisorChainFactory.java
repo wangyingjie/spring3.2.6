@@ -42,30 +42,42 @@ import org.springframework.aop.support.MethodMatchers;
  * @author Rod Johnson
  * @author Adrian Colyer
  * @since 2.0.3
+ *
+ * 重要的获取拦截器链的工厂
+ *
  */
 @SuppressWarnings("serial")
 public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializable {
 
+	//在这个过程中去完成连接器链的生成过程
 	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(
 			Advised config, Method method, Class targetClass) {
 
 		// This is somewhat tricky... we have to process introductions first,
 		// but we need to preserve order in the ultimate list.
+		// config 中已经持有了 advisor 链，这里可以直接使用其长度
 		List<Object> interceptorList = new ArrayList<Object>(config.getAdvisors().length);
+
+		// 是否匹配规则
 		boolean hasIntroductions = hasMatchingIntroductions(config, targetClass);
+		//AdvisorAdapterRegistry 实现了拦截器注册  对advice通知的织入功能起到了很大的作用
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
 		for (Advisor advisor : config.getAdvisors()) {
-			if (advisor instanceof PointcutAdvisor) {
+			if (advisor instanceof PointcutAdvisor) {// 对切入点的配置实现
 				// Add it conditionally.
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
 				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(targetClass)) {
+					//从GlobalAdvisorAdapterRegistry 中去获取MethodInterceptor 的实现
 					MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
+
+					//MethodMatcher 进行方法匹配判断
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
 					if (MethodMatchers.matches(mm, method, targetClass, hasIntroductions)) {
 						if (mm.isRuntime()) {
 							// Creating a new object instance in the getInterceptors() method
 							// isn't a problem as we normally cache created chains.
 							for (MethodInterceptor interceptor : interceptors) {
+								// 在 getInterceptors() 方法中创建新的对象实例
 								interceptorList.add(new InterceptorAndDynamicMethodMatcher(interceptor, mm));
 							}
 						}
@@ -87,11 +99,14 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 				interceptorList.addAll(Arrays.asList(interceptors));
 			}
 		}
+		// 返回所有的拦截器链的配置信息，这些拦截器链会被jdk生成的 AopProxy代理对象的invoke方法或 cglib 的intercept 拦截方法取得  并最终触发执行
 		return interceptorList;
 	}
 
 	/**
 	 * Determine whether the Advisors contain matching introductions.
+	 *
+	 * 判断advisor是否符合配置的规则
 	 */
 	private static boolean hasMatchingIntroductions(Advised config, Class targetClass) {
 		for (int i = 0; i < config.getAdvisors().length; i++) {

@@ -238,6 +238,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 		}
 	}
 
+	// åœ¨ä½¿ç”¨IOCå®¹å™¨çš„æ—¶å€™  å¯¹IOCå®¹å™¨å¦‚æœéœ€è¦å›è°ƒåˆ™å®ç° BeanFactoryAware æ¥å£
 	public void setBeanFactory(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
@@ -313,19 +314,19 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	}
 
 	/**
-	 *   Èç¹ûbeanÊÇÈ·¶¨ÎªÒ»¸ö´úÀíÀàµÄ´´½¨ÓëÅäÖÃÀ¹½ØÆ÷´úÀí¡£
+	 *   å¦‚æœbeanæ˜¯ç¡®å®šä¸ºä¸€ä¸ªä»£ç†ç±»çš„åˆ›å»ºä¸é…ç½®æ‹¦æˆªå™¨ä»£ç†ã€‚
 	 * Create a proxy with the configured interceptors if the bean is
 	 * identified as one to proxy by the subclass.
 	 * @see #getAdvicesAndAdvisorsForBean
 	 */
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean != null) {
-			//¹¹½¨»º´ækey
+			//æ„å»ºç¼“å­˜key
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
-			//ÊÇ·ñÓÉÓÚ±ÜÃâÑ­»·ÒÀÀµ¶ø´´½¨µÄBean´úÀí
+			//æ˜¯å¦ç”±äºé¿å…å¾ªç¯ä¾èµ–è€Œåˆ›å»ºçš„Beanä»£ç†
 			if (!this.earlyProxyReferences.containsKey(cacheKey)) {
 
-				//¶ÔÖ¸¶¨Bean½øĞĞ·â×°
+				//å¯¹æŒ‡å®šBeanè¿›è¡Œå°è£…
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}
@@ -344,10 +345,10 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	}
 
 	/**
-	 * ·â×°Ö¸¶¨µÄBean Èç¹û±ØÒª£¬¼´Èç¹ûËüÊÇºÏ¸ñµÄ´úÀí¡£
+	 * å°è£…æŒ‡å®šçš„Bean å¦‚æœå¿…è¦ï¼Œå³å¦‚æœå®ƒæ˜¯åˆæ ¼çš„ä»£ç†ã€‚
 	 *
-	 * 1.ÕÒ³öÖ¸¶¨bean¶ÔÓ¦µÄÔöÇ¿Æ÷
-	 * 2.¸ù¾İÕÒ³öµÄÔöÇ¿Æ÷´´½¨´úÀí¶ÔÏó
+	 * 1.æ‰¾å‡ºæŒ‡å®šbeanå¯¹åº”çš„å¢å¼ºå™¨
+	 * 2.æ ¹æ®æ‰¾å‡ºçš„å¢å¼ºå™¨åˆ›å»ºä»£ç†å¯¹è±¡
 	 *
 	 * Wrap the given bean if necessary, i.e. if it is eligible for being proxied.
 	 * @param bean the raw bean instance
@@ -357,7 +358,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	 */
 	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
 
-		//Èç¹ûÒÑ¾­´¦Àí¹ı
+		//å¦‚æœå·²ç»å¤„ç†è¿‡
 		if (beanName != null && this.targetSourcedBeans.containsKey(beanName)) {
 			return bean;
 		}
@@ -369,7 +370,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 			return bean;
 		}
 
-		// Create proxy if we have advice.  Èç¹ûÓĞadvice Ôò´´½¨Ò»¸ö´úÀí  ÒªÕÒ³öÔöÇ¿Æ÷¡¢Í¬Ê±ÒªÅĞ¶ÏÊÇ·ñÂú×ãĞèÒª
+		// Create proxy if we have advice.  å¦‚æœæœ‰advice åˆ™åˆ›å»ºä¸€ä¸ªä»£ç†  è¦æ‰¾å‡ºå¢å¼ºå™¨ã€åŒæ—¶è¦åˆ¤æ–­æ˜¯å¦æ»¡è¶³éœ€è¦
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);

@@ -508,6 +508,8 @@ public class BeanDefinitionParserDelegate {
 				}
 			}
 			String[] aliasesArray = StringUtils.toStringArray(aliases);
+
+			// 返回一个BeanDefinitionHolder 对象   其中包含 BeanDefinition 对象的引用
 			return new BeanDefinitionHolder(beanDefinition, beanName, aliasesArray);
 		}
 
@@ -927,14 +929,17 @@ public class BeanDefinitionParserDelegate {
 		}
 		this.parseState.push(new PropertyEntry(propertyName));
 		try {
+			//已经存在同名的propertyName  这直接返回，不在解析
 			if (bd.getPropertyValues().contains(propertyName)) {
 				error("Multiple 'property' definitions for property '" + propertyName + "'", ele);
 				return;
 			}
+			//解析PropertyValue属性
 			Object val = parsePropertyValue(ele, bd, propertyName);
 			PropertyValue pv = new PropertyValue(propertyName, val);
 			parseMetaElements(ele, pv);
 			pv.setSource(extractSource(ele));
+			//将解析到的 PropertyValue 设置到 BeanDefinition 中去
 			bd.getPropertyValues().addPropertyValue(pv);
 		}
 		finally {
@@ -1013,14 +1018,18 @@ public class BeanDefinitionParserDelegate {
 			}
 		}
 
+		// 属性是 ref
 		boolean hasRefAttribute = ele.hasAttribute(REF_ATTRIBUTE);
+		// 属性是 value
 		boolean hasValueAttribute = ele.hasAttribute(VALUE_ATTRIBUTE);
+
 		if ((hasRefAttribute && hasValueAttribute) ||
 				((hasRefAttribute || hasValueAttribute) && subElement != null)) {
 			error(elementName +
 					" is only allowed to contain either 'ref' attribute OR 'value' attribute OR sub-element", ele);
 		}
 
+		// 是ref则创建一个 ref的数据对象  RuntimeBeanReference  这个对象封装了ref的信息
 		if (hasRefAttribute) {
 			String refName = ele.getAttribute(REF_ATTRIBUTE);
 			if (!StringUtils.hasText(refName)) {
@@ -1030,11 +1039,13 @@ public class BeanDefinitionParserDelegate {
 			ref.setSource(extractSource(ele));
 			return ref;
 		}
+		// 是value则创建一个 TypedStringValue 封装value信息
 		else if (hasValueAttribute) {
 			TypedStringValue valueHolder = new TypedStringValue(ele.getAttribute(VALUE_ATTRIBUTE));
 			valueHolder.setSource(extractSource(ele));
 			return valueHolder;
 		}
+		// 如果还有子类信息 则继续解析   包括了Array/List/Set/Map/Prop 等元素的解析过程
 		else if (subElement != null) {
 			return parsePropertySubElement(subElement, bd);
 		}
@@ -1218,6 +1229,7 @@ public class BeanDefinitionParserDelegate {
 		target.setSource(extractSource(collectionEle));
 		target.setElementTypeName(defaultElementType);
 		target.setMergeEnabled(parseMergeAttribute(collectionEle));
+		// 具体的 List 元素的解析过程
 		parseCollectionElements(nl, target, bd, defaultElementType);
 		return target;
 	}
@@ -1236,6 +1248,7 @@ public class BeanDefinitionParserDelegate {
 		return target;
 	}
 
+	// 具体的 Collection 元素的解析过程
 	protected void parseCollectionElements(
 			NodeList elementNodes, Collection<Object> target, BeanDefinition bd, String defaultElementType) {
 

@@ -357,6 +357,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 		}
 	}
 
+	// 添加配置文件中放置的拦截器
 	private void addAdvisorInternal(int pos, Advisor advisor) throws AopConfigException {
 		Assert.notNull(advisor, "Advisor must not be null");
 		if (isFrozen()) {
@@ -474,11 +475,16 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * @param method the proxied method
 	 * @param targetClass the target class
 	 * @return List of MethodInterceptors (may also include InterceptorAndDynamicMethodMatchers)
+	 *
+	 * 获取拦截器链，利用缓存提交效率
 	 */
 	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, Class targetClass) {
 		MethodCacheKey cacheKey = new MethodCacheKey(method);
 		List<Object> cached = this.methodCache.get(cacheKey);
 		if (cached == null) {
+			//缓存获取拦截器链  第一次还是需要自己生成拦截器链
+			//拦截器链是由 advisorChainFactory完成的
+			//使用的 DefaultAdvisorChainFactory 生成连接器链
 			cached = this.advisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice(
 					this, method, targetClass);
 			this.methodCache.put(cacheKey, cached);

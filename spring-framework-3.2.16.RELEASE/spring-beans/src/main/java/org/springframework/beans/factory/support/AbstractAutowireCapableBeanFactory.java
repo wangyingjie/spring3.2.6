@@ -1580,7 +1580,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return wrappedBean;
 	}
 
-	//判断是否实现了 BeanNameAware 、 BeanClassLoaderAware 等 spring 提供的接口，
+	//判断是否实现了 BeanNameAware 、 BeanClassLoaderAware 等 spring 提供的接口Bean 感知接口
 	private void invokeAwareMethods(final String beanName, final Object bean) {
 		if (bean instanceof Aware) {
 			if (bean instanceof BeanNameAware) {
@@ -1589,6 +1589,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (bean instanceof BeanClassLoaderAware) {
 				((BeanClassLoaderAware) bean).setBeanClassLoader(getBeanClassLoader());
 			}
+			// 初始化IOC容器的时候回判断当前Bean是否实现了BeanFactoryAware接口，如果是则会将 BeanFactory 设置给IOC容器的Bean对象持有
 			if (bean instanceof BeanFactoryAware) {
 				((BeanFactoryAware) bean).setBeanFactory(AbstractAutowireCapableBeanFactory.this);
 			}

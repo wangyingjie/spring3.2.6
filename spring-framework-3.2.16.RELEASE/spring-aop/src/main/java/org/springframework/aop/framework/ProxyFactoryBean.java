@@ -458,16 +458,19 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 				else {
 					// If we get here, we need to add a named interceptor.
 					// We must check if it's a singleton or prototype.
+					// 检查bean是 单例还是原型模式
 					Object advice;
-					if (this.singleton || this.beanFactory.isSingleton(name)) {
-						// Add the real Advisor/Advice to the chain.
+					if (this.singleton || this.beanFactory.isSingleton(name)) {// 单例
+						// Add the real Advisor/Advice to the chain.  取得Advisor、Advice
+						//  把interceptorNames这个List中的 Interceptor名字交给 beanFactory 的getBean 去获取 advic
 						advice = this.beanFactory.getBean(name);
 					}
-					else {
+					else {// 原型
 						// It's a prototype Advice or Advisor: replace with a prototype.
 						// Avoid unnecessary creation of prototype bean just for advisor chain initialization.
 						advice = new PrototypePlaceholderAdvisor(name);
 					}
+					//切面添加 到拦截器链中
 					addAdvisorOnChainCreation(advice, name);
 				}
 			}
@@ -511,6 +514,8 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 
 	/**
 	 * Add all global interceptors and pointcuts.
+	 *
+	 * 从Ioc容器中获取拦截器
 	 */
 	private void addGlobalAdvisor(ListableBeanFactory beanFactory, String prefix) {
 		String[] globalAdvisorNames =
@@ -533,6 +538,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 		for (Object bean : beans) {
 			String name = names.get(bean);
 			if (name.startsWith(prefix)) {
+				//将Bean名字前缀满足条件的 advisor 添加到 拦截器链中
 				addAdvisorOnChainCreation(bean, name);
 			}
 		}
@@ -647,6 +653,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 			return beanName;
 		}
 
+		// 原型模式不支持拦截器
 		public Advice getAdvice() {
 			throw new UnsupportedOperationException("Cannot invoke methods: " + this.message);
 		}

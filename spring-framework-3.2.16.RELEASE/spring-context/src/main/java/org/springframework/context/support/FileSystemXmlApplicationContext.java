@@ -79,6 +79,8 @@ public class FileSystemXmlApplicationContext extends AbstractXmlApplicationConte
 	 * from the given XML file and automatically refreshing the context.
 	 * @param configLocation file path
 	 * @throws BeansException if context creation failed
+	 *
+	 * 包含Beandefinition所在的文件路径
 	 */
 	public FileSystemXmlApplicationContext(String configLocation) throws BeansException {
 		this(new String[] {configLocation}, true, null);
@@ -130,6 +132,9 @@ public class FileSystemXmlApplicationContext extends AbstractXmlApplicationConte
 	 * @param parent the parent context
 	 * @throws BeansException if context creation failed
 	 * @see #refresh()
+	 *
+	 * 对象的初始化的过程中载入Beandefinition，这个  refresh 启动了BeanDefinition的载入过程
+	 *
 	 */
 	public FileSystemXmlApplicationContext(String[] configLocations, boolean refresh, ApplicationContext parent)
 			throws BeansException {

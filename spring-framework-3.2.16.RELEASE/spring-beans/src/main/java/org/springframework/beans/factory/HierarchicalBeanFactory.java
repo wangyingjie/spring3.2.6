@@ -33,6 +33,8 @@ public interface HierarchicalBeanFactory extends BeanFactory {
 
 	/**
 	 * Return the parent bean factory, or {@code null} if there is none.
+	 *
+	 * 增加了获取父类的beanFactory
 	 */
 	BeanFactory getParentBeanFactory();
 

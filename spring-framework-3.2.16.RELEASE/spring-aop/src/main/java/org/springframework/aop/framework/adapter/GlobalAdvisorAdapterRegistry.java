@@ -23,11 +23,16 @@ package org.springframework.aop.framework.adapter;
  * @author Juergen Hoeller
  * @author Phillip Webb
  * @see DefaultAdvisorAdapterRegistry
+ *
+ * 起到了一个适配器的作用
+ *
  */
 public abstract class GlobalAdvisorAdapterRegistry {
 
 	/**
 	 * Keep track of a single instance so we can return it to classes that request it.
+	 *
+	 * DefaultAdvisorAdapterRegistry 来完成各种通知的注册和适配工作
 	 */
 	private static AdvisorAdapterRegistry instance = new DefaultAdvisorAdapterRegistry();
 

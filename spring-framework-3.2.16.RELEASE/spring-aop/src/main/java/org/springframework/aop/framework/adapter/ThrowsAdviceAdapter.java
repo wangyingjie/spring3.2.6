@@ -39,6 +39,7 @@ class ThrowsAdviceAdapter implements AdvisorAdapter, Serializable {
 	}
 
 	public MethodInterceptor getInterceptor(Advisor advisor) {
+		// 方法抛异常
 		return new ThrowsAdviceInterceptor(advisor.getAdvice());
 	}
 

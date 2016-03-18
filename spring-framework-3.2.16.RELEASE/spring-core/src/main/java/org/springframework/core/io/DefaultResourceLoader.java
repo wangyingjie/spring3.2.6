@@ -99,11 +99,14 @@ public class DefaultResourceLoader implements ResourceLoader {
 		else {
 			try {
 				// Try to parse the location as a URL...
+				// 处理url标识的Resource定位
 				URL url = new URL(location);
 				return new UrlResource(url);
 			}
 			catch (MalformedURLException ex) {
 				// No URL -> resolve as resource path.
+				// 如果既不是classpath  也不是 url表示的 Resource 定位，则把获取资源交给 getResourceByPath
+				// 默认实现得到一个 ClassPathContextResource
 				return getResourceByPath(location);
 			}
 		}

@@ -40,6 +40,7 @@ class AfterReturningAdviceAdapter implements AdvisorAdapter, Serializable {
 
 	public MethodInterceptor getInterceptor(Advisor advisor) {
 		AfterReturningAdvice advice = (AfterReturningAdvice) advisor.getAdvice();
+		// 返回一个后置通知
 		return new AfterReturningAdviceInterceptor(advice);
 	}
 
