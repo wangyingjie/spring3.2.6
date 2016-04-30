@@ -201,18 +201,22 @@ public class InternalResourceView extends AbstractUrlBasedView {
 	protected void renderMergedOutputModel(
 			Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
+		// 需要将哪个请求的处理器交给 RequestDispatcher
 		// Determine which request handle to expose to the RequestDispatcher.
 		HttpServletRequest requestToExpose = getRequestToExpose(request);
 
+		//将模型对象放到 request 里面
 		// Expose the model object as request attributes.
 		exposeModelAsRequestAttributes(model, requestToExpose);
 
 		// Expose helpers as request attributes, if any.
 		exposeHelpers(requestToExpose);
 
+		// 获取内部资源路径
 		// Determine the path for the request dispatcher.
 		String dispatcherPath = prepareForRendering(requestToExpose, response);
 
+		// 将请求转发到内部资源路径中去 例如：jsp 的实现
 		// Obtain a RequestDispatcher for the target resource (typically a JSP).
 		RequestDispatcher rd = getRequestDispatcher(requestToExpose, dispatcherPath);
 		if (rd == null) {
@@ -230,6 +234,7 @@ public class InternalResourceView extends AbstractUrlBasedView {
 		}
 
 		else {
+			// 转发请求至定义好的资源上，比如JSP页面，JSP页面的展现由WEB容器负责，在这种情况下，View只起到了转发请求的作用
 			// Note: The forwarded resource is supposed to determine the content type itself.
 			exposeForwardRequestAttributes(requestToExpose);
 			if (logger.isDebugEnabled()) {
@@ -285,6 +290,7 @@ public class InternalResourceView extends AbstractUrlBasedView {
 	protected String prepareForRendering(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
+		//从request中获取url
 		String path = getUrl();
 		if (this.preventDispatchLoop) {
 			String uri = request.getRequestURI();

@@ -1246,7 +1246,7 @@ public class DispatcherServlet extends FrameworkServlet {
 						"' in servlet with name '" + getServletName() + "'");
 			}
 		}
-		else {
+		else {// modelandview 中已经包含了view对象，得到对应的视图对象
 			// No need to lookup: the ModelAndView object contains the actual View object.
 			view = mv.getView();
 			if (view == null) {
@@ -1302,6 +1302,9 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		for (ViewResolver viewResolver : this.viewResolvers) {
 			//步骤5 由ViewResolver解析View（viewResolver.resolveViewName(viewName, locale)）
+			/**
+			 * @see org.springframework.web.servlet.view.BeanNameViewResolver
+			 */
 			View view = viewResolver.resolveViewName(viewName, locale);
 			if (view != null) {
 				return view;

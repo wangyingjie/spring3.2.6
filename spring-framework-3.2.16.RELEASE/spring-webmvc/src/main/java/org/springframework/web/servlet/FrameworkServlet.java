@@ -507,6 +507,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 						// the root application context (if any; may be null) as the parent
 						cwac.setParent(rootContext);
 					}
+					// 初始化 IOC 容器
 					configureAndRefreshWebApplicationContext(cwac);
 				}
 			}

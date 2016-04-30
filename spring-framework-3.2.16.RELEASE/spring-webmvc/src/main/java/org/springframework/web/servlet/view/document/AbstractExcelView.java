@@ -135,15 +135,19 @@ public abstract class AbstractExcelView extends AbstractView {
 
 		HSSFWorkbook workbook;
 		if (this.url != null) {
+			// url 链接创建poi的excel的workbook
 			workbook = getTemplateSource(this.url, request);
 		}
 		else {
+			// 如果没有模板则直接创建一个模板
 			workbook = new HSSFWorkbook();
 			logger.debug("Created Excel Workbook from scratch");
 		}
 
+		// 抽象方法  由子类指定每个单元格输入的对象
 		buildExcelDocument(model, workbook, request, response);
 
+		// 设置响应头
 		// Set the content type.
 		response.setContentType(getContentType());
 
@@ -172,6 +176,7 @@ public abstract class AbstractExcelView extends AbstractView {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Loading Excel workbook from " + inputFile);
 		}
+		// 创建excel 文本对象
 		POIFSFileSystem fs = new POIFSFileSystem(inputFile.getInputStream());
 		return new HSSFWorkbook(fs);
 	}
@@ -197,6 +202,8 @@ public abstract class AbstractExcelView extends AbstractView {
 	 * @param row the row number
 	 * @param col the column number
 	 * @return the HSSFCell
+	 *
+	 * 定位具体的单元格
 	 */
 	protected HSSFCell getCell(HSSFSheet sheet, int row, int col) {
 		HSSFRow sheetRow = sheet.getRow(row);
@@ -214,6 +221,8 @@ public abstract class AbstractExcelView extends AbstractView {
 	 * Convenient method to set a String as text content in a cell.
 	 * @param cell the cell in which the text must be put
 	 * @param text the text to put in the cell
+	 *
+	 * 具体的单元格写入数值
 	 */
 	protected void setText(HSSFCell cell, String text) {
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);

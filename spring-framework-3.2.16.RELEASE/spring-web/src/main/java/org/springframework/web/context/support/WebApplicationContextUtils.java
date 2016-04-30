@@ -228,8 +228,8 @@ public abstract class WebApplicationContextUtils {
 	 * @see #initServletPropertySources(MutablePropertySources, ServletContext, ServletConfig)
 	 */
 	public static void initServletPropertySources(MutablePropertySources propertySources, ServletContext servletContext) {
-		//servletContext¾Í±»propertySources½Ó¹ÜÁË£¬ËüÓÃreplace·½·¨£¬½«servletContext´æ·ÅÁË½øÀ´£¬
-		// keyÊÇÒ»¸ö³£Á¿£¬valueÊÇÒ»¸öServetPropertySource¶ÔÏó£¬ServetPropertySource¾ÍÀàËÆÒ»¸öEntry.
+		//servletContextå°±è¢«propertySourcesæ¥ç®¡äº†ï¼Œå®ƒç”¨replaceæ–¹æ³•ï¼Œå°†servletContextå­˜æ”¾äº†è¿›æ¥ï¼Œ
+		// keyæ˜¯ä¸€ä¸ªå¸¸é‡ï¼Œvalueæ˜¯ä¸€ä¸ªServetPropertySourceå¯¹è±¡ï¼ŒServetPropertySourceå°±ç±»ä¼¼ä¸€ä¸ªEntry.
 		initServletPropertySources(propertySources, servletContext, null);
 	}
 
@@ -251,26 +251,26 @@ public abstract class WebApplicationContextUtils {
 	 * @see org.springframework.core.env.PropertySource.StubPropertySource
 	 * @see org.springframework.core.env.ConfigurableEnvironment#getPropertySources()
 	 *
-	 * ×¢Òâ¸Ã·½·¨Ö´ĞĞ½áÊøÖ®ºó£º
-	 * 		servletContext¾Í±»propertySources½Ó¹ÜÁË£¬ËüÓÃreplace·½·¨£¬½«servletContext´æ·ÅÁË½øÀ´£¬
-	 * 		keyÊÇÒ»¸ö³£Á¿£¬valueÊÇÒ»¸öServetPropertySource¶ÔÏó£¬ServetPropertySource¾ÍÀàËÆÒ»¸öEntry.
+	 * æ³¨æ„è¯¥æ–¹æ³•æ‰§è¡Œç»“æŸä¹‹åï¼š
+	 * 		servletContextå°±è¢«propertySourcesæ¥ç®¡äº†ï¼Œå®ƒç”¨replaceæ–¹æ³•ï¼Œå°†servletContextå­˜æ”¾äº†è¿›æ¥ï¼Œ
+	 * 		keyæ˜¯ä¸€ä¸ªå¸¸é‡ï¼Œvalueæ˜¯ä¸€ä¸ªServetPropertySourceå¯¹è±¡ï¼ŒServetPropertySourceå°±ç±»ä¼¼ä¸€ä¸ªEntry.
 	 */
 	public static void initServletPropertySources(
 			MutablePropertySources propertySources, ServletContext servletContext, ServletConfig servletConfig) {
 
 		Assert.notNull(propertySources, "propertySources must not be null");
-		// propertySources ·ÅÖÃservletContext£¬ keyÊÇ³£Á¿£¬valueÊÇÒ»¸öPropertySource,
+		// propertySources æ”¾ç½®servletContextï¼Œ keyæ˜¯å¸¸é‡ï¼Œvalueæ˜¯ä¸€ä¸ªPropertySource,
 		if (servletContext != null && propertySources.contains(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME) &&
 				propertySources.get(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME) instanceof StubPropertySource) {
 
-			//ÓÃPropertySource´æ´¢ # servletContext
+			//ç”¨PropertySourceå­˜å‚¨ # servletContext
 			propertySources.replace(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME,
 					new ServletContextPropertySource(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME, servletContext));
 		}
 		if (servletConfig != null && propertySources.contains(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME) &&
 				propertySources.get(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME) instanceof StubPropertySource) {
 
-			//ÓÃPropertySource´æ´¢ # servletConfig
+			//ç”¨PropertySourceå­˜å‚¨ # servletConfig
 			propertySources.replace(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME,
 					new ServletConfigPropertySource(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME, servletConfig));
 		}
@@ -342,7 +342,7 @@ public abstract class WebApplicationContextUtils {
 
 	/**
 	 * Inner class to avoid hard-coded JSF dependency.
- 	 */
+	 */
 	private static class FacesDependencyRegistrar {
 
 		public static void registerFacesDependencies(ConfigurableListableBeanFactory beanFactory) {
