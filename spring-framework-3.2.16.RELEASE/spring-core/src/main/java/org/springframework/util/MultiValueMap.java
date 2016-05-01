@@ -24,6 +24,9 @@ import java.util.Map;
  *
  * @author Arjen Poutsma
  * @since 3.0
+ *
+ * 一个Map的key 对应多个值，值是一个List 链表结构
+ *
  */
 public interface MultiValueMap<K, V> extends Map<K, List<V>> {
 
