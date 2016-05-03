@@ -605,6 +605,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Configure the factory's standard context characteristics,
 	 * such as the context's ClassLoader and post-processors.
 	 * @param beanFactory the BeanFactory to configure
+	 *
+	 *
 	 */
 	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 		// Tell the internal bean factory to use the context's class loader etc.
@@ -990,7 +992,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Allow for caching all bean definition metadata, not expecting further changes.
 		beanFactory.freezeConfiguration();
 
-		// 完成所有非惰性的单例对象的创建
+		// 完成所有非惰性的单例对象的创建   由 DefaultListableBeanFactory # preInstantiateSingletons 实现
 		// Instantiate all remaining (non-lazy-init) singletons.
 		beanFactory.preInstantiateSingletons();
 	}
@@ -1092,6 +1094,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #destroyBeans()
 	 * @see #close()
 	 * @see #registerShutdownHook()
+	 *
+	 * Spring Bean 销毁
 	 */
 	protected void doClose() {
 		boolean actuallyClose;

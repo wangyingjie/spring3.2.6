@@ -26,6 +26,10 @@ import java.lang.reflect.Method;
  * @see ThrowsAdvice
  *
  * @author Rod Johnson
+ *
+ * 定义了为待增强的目标方法设置前置增强接口
+ *
+ *
  */
 public interface MethodBeforeAdvice extends BeforeAdvice {
 
@@ -38,6 +42,8 @@ public interface MethodBeforeAdvice extends BeforeAdvice {
 	 * Any exception thrown will be returned to the caller if it's
 	 * allowed by the method signature. Otherwise the exception
 	 * will be wrapped as a runtime exception.
+	 *
+	 * 回调函数
 	 */
 	void before(Method method, Object[] args, Object target) throws Throwable;
 

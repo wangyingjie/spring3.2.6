@@ -515,6 +515,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		// Actually destroy the bean now...
 		if (bean != null) {
 			try {
+				// 调用Spring Bean 的destory 方法将Bean实例进行销毁
+				/**
+				 * @see DisposableBeanAdapter
+				 */
 				bean.destroy();
 			}
 			catch (Throwable ex) {
@@ -553,7 +557,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * should <i>not</i> have their own mutexes involved in singleton creation,
 	 * to avoid the potential for deadlocks in lazy-init situations.
 	 */
-	protected final Object getSingletonMutex() {
+	public final Object getSingletonMutex() {
 		return this.singletonObjects;
 	}
 

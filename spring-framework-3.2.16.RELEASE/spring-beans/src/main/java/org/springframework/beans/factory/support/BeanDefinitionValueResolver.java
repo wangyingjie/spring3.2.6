@@ -103,11 +103,12 @@ class BeanDefinitionValueResolver {
 	public Object resolveValueIfNecessary(Object argName, Object value) {
 		// We must check each value to see whether it requires a runtime reference
 		// to another bean to be resolved.
-		if (value instanceof RuntimeBeanReference) {
+		if (value instanceof RuntimeBeanReference) {// Bean 定义载入的时候完成了 RuntimeBeanReference 的初始化设置
 			RuntimeBeanReference ref = (RuntimeBeanReference) value;
+			// 对Bean引用的解析过程
 			return resolveReference(argName, ref);
 		}
-		else if (value instanceof RuntimeBeanNameReference) {
+		else if (value instanceof RuntimeBeanNameReference) {//Bean 名字的引用注入
 			String refName = ((RuntimeBeanNameReference) value).getBeanName();
 			refName = String.valueOf(evaluate(refName));
 			if (!this.beanFactory.containsBean(refName)) {
@@ -128,6 +129,7 @@ class BeanDefinitionValueResolver {
 					ObjectUtils.getIdentityHexString(bd);
 			return resolveInnerBean(argName, innerBeanName, bd);
 		}
+		// 这里对ManagedArray进行解析
 		else if (value instanceof ManagedArray) {
 			// May need to resolve contained runtime references.
 			ManagedArray array = (ManagedArray) value;
@@ -150,20 +152,26 @@ class BeanDefinitionValueResolver {
 					elementType = Object.class;
 				}
 			}
+			// 对其他类型的属性惊醒注入 如：Array、List
 			return resolveManagedArray(argName, (List<?>) value, elementType);
 		}
+		// 这里对ManagedList进行解析
 		else if (value instanceof ManagedList) {
+			// 对每一个List中的元素  进行依次解析
 			// May need to resolve contained runtime references.
 			return resolveManagedList(argName, (List<?>) value);
 		}
+		// 这里对ManagedSet进行解析
 		else if (value instanceof ManagedSet) {
 			// May need to resolve contained runtime references.
 			return resolveManagedSet(argName, (Set<?>) value);
 		}
+		// 这里对ManagedMap进行解析
 		else if (value instanceof ManagedMap) {
 			// May need to resolve contained runtime references.
 			return resolveManagedMap(argName, (Map<?, ?>) value);
 		}
+		// 这里对ManagedProperties进行解析
 		else if (value instanceof ManagedProperties) {
 			Properties original = (Properties) value;
 			Properties copy = new Properties();
@@ -180,6 +188,7 @@ class BeanDefinitionValueResolver {
 			}
 			return copy;
 		}
+		// 这里对TypedStringValue进行解析
 		else if (value instanceof TypedStringValue) {
 			// Convert value to target type here.
 			TypedStringValue typedStringValue = (TypedStringValue) value;
@@ -313,8 +322,10 @@ class BeanDefinitionValueResolver {
 	 */
 	private Object resolveReference(Object argName, RuntimeBeanReference ref) {
 		try {
+			//取得 referenceName
 			String refName = ref.getBeanName();
 			refName = String.valueOf(evaluate(refName));
+			//如果 ref 是在父类IOC容器，则到父类中去获取
 			if (ref.isToParent()) {
 				if (this.beanFactory.getParentBeanFactory() == null) {
 					throw new BeanCreationException(
@@ -322,9 +333,11 @@ class BeanDefinitionValueResolver {
 							"Can't resolve reference to bean '" + refName +
 							"' in parent factory: no parent factory available");
 				}
+				//todo  在父类IOC容器获取Bean，这里会触发一个getBean的过程，如果依赖注入没有发生，这里会触发相应的依赖注入
 				return this.beanFactory.getParentBeanFactory().getBean(refName);
 			}
 			else {
+				//todo  在当前IOC容器中获取Bean，这里会触发一个getBean的过程，如果依赖注入没有发生，这里会触发相应的依赖注入
 				Object bean = this.beanFactory.getBean(refName);
 				this.beanFactory.registerDependentBean(refName, this.beanName);
 				return bean;
@@ -343,6 +356,7 @@ class BeanDefinitionValueResolver {
 	private Object resolveManagedArray(Object argName, List<?> ml, Class<?> elementType) {
 		Object resolved = Array.newInstance(elementType, ml.size());
 		for (int i = 0; i < ml.size(); i++) {
+			// 通过递归的方式，对元素进行解析
 			Array.set(resolved, i,
 					resolveValueIfNecessary(new KeyedArgName(argName, i), ml.get(i)));
 		}
@@ -351,12 +365,13 @@ class BeanDefinitionValueResolver {
 
 	/**
 	 * For each element in the managed list, resolve reference if necessary.
+	 *
 	 */
 	private List<?> resolveManagedList(Object argName, List<?> ml) {
 		List<Object> resolved = new ArrayList<Object>(ml.size());
 		for (int i = 0; i < ml.size(); i++) {
-			resolved.add(
-					resolveValueIfNecessary(new KeyedArgName(argName, i), ml.get(i)));
+			// 通过递归的方式，对List中的元素进行解析
+			resolved.add(resolveValueIfNecessary(new KeyedArgName(argName, i), ml.get(i)));
 		}
 		return resolved;
 	}
@@ -368,6 +383,7 @@ class BeanDefinitionValueResolver {
 		Set<Object> resolved = new LinkedHashSet<Object>(ms.size());
 		int i = 0;
 		for (Object m : ms) {
+			// 通过递归的方式，对元素进行解析
 			resolved.add(resolveValueIfNecessary(new KeyedArgName(argName, i), m));
 			i++;
 		}
@@ -381,6 +397,7 @@ class BeanDefinitionValueResolver {
 		Map<Object, Object> resolved = new LinkedHashMap<Object, Object>(mm.size());
 		for (Map.Entry<?, ?> entry : mm.entrySet()) {
 			Object resolvedKey = resolveValueIfNecessary(argName, entry.getKey());
+			// 通过递归的方式，对元素进行解析
 			Object resolvedValue = resolveValueIfNecessary(
 					new KeyedArgName(argName, entry.getKey()), entry.getValue());
 			resolved.put(resolvedKey, resolvedValue);

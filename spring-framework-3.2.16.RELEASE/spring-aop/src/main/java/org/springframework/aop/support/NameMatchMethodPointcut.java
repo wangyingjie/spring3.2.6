@@ -80,6 +80,7 @@ public class NameMatchMethodPointcut extends StaticMethodMatcherPointcut impleme
 	@Override
 	public boolean matches(Method method, Class<?> targetClass) {
 		for (String mappedName : this.mappedNames) {
+			// 方法名相同，或者方法相匹配
 			if (mappedName.equals(method.getName()) || isMatch(method.getName(), mappedName)) {
 				return true;
 			}

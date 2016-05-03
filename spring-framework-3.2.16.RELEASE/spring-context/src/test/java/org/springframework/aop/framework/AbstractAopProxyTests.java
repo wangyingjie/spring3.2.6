@@ -1987,10 +1987,12 @@ public abstract class AbstractAopProxyTests {
 		}
 
 		public void afterThrowing(IOException ex) throws Throwable {
+			//统计出现的异常类型
 			count(IOException.class.getName());
 		}
 
 		public void afterThrowing(UncheckedException ex) throws Throwable {
+			//统计出现的异常类型
 			count(UncheckedException.class.getName());
 		}
 

@@ -39,6 +39,11 @@ import org.springframework.util.StringUtils;
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @since 1.1
+ *
+ * Spring 生成Bean对象使用的策略类
+ *
+ * 两种方式：1、使用Jvm自带的反射功能生成对象；2、使用Cglib 来实例化对象
+ *
  */
 public class SimpleInstantiationStrategy implements InstantiationStrategy {
 
@@ -84,10 +89,12 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
+			// 使用java自带的反射实例化Bean对象
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {
 			// Must generate CGLIB subclass.
+			// Gglib 实例化 bean 对象
 			return instantiateWithMethodInjection(beanDefinition, beanName, owner);
 		}
 	}

@@ -349,13 +349,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (System.getSecurityManager() != null) {
 				bean = AccessController.doPrivileged(new PrivilegedAction<Object>() {
 					public Object run() {
+						// todo 基于Cglib 反射 CglibSubclassingInstantiationStrategy 进行Bean实例化
 						return getInstantiationStrategy().instantiate(bd, null, parent);
 					}
 				}, getAccessControlContext());
 			}
 			else {
+				// todo 基于Cglib 反射 CglibSubclassingInstantiationStrategy 进行Bean实例化
 				bean = getInstantiationStrategy().instantiate(bd, null, parent);
 			}
+
+			//填充Bean对象的属性  此方法是完成Bean的依赖注入的关键方法
 			populateBean(beanClass.getName(), bd, new BeanWrapperImpl(bean));
 			return bean;
 		}
@@ -503,6 +507,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
+			// 创建Bean实例
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 
@@ -983,6 +988,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (mbd.getFactoryMethodName() != null)  {
+			//工厂方法
 			return instantiateUsingFactoryMethod(beanName, mbd, args);
 		}
 
@@ -999,9 +1005,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 		if (resolved) {
 			if (autowireNecessary) {
+				//构造函数创建Bean实例
 				return autowireConstructor(beanName, mbd, null, null);
 			}
 			else {
+				// 使用默认无参数构造函数实例化
 				return instantiateBean(beanName, mbd);
 			}
 		}
@@ -1058,11 +1066,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (System.getSecurityManager() != null) {
 				beanInstance = AccessController.doPrivileged(new PrivilegedAction<Object>() {
 					public Object run() {
+						// todo 基于Cglib 反射 CglibSubclassingInstantiationStrategy 进行Bean实例化
 						return getInstantiationStrategy().instantiate(mbd, beanName, parent);
 					}
 				}, getAccessControlContext());
 			}
 			else {
+				// todo 基于Cglib 反射 CglibSubclassingInstantiationStrategy 进行Bean实例化
 				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);
 			}
 			BeanWrapper bw = new BeanWrapperImpl(beanInstance);
@@ -1122,6 +1132,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @param bw BeanWrapper with bean instance
 	 */
 	protected void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw) {
+
+		// 获取BeanDefinition中设置的 property 属性，这些属性来自对 BeanDefinition 的解析
 		PropertyValues pvs = mbd.getPropertyValues();
 
 		if (bw == null) {
@@ -1157,6 +1169,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			return;
 		}
 
+		//开始Bean的依赖注入过程
 		//不同注入方式的实现策略：byName ||　byType
 		if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME ||
 				mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
@@ -1201,6 +1214,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
+		// 对属性进行注入
 		applyPropertyValues(beanName, mbd, bw, pvs);
 	}
 
@@ -1454,6 +1468,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (converter == null) {
 			converter = bw;
 		}
+
+		// BeanDefinitionValueResolver 对BeanDefinition的解析
 		BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this, beanName, mbd, converter);
 
 		// Create a deep copy, resolving any references for values.
@@ -1499,6 +1515,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Set our (possibly massaged) deep copy.
 		try {
+			// 此处是依赖注入发生的地方，会在BeanWrapperImpl中完成
 			bw.setPropertyValues(new MutablePropertyValues(deepCopy));
 		}
 		catch (BeansException ex) {

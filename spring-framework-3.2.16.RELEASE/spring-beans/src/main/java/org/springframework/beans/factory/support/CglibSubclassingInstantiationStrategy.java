@@ -40,6 +40,12 @@ import org.springframework.cglib.proxy.NoOp;
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @since 1.1
+ *
+ *
+ * Spring 生成Bean对象使用的策略类
+ *
+ * 两种方式：1、使用Jvm自带的反射功能生成对象；2、使用Cglib 来实例化对象
+ *
  */
 public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationStrategy {
 
@@ -106,16 +112,19 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 		 * @return new instance of the dynamically generated subclass
 		 */
 		public Object instantiate(Constructor<?> ctor, Object[] args) {
+
+			//使用 cglib Enhancer 创建Bean对象
 			Enhancer enhancer = new Enhancer();
-			enhancer.setSuperclass(this.beanDefinition.getBeanClass());
-			enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
-			enhancer.setCallbackFilter(new CallbackFilterImpl());
+			enhancer.setSuperclass(this.beanDefinition.getBeanClass());//设置Class 基类
+			enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);//
+			enhancer.setCallbackFilter(new CallbackFilterImpl());//设置回调方法
 			enhancer.setCallbacks(new Callback[] {
 					NoOp.INSTANCE,
 					new LookupOverrideMethodInterceptor(),
 					new ReplaceOverrideMethodInterceptor()
 			});
 
+			// 使用 enhancer#create  方法创建Bean实例对象
 			return (ctor != null ? enhancer.create(ctor.getParameterTypes(), args) : enhancer.create());
 		}
 

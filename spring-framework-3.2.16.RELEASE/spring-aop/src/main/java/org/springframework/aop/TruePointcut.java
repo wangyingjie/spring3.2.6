@@ -30,6 +30,7 @@ class TruePointcut implements Pointcut, Serializable {
 
 	/**
 	 * Enforce Singleton pattern.
+	 * 构造方法私有化
 	 */
 	private TruePointcut() {
 	}
