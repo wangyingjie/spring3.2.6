@@ -108,6 +108,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				detectHandlerMethods(beanName);
 			}
 		}
+		//扩展方法
 		handlerMethodsInitialized(getHandlerMethods());
 	}
 
@@ -123,11 +124,16 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	 * @param handler the bean name of a handler or a handler instance
 	 */
 	protected void detectHandlerMethods(final Object handler) {
+
+		//获取handler的类型
 		Class<?> handlerType =
 				(handler instanceof String ? getApplicationContext().getType((String) handler) : handler.getClass());
 
 		// Avoid repeated calls to getMappingForMethod which would rebuild RequestMatchingInfo instances
+		// 保存 Handler 与匹配条件的对应关系，用于给registerHandlerMethod传入匹配条件
 		final Map<Method, T> mappings = new IdentityHashMap<Method, T>();
+
+		// cglib代理的子类型则返回父类型
 		final Class<?> userType = ClassUtils.getUserClass(handlerType);
 
 		Set<Method> methods = HandlerMethodSelector.selectMethods(userType, new MethodFilter() {

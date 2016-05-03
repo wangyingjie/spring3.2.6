@@ -34,6 +34,9 @@ import org.springframework.util.Assert;
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
+ *
+ * 热交换功能的应用
+ *
  */
 public class HotSwappableTargetSource implements TargetSource, Serializable {
 

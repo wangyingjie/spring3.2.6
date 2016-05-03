@@ -125,6 +125,9 @@ import org.springframework.util.ObjectUtils;
  * @see org.springframework.context.event.ApplicationEventMulticaster
  * @see org.springframework.context.ApplicationListener
  * @see org.springframework.context.MessageSource
+ *
+ * DefaultResourceLoader 具备读入Resource定义的BeanDefinition的能力
+ *
  */
 public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		implements ConfigurableApplicationContext, DisposableBean {

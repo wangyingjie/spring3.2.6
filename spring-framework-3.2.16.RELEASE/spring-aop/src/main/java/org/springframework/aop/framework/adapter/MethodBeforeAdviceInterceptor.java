@@ -46,7 +46,9 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Seriali
 		this.advice = advice;
 	}
 
+	//会在代理对象的方法被调用时触发回调
 	public Object invoke(MethodInvocation mi) throws Throwable {
+		//方法执行前进行拦截器方法调用   回调方法的调用
 		this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis() );
 		return mi.proceed();
 	}

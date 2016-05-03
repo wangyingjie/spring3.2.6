@@ -119,25 +119,25 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
+		// 如果已经建立了 BeanFactory 则要进行销毁并关闭之
 		if (hasBeanFactory()) {
 			destroyBeans();
 			closeBeanFactory();
 		}
 		try {
-			// 创建beanfactory
+			// 创建beanfactory   beanFactory 属于一个IOC容器 可供ApplicationContext使用
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
 
 			customizeBeanFactory(beanFactory);
 
-			// 解析xml 获取  BeanDefitions
+			// 解析xml 获取  BeanDefitions、启动对Beandefinition的载入功能
 			loadBeanDefinitions(beanFactory);
 
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
 			}
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new ApplicationContextException("I/O error parsing bean definition source for " + getDisplayName(), ex);
 		}
 	}

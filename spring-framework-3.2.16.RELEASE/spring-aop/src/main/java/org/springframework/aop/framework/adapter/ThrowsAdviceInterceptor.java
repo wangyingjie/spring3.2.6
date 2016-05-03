@@ -74,12 +74,14 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 		Assert.notNull(throwsAdvice, "Advice must not be null");
 		this.throwsAdvice = throwsAdvice;
 
+		// 配置ThrowsAdvice的回调方法
 		Method[] methods = throwsAdvice.getClass().getMethods();
 		for (Method method : methods) {
 			if (method.getName().equals(AFTER_THROWING) &&
 					(method.getParameterTypes().length == 1 || method.getParameterTypes().length == 4) &&
 					Throwable.class.isAssignableFrom(method.getParameterTypes()[method.getParameterTypes().length - 1])
 				) {
+				// 配置一个异常处理类
 				// Have an exception handler
 				this.exceptionHandlerMap.put(method.getParameterTypes()[method.getParameterTypes().length - 1], method);
 				if (logger.isDebugEnabled()) {
@@ -121,11 +123,13 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		try {
+			// 执行目标方法  且方法被包装到了 try …… catch 中
 			return mi.proceed();
-		}
-		catch (Throwable ex) {
+		} catch (Throwable ex) {
+			// 获取异常后的拦截器处理链
 			Method handlerMethod = getExceptionHandler(ex);
 			if (handlerMethod != null) {
+				// 调用拦截器处理链
 				invokeHandlerMethod(mi, ex, handlerMethod);
 			}
 			throw ex;
@@ -141,6 +145,7 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 			handlerArgs = new Object[] {mi.getMethod(), mi.getArguments(), mi.getThis(), ex};
 		}
 		try {
+			// 异常连接器链执行
 			method.invoke(this.throwsAdvice, handlerArgs);
 		}
 		catch (InvocationTargetException targetEx) {

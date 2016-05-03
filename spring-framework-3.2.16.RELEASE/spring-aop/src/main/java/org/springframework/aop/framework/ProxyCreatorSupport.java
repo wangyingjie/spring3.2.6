@@ -28,6 +28,9 @@ import org.springframework.util.Assert;
  * @author Juergen Hoeller
  * @since 2.0.3
  * @see #createAopProxy()
+ *
+ * Aop的核心实现支持类  ctrl+H  可以查看类图继承关系
+ *
  */
 @SuppressWarnings("serial")
 public class ProxyCreatorSupport extends AdvisedSupport {
@@ -104,7 +107,7 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 		}
 		// 屌用 DefaultAopProxyFactory 来创建 AopProxy
 		// 由于ProxyFactory类本身是 ProxyConfig的子类，所以创建AopProxy的过程和一般代理Proxy过程是一样的
-		return getAopProxyFactory().createAopProxy(this);
+		return getAopProxyFactory().createAopProxy(this);//把自身当做对象传入
 	}
 
 	/**

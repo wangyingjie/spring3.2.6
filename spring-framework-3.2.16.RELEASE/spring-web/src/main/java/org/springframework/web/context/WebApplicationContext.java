@@ -109,6 +109,8 @@ public interface WebApplicationContext extends ApplicationContext {
 	/**
 	 * Return the standard Servlet API ServletContext for this application.
 	 * <p>Also available for a Portlet application, in addition to the PortletContext.
+	 *
+	 * 接口中唯一的方法   可以获取servletContext的上下文信息
 	 */
 	ServletContext getServletContext();
 

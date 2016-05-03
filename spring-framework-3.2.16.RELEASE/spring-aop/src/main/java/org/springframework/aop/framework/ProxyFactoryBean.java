@@ -100,9 +100,9 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private String[] interceptorNames;
+	private String[] interceptorNames;//拦截器
 
-	private String targetName;
+	private String targetName;//目标类
 
 	private boolean autodetectInterfaces = true;
 
@@ -238,8 +238,11 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	 * @return a fresh AOP proxy reflecting the current state of this factory
 	 */
 	public Object getObject() throws BeansException {
+
+		//初始化拦截器通知链
 		initializeAdvisorChain();
 		if (isSingleton()) {
+			// 单例处理
 			return getSingletonInstance();
 		}
 		else {
@@ -247,6 +250,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 				logger.warn("Using non-singleton proxies with singleton targets is often undesirable. " +
 						"Enable prototype proxies by setting the 'targetName' property.");
 			}
+			//非单例
 			return newPrototypeInstance();
 		}
 	}
@@ -306,14 +310,17 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 			this.targetSource = freshTargetSource();
 			if (this.autodetectInterfaces && getProxiedInterfaces().length == 0 && !isProxyTargetClass()) {
 				// Rely on AOP infrastructure to tell us what interfaces to proxy.
+				// 根据aop框架来判断需要代理的接口
 				Class<?> targetClass = getTargetClass();
 				if (targetClass == null) {
 					throw new FactoryBeanNotInitializedException("Cannot determine target class for proxy");
 				}
+				// 设置代理对象的接口
 				setInterfaces(ClassUtils.getAllInterfacesForClass(targetClass, this.proxyClassLoader));
 			}
 			// Initialize the shared singleton instance.
 			super.setFrozen(this.freezeProxy);
+			// 使用proxyFactory来生成代理的Proxy
 			this.singletonInstance = getProxy(createAopProxy());
 		}
 		return this.singletonInstance;
@@ -413,9 +420,11 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	 * from a BeanFactory will be refreshed each time a new prototype instance
 	 * is added. Interceptors added programmatically through the factory API
 	 * are unaffected by such changes.
+	 *
+	 * 初始化通知器链
 	 */
 	private synchronized void initializeAdvisorChain() throws AopConfigException, BeansException {
-		if (this.advisorChainInitialized) {
+		if (this.advisorChainInitialized) {//标志位
 			return;
 		}
 
@@ -449,16 +458,19 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 				else {
 					// If we get here, we need to add a named interceptor.
 					// We must check if it's a singleton or prototype.
+					// 检查bean是 单例还是原型模式
 					Object advice;
-					if (this.singleton || this.beanFactory.isSingleton(name)) {
-						// Add the real Advisor/Advice to the chain.
+					if (this.singleton || this.beanFactory.isSingleton(name)) {// 单例
+						// Add the real Advisor/Advice to the chain.  取得Advisor、Advice
+						//  把interceptorNames这个List中的 Interceptor名字交给 beanFactory 的getBean 去获取 advic
 						advice = this.beanFactory.getBean(name);
 					}
-					else {
+					else {// 原型
 						// It's a prototype Advice or Advisor: replace with a prototype.
 						// Avoid unnecessary creation of prototype bean just for advisor chain initialization.
 						advice = new PrototypePlaceholderAdvisor(name);
 					}
+					//切面添加 到拦截器链中
 					addAdvisorOnChainCreation(advice, name);
 				}
 			}
@@ -502,6 +514,8 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 
 	/**
 	 * Add all global interceptors and pointcuts.
+	 *
+	 * 从Ioc容器中获取拦截器
 	 */
 	private void addGlobalAdvisor(ListableBeanFactory beanFactory, String prefix) {
 		String[] globalAdvisorNames =
@@ -524,6 +538,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 		for (Object bean : beans) {
 			String name = names.get(bean);
 			if (name.startsWith(prefix)) {
+				//将Bean名字前缀满足条件的 advisor 添加到 拦截器链中
 				addAdvisorOnChainCreation(bean, name);
 			}
 		}
@@ -638,6 +653,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 			return beanName;
 		}
 
+		// 原型模式不支持拦截器
 		public Advice getAdvice() {
 			throw new UnsupportedOperationException("Cannot invoke methods: " + this.message);
 		}

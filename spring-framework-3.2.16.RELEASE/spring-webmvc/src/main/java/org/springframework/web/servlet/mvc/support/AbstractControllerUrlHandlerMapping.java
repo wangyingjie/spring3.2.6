@@ -82,6 +82,7 @@ public abstract class AbstractControllerUrlHandlerMapping extends AbstractDetect
 	@Override
 	protected String[] determineUrlsForHandler(String beanName) {
 		Class<?> beanClass = getApplicationContext().getType(beanName);
+		//主要将符合条件的 Handler 找出来
 		if (isEligibleForMapping(beanName, beanClass)) {
 			return buildUrlsForHandler(beanName, beanClass);
 		}

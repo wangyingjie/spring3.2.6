@@ -259,8 +259,10 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 				" and static attributes " + this.staticAttributes);
 		}
 
+		//将相关信息收集到 Map 中
 		Map<String, Object> mergedModel = createMergedOutputModel(model, request, response);
 		prepareResponse(request, response);
+		//展现模型数据到视图的调用方法
 		renderMergedOutputModel(mergedModel, request, response);
 	}
 
@@ -364,12 +366,15 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 	 * This method is suitable for all resources reachable by {@link javax.servlet.RequestDispatcher}.
 	 * @param model Map of model objects to expose
 	 * @param request current HTTP request
+	 *
+	 *  把WEB页面将要展示的 model 对象取来让后放置到 request#setAttribute  中去
 	 */
 	protected void exposeModelAsRequestAttributes(Map<String, Object> model, HttpServletRequest request) throws Exception {
 		for (Map.Entry<String, Object> entry : model.entrySet()) {
 			String modelName = entry.getKey();
 			Object modelValue = entry.getValue();
 			if (modelValue != null) {
+				//设置数据至request中
 				request.setAttribute(modelName, modelValue);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Added model object '" + modelName + "' of type [" + modelValue.getClass().getName() +
