@@ -196,7 +196,7 @@ public abstract class AnnotationUtils {
 	 * @param annotationType the annotation type to look for
 	 * @return the annotation found, or {@code null} if none found
 	 */
-	public static <A extends Annotation> A findAnnotation(Class<?> clazz, Class<A> annotationType) {
+	public static <A extends Annotation> A 	findAnnotation(Class<?> clazz, Class<A> annotationType) {
 		Assert.notNull(clazz, "Class must not be null");
 		A annotation = clazz.getAnnotation(annotationType);
 		if (annotation != null) {

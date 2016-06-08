@@ -58,6 +58,7 @@ public abstract class HandlerMethodSelector {
 				public void doWith(Method method) {
 					Method specificMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
 					Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
+					//MethodFilter 回调方法  匹配满足条件的方法
 					if (handlerMethodFilter.matches(specificMethod) &&
 							(bridgedMethod == specificMethod || !handlerMethodFilter.matches(bridgedMethod))) {
 						handlerMethods.add(specificMethod);

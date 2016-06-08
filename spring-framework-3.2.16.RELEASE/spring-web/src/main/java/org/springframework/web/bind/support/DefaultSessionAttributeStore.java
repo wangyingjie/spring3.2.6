@@ -30,6 +30,8 @@ import org.springframework.web.context.request.WebRequest;
  * @see org.springframework.web.context.request.WebRequest#setAttribute
  * @see org.springframework.web.context.request.WebRequest#getAttribute
  * @see org.springframework.web.context.request.WebRequest#removeAttribute
+ *
+ * 存储 @SessionAttribute 注解的解析类
  */
 public class DefaultSessionAttributeStore implements SessionAttributeStore {
 
@@ -58,6 +60,8 @@ public class DefaultSessionAttributeStore implements SessionAttributeStore {
 		Assert.notNull(request, "WebRequest must not be null");
 		Assert.notNull(attributeName, "Attribute name must not be null");
 		String storeAttributeName = getAttributeNameInSession(request, attributeName);
+
+		//调用了 ServletRequestAttributes 方法进行处理
 		return request.getAttribute(storeAttributeName, WebRequest.SCOPE_SESSION);
 	}
 

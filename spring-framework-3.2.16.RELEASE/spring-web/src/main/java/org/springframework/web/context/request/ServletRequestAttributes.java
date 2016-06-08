@@ -103,6 +103,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 				try {
 					Object value = session.getAttribute(name);
 					if (value != null) {
+						//用于保存从session中获取过的值
 						this.sessionAttributesToUpdate.put(name, value);
 					}
 					return value;
@@ -116,6 +117,8 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 	}
 
 	public void setAttribute(String name, Object value, int scope) {
+
+		//根据属性  scope 指定的范围往request里面存数据
 		if (scope == SCOPE_REQUEST) {
 			if (!isRequestActive()) {
 				throw new IllegalStateException(
@@ -124,6 +127,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 			this.request.setAttribute(name, value);
 		}
 		else {
+			//根据属性  scope 指定的范围往session里面存数据
 			HttpSession session = getSession(true);
 			this.sessionAttributesToUpdate.remove(name);
 			session.setAttribute(name, value);
@@ -154,20 +158,20 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 	}
 
 	public String[] getAttributeNames(int scope) {
+
+		//根据 scope 从不同的作用域里面取数据
 		if (scope == SCOPE_REQUEST) {
 			if (!isRequestActive()) {
 				throw new IllegalStateException(
 						"Cannot ask for request attributes - request is not active anymore!");
 			}
 			return StringUtils.toStringArray(this.request.getAttributeNames());
-		}
-		else {
+		} else {
 			HttpSession session = getSession(false);
 			if (session != null) {
 				try {
 					return StringUtils.toStringArray(session.getAttributeNames());
-				}
-				catch (IllegalStateException ex) {
+				} catch (IllegalStateException ex) {
 					// Session invalidated - shouldn't usually happen.
 				}
 			}
