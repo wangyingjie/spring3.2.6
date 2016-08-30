@@ -663,15 +663,17 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		return true;
 	}
 
+	//该方法实际处理请求
 	@Override
 	protected final ModelAndView handleInternal(HttpServletRequest request,
 			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
 
-		if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
+		if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {// 有SessionAttributes 注解
 			// Always prevent caching in case of session attribute management.
+			//备好处理器所需参数 设置缓存过期时间
 			checkAndPrepare(request, response, this.cacheSecondsForSessionAttributeHandlers, true);
-		}
-		else {
+		} else {
+			//备好处理器所需参数 设置缓存过期时间
 			// Uses configured default cacheSeconds setting.
 			checkAndPrepare(request, response, true);
 		}
@@ -706,9 +708,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	 * (never {@code null}).
 	 */
 	private SessionAttributesHandler getSessionAttributesHandler(HandlerMethod handlerMethod) {
+		//获取handlerType
 		Class<?> handlerType = handlerMethod.getBeanType();
+		//从缓存里面取
 		SessionAttributesHandler sessionAttrHandler = this.sessionAttributesHandlerCache.get(handlerType);
 		if (sessionAttrHandler == null) {
+			//同步
 			synchronized (this.sessionAttributesHandlerCache) {
 				sessionAttrHandler = this.sessionAttributesHandlerCache.get(handlerType);
 				if (sessionAttrHandler == null) {

@@ -195,6 +195,8 @@ public abstract class AnnotationUtils {
 	 * @param clazz the class to look for annotations on
 	 * @param annotationType the annotation type to look for
 	 * @return the annotation found, or {@code null} if none found
+	 *
+	 * //查找注解的工具方法
 	 */
 	public static <A extends Annotation> A 	findAnnotation(Class<?> clazz, Class<A> annotationType) {
 		Assert.notNull(clazz, "Class must not be null");

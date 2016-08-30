@@ -70,6 +70,7 @@ public class SessionAttributesHandler {
 		Assert.notNull(sessionAttributeStore, "SessionAttributeStore may not be null.");
 		this.sessionAttributeStore = sessionAttributeStore;
 
+		//查找注解的工具方法
 		SessionAttributes annotation = AnnotationUtils.findAnnotation(handlerType, SessionAttributes.class);
 		if (annotation != null) {
 			this.attributeNames.addAll(Arrays.asList(annotation.value()));
