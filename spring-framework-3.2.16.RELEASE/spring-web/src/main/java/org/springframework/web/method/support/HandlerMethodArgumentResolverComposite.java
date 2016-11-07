@@ -100,6 +100,8 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 
 	/**
 	 * Add the given {@link HandlerMethodArgumentResolver}.
+	 *
+	 * 方法返回自身可以进行链式编程
 	 */
 	public HandlerMethodArgumentResolverComposite addResolver(HandlerMethodArgumentResolver argumentResolver) {
 		this.argumentResolvers.add(argumentResolver);
@@ -108,6 +110,8 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 
 	/**
 	 * Add the given {@link HandlerMethodArgumentResolver}s.
+	 *
+	 * 方法返回自身可以进行链式编程
 	 */
 	public HandlerMethodArgumentResolverComposite addResolvers(
 			List<? extends HandlerMethodArgumentResolver> argumentResolvers) {

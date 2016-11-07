@@ -266,6 +266,7 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 			HttpServletRequest request, HttpServletResponse response, int cacheSeconds, boolean lastModified)
 			throws ServletException {
 
+		//检查请求类型是否支持
 		// Check whether we should support the request method.
 		String method = request.getMethod();
 		if (this.supportedMethods != null && !this.supportedMethods.contains(method)) {
@@ -275,11 +276,13 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 
 		// Check whether a session is required.
 		if (this.requireSession) {
+			// session 不存在则抛异常
 			if (request.getSession(false) == null) {
 				throw new HttpSessionRequiredException("Pre-existing session required but none found");
 			}
 		}
 
+		//给response设置缓存失效时间
 		// Do declarative cache control.
 		// Revalidate if the controller supports last-modified.
 		applyCacheSeconds(response, cacheSeconds, lastModified);
@@ -370,9 +373,10 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 	 */
 	protected final void applyCacheSeconds(HttpServletResponse response, int seconds, boolean mustRevalidate) {
 		if (seconds > 0) {
+			//缓存设置过期时间
 			cacheForSeconds(response, seconds, mustRevalidate);
-		}
-		else if (seconds == 0) {
+		} else if (seconds == 0) {
+			//prevent 预防; 阻碍; 阻止; [宗教]引领;
 			preventCaching(response);
 		}
 		// Leave caching to the client otherwise.

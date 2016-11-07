@@ -50,6 +50,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * （1）初始化Model
+ * （2）处理器执行后将Model中相应的参数更新到SessionAttribute中
+ *
  */
 public final class ModelFactory {
 
@@ -91,17 +95,22 @@ public final class ModelFactory {
 	public void initModel(NativeWebRequest request, ModelAndViewContainer mavContainer, HandlerMethod handlerMethod)
 			throws Exception {
 
+		// 1 从sessionAttribute中取出保存的参数  并合并到 mavContainer 中
 		Map<String, ?> attributesInSession = this.sessionAttributesHandler.retrieveAttributes(request);
+		// 设置 SessionAttributes 参数
 		mavContainer.mergeAttributes(attributesInSession);
 
+		// 2 执行注解了　@ModelAttribute 的方法并将结果设置到Model
 		invokeModelAttributeMethods(request, mavContainer);
 
+		// 3 遍历注解了 @ModelAttribute 又在 SessionAttributes 注解中的参数是否已经设置到了  mavContainer 中了
 		for (String name : findSessionAttributeArguments(handlerMethod)) {
 			if (!mavContainer.containsAttribute(name)) {
 				Object value = this.sessionAttributesHandler.retrieveAttribute(request, name);
 				if (value == null) {
 					throw new HttpSessionRequiredException("Expected session attribute '" + name + "'");
 				}
+				//设置并保存
 				mavContainer.addAttribute(name, value);
 			}
 		}
@@ -115,16 +124,22 @@ public final class ModelFactory {
 			throws Exception {
 
 		for (InvocableHandlerMethod attrMethod : this.attributeMethods) {
+
+			//取注解值  如果已经包含则跳过
 			String modelName = attrMethod.getMethodAnnotation(ModelAttribute.class).value();
 			if (mavContainer.containsAttribute(modelName)) {
 				continue;
 			}
 
+			//执行 @ModelAttribue注解的方法
 			Object returnValue = attrMethod.invokeForRequest(request, mavContainer);
 
-			if (!attrMethod.isVoid()){
+			if (!attrMethod.isVoid()){//返回参数不为 void
+				//获取返回参数名
 				String returnValueName = getNameForReturnValue(returnValue, attrMethod.getReturnType());
 				if (!mavContainer.containsAttribute(returnValueName)) {
+
+					// 设置 ModelAttribute 属性
 					mavContainer.addAttribute(returnValueName, returnValue);
 				}
 			}
@@ -134,12 +149,20 @@ public final class ModelFactory {
 	/**
 	 * Return all {@code @ModelAttribute} arguments declared as session
 	 * attributes via {@code @SessionAttributes}.
+	 *
+	 * 获取同时有  ModelAttribute  和   SessionAttributes 注解的方法
 	 */
 	private List<String> findSessionAttributeArguments(HandlerMethod handlerMethod) {
 		List<String> result = new ArrayList<String>();
+
+		//循环方法的每一个参数
 		for (MethodParameter param : handlerMethod.getMethodParameters()) {
+
+			//参数是否有 ModelAttribute
 			if (param.hasParameterAnnotation(ModelAttribute.class)) {
 				String name = getNameForParameter(param);
+
+				//param 如果也是 SessionAttribute 则添加到  result 并返回
 				if (this.sessionAttributesHandler.isHandlerSessionAttribute(name, param.getParameterType())) {
 					result.add(name);
 				}
@@ -152,22 +175,27 @@ public final class ModelFactory {
 	 * Derive the model attribute name for the given return value using
 	 * one of the following:
 	 * <ol>
-	 * 	<li>The method {@code ModelAttribute} annotation value
-	 * 	<li>The declared return type if it is other than {@code Object}
-	 * 	<li>The actual return value type
+	 * <li>The method {@code ModelAttribute} annotation value
+	 * <li>The declared return type if it is other than {@code Object}
+	 * <li>The actual return value type
 	 * </ol>
+	 *
 	 * @param returnValue the value returned from a method invocation
-	 * @param returnType the return type of the method
+	 * @param returnType  the return type of the method
 	 * @return the model name, never {@code null} nor empty
+	 * <p/>
+	 * 获取参数名称
 	 */
 	public static String getNameForReturnValue(Object returnValue, MethodParameter returnType) {
+		//取得 annotation
 		ModelAttribute annot = returnType.getMethodAnnotation(ModelAttribute.class);
 		if (annot != null && StringUtils.hasText(annot.value())) {
 			return annot.value();
-		}
-		else {
+		} else {
 			Method method = returnType.getMethod();
 			Class<?> resolvedType = GenericTypeResolver.resolveReturnType(method, returnType.getDeclaringClass());
+
+			//使用 Conventions 根据ReturnType、方法 返回参数名
 			return Conventions.getVariableNameForReturnType(method, resolvedType, returnValue);
 		}
 	}
@@ -199,10 +227,12 @@ public final class ModelFactory {
 			this.sessionAttributesHandler.cleanupAttributes(request);
 		}
 		else {
+			//设置 sessionAttribute 蛇形
 			this.sessionAttributesHandler.storeAttributes(request, mavContainer.getModel());
 		}
 
 		if (!mavContainer.isRequestHandled()) {
+			// 给Model设置   BindingResult
 			updateBindingResult(request, mavContainer.getModel());
 		}
 	}

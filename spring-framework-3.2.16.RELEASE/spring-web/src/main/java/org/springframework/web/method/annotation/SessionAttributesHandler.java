@@ -43,6 +43,9 @@ import org.springframework.web.context.request.WebRequest;
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ *  SessionAttributesHandler 是在ModelFactory中使用的
+ *
  */
 public class SessionAttributesHandler {
 
@@ -67,6 +70,7 @@ public class SessionAttributesHandler {
 		Assert.notNull(sessionAttributeStore, "SessionAttributeStore may not be null.");
 		this.sessionAttributeStore = sessionAttributeStore;
 
+		//查找注解的工具方法
 		SessionAttributes annotation = AnnotationUtils.findAnnotation(handlerType, SessionAttributes.class);
 		if (annotation != null) {
 			this.attributeNames.addAll(Arrays.asList(annotation.value()));
@@ -120,6 +124,8 @@ public class SessionAttributesHandler {
 			Class<?> attrType = (value != null) ? value.getClass() : null;
 
 			if (isHandlerSessionAttribute(name, attrType)) {
+
+				//对单个属性的操作
 				this.sessionAttributeStore.storeAttribute(request, name, value);
 			}
 		}
