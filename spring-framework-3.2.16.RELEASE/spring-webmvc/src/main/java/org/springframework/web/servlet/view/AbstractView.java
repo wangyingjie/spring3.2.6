@@ -58,7 +58,7 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 	/** Default content type. Overridable as bean property. */
 	public static final String DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1";
 
-	/** Initial size for the temporary output byte array (if any) */
+	/** Initial size for the temporary output byte array (if any) 默认临时流文件输出 4M */
 	private static final int OUTPUT_BYTE_ARRAY_INITIAL_SIZE = 4096;
 
 
@@ -273,11 +273,12 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 	protected Map<String, Object> createMergedOutputModel(Map<String, ?> model, HttpServletRequest request,
 			HttpServletResponse response) {
 
+		//exposePathVariables 是否将路径中的变量暴漏到 model 中
 		@SuppressWarnings("unchecked")
 		Map<String, Object> pathVars = (this.exposePathVariables ?
 				(Map<String, Object>) request.getAttribute(View.PATH_VARIABLES) : null);
 
-		// Consolidate static and dynamic model attributes.
+		// Consolidate static and dynamic model attributes. 静态资源
 		int size = this.staticAttributes.size();
 		size += (model != null ? model.size() : 0);
 		size += (pathVars != null ? pathVars.size() : 0);
@@ -291,7 +292,7 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 			mergedModel.putAll(model);
 		}
 
-		// Expose RequestContext?
+		// Expose RequestContext?  请求上下文属性
 		if (this.requestContextAttribute != null) {
 			mergedModel.put(this.requestContextAttribute, createRequestContext(request, response, mergedModel));
 		}

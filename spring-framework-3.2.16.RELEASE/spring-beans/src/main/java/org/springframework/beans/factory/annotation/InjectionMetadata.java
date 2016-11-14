@@ -81,10 +81,14 @@ public class InjectionMetadata {
 				(this.checkedElements != null ? this.checkedElements : this.injectedElements);
 		if (!elementsToIterate.isEmpty()) {
 			boolean debug = logger.isDebugEnabled();
+
+			//注入的元素集合
 			for (InjectedElement element : elementsToIterate) {
 				if (debug) {
 					logger.debug("Processing injected element of bean '" + beanName + "': " + element);
 				}
+
+				// 注解方式的自动注入发生的地方
 				element.inject(target, beanName, pvs);
 			}
 		}

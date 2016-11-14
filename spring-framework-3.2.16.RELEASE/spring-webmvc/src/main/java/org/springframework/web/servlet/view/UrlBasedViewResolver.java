@@ -16,16 +16,16 @@
 
 package org.springframework.web.servlet.view;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.Ordered;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.servlet.View;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Simple implementation of the {@link org.springframework.web.servlet.ViewResolver}
@@ -392,20 +392,23 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	protected View createView(String viewName, Locale locale) throws Exception {
 		// If this resolver is not supposed to handle the given view,
 		// return null to pass on to the next resolver in the chain.
-		if (!canHandle(viewName, locale)) {
+		if (!canHandle(viewName, locale)) {//是否支持视图名的处理
 			return null;
 		}
 		// Check for special "redirect:" prefix.
 		if (viewName.startsWith(REDIRECT_URL_PREFIX)) {
+			//视图名以 redirect 开头
 			String redirectUrl = viewName.substring(REDIRECT_URL_PREFIX.length());
 			RedirectView view = new RedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());
 			return applyLifecycleMethods(viewName, view);
 		}
 		// Check for special "forward:" prefix.
 		if (viewName.startsWith(FORWARD_URL_PREFIX)) {
+			//视图已forward开头
 			String forwardUrl = viewName.substring(FORWARD_URL_PREFIX.length());
 			return new InternalResourceView(forwardUrl);
 		}
+		// 其他方式的视图处理
 		// Else fall back to superclass implementation: calling loadView.
 		return super.createView(viewName, locale);
 	}
@@ -466,20 +469,23 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	 * @see #loadView(String, java.util.Locale)
 	 */
 	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
+
 		AbstractUrlBasedView view = (AbstractUrlBasedView) BeanUtils.instantiateClass(getViewClass());
+		// 构建url访问页面路径
 		view.setUrl(getPrefix() + viewName + getSuffix());
 
 		String contentType = getContentType();
 		if (contentType != null) {
+			//设置contentType
 			view.setContentType(contentType);
 		}
 
-		view.setRequestContextAttribute(getRequestContextAttribute());
-		view.setAttributesMap(getAttributesMap());
+		view.setRequestContextAttribute(getRequestContextAttribute());//设置request属性
+		view.setAttributesMap(getAttributesMap());//设置静态资源
 
 		Boolean exposePathVariables = getExposePathVariables();
 		if (exposePathVariables != null) {
-			view.setExposePathVariables(exposePathVariables);
+			view.setExposePathVariables(exposePathVariables);//暴露路径变量到view
 		}
 
 		return view;

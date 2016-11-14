@@ -270,7 +270,7 @@ public class FreeMarkerView extends AbstractTemplateView {
 	 * @see freemarker.ext.servlet.FreemarkerServlet
 	 */
 	protected void doRender(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		// Expose model to JSP tags (as request attributes).
+		// Expose model to JSP tags (as request attributes).  将参数model中的key、value暴漏到request的attribute中
 		exposeModelAsRequestAttributes(model, request);
 		// Expose all standard FreeMarker hash models.
 		SimpleHash fmModel = buildTemplateModel(model, request, response);
@@ -280,6 +280,8 @@ public class FreeMarkerView extends AbstractTemplateView {
 		}
 		// Grab the locale-specific version of the template.
 		Locale locale = RequestContextUtils.getLocale(request);
+
+		//该方法用了 freemarker提供的Template中的process方法进行页面渲染
 		processTemplate(getTemplate(locale), fmModel, response);
 	}
 

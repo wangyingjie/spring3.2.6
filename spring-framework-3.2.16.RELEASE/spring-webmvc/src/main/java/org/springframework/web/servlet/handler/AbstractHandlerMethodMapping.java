@@ -104,6 +104,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				getApplicationContext().getBeanNamesForType(Object.class));
 
 		for (String beanName : beanNames) {
+			//获取到所有 spring 管理的 bean，通过isHandler来匹配springMvc的Controller
 			if (isHandler(getApplicationContext().getType(beanName))){
 				detectHandlerMethods(beanName);
 			}

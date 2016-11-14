@@ -118,9 +118,11 @@ public class CglibSubclassingInstantiationStrategy extends SimpleInstantiationSt
 			enhancer.setSuperclass(this.beanDefinition.getBeanClass());//设置Class 基类
 			enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);//
 			enhancer.setCallbackFilter(new CallbackFilterImpl());//设置回调方法
-			enhancer.setCallbacks(new Callback[] {
+			enhancer.setCallbacks(new Callback[]{
 					NoOp.INSTANCE,
+					//lookup-method 实现方式
 					new LookupOverrideMethodInterceptor(),
+					//replace-method 实现方式
 					new ReplaceOverrideMethodInterceptor()
 			});
 

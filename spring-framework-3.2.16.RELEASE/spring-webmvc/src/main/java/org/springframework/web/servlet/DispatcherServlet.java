@@ -16,26 +16,8 @@
 
 package org.springframework.web.servlet;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -57,6 +39,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.util.NestedServletException;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Central dispatcher for HTTP request handlers/controllers, e.g. for web UI controllers
@@ -935,14 +924,14 @@ public class DispatcherServlet extends FrameworkServlet {
 				//步骤2、请求到处理器（页面控制器）的映射，通过HandlerMapping进行映射
 				// Determine handler for the current request.
 				mappedHandler = getHandler(processedRequest, false);
-				if (mappedHandler == null || mappedHandler.getHandler() == null) {
+				if (mappedHandler == null || mappedHandler.getHandler() == null) {//mappedHandler.getHandler() 取到的实际是 HandlerMethod
 					noHandlerFound(processedRequest, response);
 					return;
 				}
 
 				//步骤3、处理器适配，即将我们的处理器包装成相应的适配器（从而支持多种类型的处理器）
 				// Determine handler adapter for the current request.
-				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
+				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());//从HandlerChain --> 获取到HandlerMethod --> 包装出HandlerAdapter
 
 				// Process last-modified header, if supported by the handler.
 				String method = request.getMethod();
@@ -1028,7 +1017,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		boolean errorView = false;
 
-		if (exception != null) {
+		if (exception != null) {//检查是否发生了异常
 			if (exception instanceof ModelAndViewDefiningException) {
 				logger.debug("ModelAndViewDefiningException encountered", exception);
 				mv = ((ModelAndViewDefiningException) exception).getModelAndView();
@@ -1042,6 +1031,8 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
+
+			//调用render方法进行页面渲染
 			render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
@@ -1237,7 +1228,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		response.setLocale(locale);
 
 		View view;
-		if (mv.isReference()) {
+		if (mv.isReference()) {//判断 mv 是不是字符串
 			//步骤5 由ViewResolver解析View（viewResolver.resolveViewName(viewName, locale)）
 			// We need to resolve the view name.
 			view = resolveViewName(mv.getViewName(), mv.getModelInternal(), locale, request);

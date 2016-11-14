@@ -537,6 +537,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 解决循环依赖，放入一个ObjectFactory 对象工厂
 			addSingletonFactory(beanName, new ObjectFactory<Object>() {
 				public Object getObject() throws BeansException {
+
+					//spring aop 的动态织入就发生在该处
 					return getEarlyBeanReference(beanName, mbd, bean);
 				}
 			});
@@ -1236,7 +1238,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		//循环处理待注入的属性列表
 		for (String propertyName : propertyNames) {
 			if (containsBean(propertyName)) {
-				//获取待注入属性的Bean对象
+				//获取待注入属性的Bean对象  依赖注入发生的地方
 				Object bean = getBean(propertyName);
 				//将依赖的bean注入到 pvs 中
 				pvs.add(propertyName, bean);
@@ -1515,7 +1517,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Set our (possibly massaged) deep copy.
 		try {
-			// 此处是依赖注入发生的地方，会在BeanWrapperImpl中完成
+			// 此处是依赖注入完成的地方，会在BeanWrapperImpl中完成
 			bw.setPropertyValues(new MutablePropertyValues(deepCopy));
 		}
 		catch (BeansException ex) {

@@ -292,6 +292,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 		InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs);
 		try {
+			// 注解方式的自动注入发生的地方
 			metadata.inject(bean, beanName, pvs);
 		}
 		catch (Throwable ex) {
