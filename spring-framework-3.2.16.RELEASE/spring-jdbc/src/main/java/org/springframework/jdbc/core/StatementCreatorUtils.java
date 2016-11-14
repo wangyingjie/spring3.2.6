@@ -16,27 +16,17 @@
 
 package org.springframework.jdbc.core;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.core.SpringProperties;
+import org.springframework.jdbc.support.SqlValue;
+
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.core.SpringProperties;
-import org.springframework.jdbc.support.SqlValue;
 
 /**
  * Utility methods for PreparedStatementSetter/Creator and CallableStatementCreator
@@ -162,6 +152,7 @@ public abstract class StatementCreatorUtils {
 	public static void setParameterValue(PreparedStatement ps, int paramIndex, int sqlType, Object inValue)
 			throws SQLException {
 
+		//处理单个参数及类型的匹配处理
 		setParameterValueInternal(ps, paramIndex, sqlType, null, null, inValue);
 	}
 
@@ -227,10 +218,14 @@ public abstract class StatementCreatorUtils {
 					"], SQL type " + (sqlTypeToUse == SqlTypeValue.TYPE_UNKNOWN ? "unknown" : Integer.toString(sqlTypeToUse)));
 		}
 
+		// TODO: 2016/11/14  设置值操作
 		if (inValueToUse == null) {
+
+			// 设置参数值为null  区分数据类型
 			setNull(ps, paramIndex, sqlTypeToUse, typeNameToUse);
 		}
 		else {
+			// 设置参数值的核心方法 区分数据类型
 			setValue(ps, paramIndex, sqlTypeToUse, typeNameToUse, scale, inValueToUse);
 		}
 	}

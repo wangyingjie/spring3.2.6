@@ -24,7 +24,7 @@ import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.util.Assert;
 
 /**
- * ���Ӽ�,��װJDBC����
+ * 连接架,包装JDBC连接
  *
  * Connection holder, wrapping a JDBC Connection.
  * {@link DataSourceTransactionManager} binds instances of this class
@@ -186,12 +186,17 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	 * returned once the data operation is done, to make the Connection available
 	 * for other operations within the same transaction. This is the case with
 	 * JDO 2.0 DataStoreConnections, for example.
+	 *
 	 * @see org.springframework.orm.jdo.DefaultJdoDialect#getJdbcConnection
 	 */
 	@Override
 	public void released() {
+
+		//存在事务是将链接数减一，而不是真正的释放链接
 		super.released();
 		if (!isOpen() && this.currentConnection != null) {
+
+			//SimpleConnectionHandle 该类什么也没干
 			this.connectionHandle.releaseConnection(this.currentConnection);
 			this.currentConnection = null;
 		}

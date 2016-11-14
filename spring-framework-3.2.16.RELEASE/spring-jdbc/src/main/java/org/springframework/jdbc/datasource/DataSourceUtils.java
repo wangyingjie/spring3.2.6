@@ -16,19 +16,18 @@
 
 package org.springframework.jdbc.datasource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Helper class that provides static methods for obtaining JDBC Connections from
@@ -111,10 +110,13 @@ public abstract class DataSourceUtils {
 		logger.debug("Fetching JDBC Connection from DataSource");
 		Connection con = dataSource.getConnection();//获取真实的DataSource链接
 
+		//当前线程支持同步
 		if (TransactionSynchronizationManager.isSynchronizationActive()) {
 			logger.debug("Registering transaction synchronization for JDBC Connection");
 			// Use same Connection for further JDBC actions within the transaction.
 			// Thread-bound object will get removed by synchronization at transaction completion.
+
+			// 在事务中使用同一个数据库链接
 			ConnectionHolder holderToUse = conHolder;
 			if (holderToUse == null) {
 				holderToUse = new ConnectionHolder(con);
@@ -122,6 +124,8 @@ public abstract class DataSourceUtils {
 			else {
 				holderToUse.setConnection(con);
 			}
+
+			// 记录数据库链接数
 			holderToUse.requested();
 			TransactionSynchronizationManager.registerSynchronization(
 					new ConnectionSynchronization(holderToUse, dataSource));
@@ -322,13 +326,16 @@ public abstract class DataSourceUtils {
 		}
 		if (dataSource != null) {
 			ConnectionHolder conHolder = (ConnectionHolder) TransactionSynchronizationManager.getResource(dataSource);
+			//存在事务
 			if (conHolder != null && connectionEquals(conHolder, con)) {
-				// It's the transactional Connection: Don't close it.
+				// It's the transactional Connection: Don't close it.   //事务的链接不能直接关闭
 				conHolder.released();
 				return;
 			}
 		}
 		logger.debug("Returning JDBC Connection to DataSource");
+
+		//直接 close 掉 con
 		doCloseConnection(con, dataSource);
 	}
 

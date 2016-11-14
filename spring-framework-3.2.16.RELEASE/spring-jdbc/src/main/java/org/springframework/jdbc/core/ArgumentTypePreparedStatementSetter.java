@@ -16,12 +16,12 @@
 
 package org.springframework.jdbc.core;
 
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collection;
-
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 /**
  * Simple adapter for {@link PreparedStatementSetter} that applies
@@ -55,8 +55,12 @@ public class ArgumentTypePreparedStatementSetter implements PreparedStatementSet
 	public void setValues(PreparedStatement ps) throws SQLException {
 		int parameterPosition = 1;
 		if (this.args != null) {
+
+			//遍历每个参数以作类型匹配及转换
 			for (int i = 0; i < this.args.length; i++) {
 				Object arg = this.args[i];
+
+				//参数是集合，递归解析集合内部的属性
 				if (arg instanceof Collection && this.argTypes[i] != Types.ARRAY) {
 					Collection entries = (Collection) arg;
 					for (Object entry : entries) {
@@ -74,6 +78,8 @@ public class ArgumentTypePreparedStatementSetter implements PreparedStatementSet
 					}
 				}
 				else {
+
+					//解析当前属性
 					doSetValue(ps, parameterPosition, this.argTypes[i], arg);
 					parameterPosition++;
 				}
@@ -93,6 +99,7 @@ public class ArgumentTypePreparedStatementSetter implements PreparedStatementSet
 	protected void doSetValue(PreparedStatement ps, int parameterPosition, int argType, Object argValue)
 			throws SQLException {
 
+		//处理单个参数及类型的匹配处理
 		StatementCreatorUtils.setParameterValue(ps, parameterPosition, argType, argValue);
 	}
 

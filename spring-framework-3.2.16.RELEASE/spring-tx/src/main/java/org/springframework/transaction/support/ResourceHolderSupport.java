@@ -54,7 +54,7 @@ public abstract class ResourceHolderSupport implements ResourceHolder {
 
 	/**
 	 *
-	 * ·µ»ØÊÂÎñ×ÊÔ´ÊÇ·ñÍ¬²½¡£
+	 * è¿”å›äº‹åŠ¡èµ„æºæ˜¯å¦åŒæ­¥ã€‚
 	 * Return whether the resource is synchronized with a transaction.
 	 */
 	public boolean isSynchronizedWithTransaction() {

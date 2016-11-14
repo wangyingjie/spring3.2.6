@@ -293,6 +293,8 @@ public abstract class TransactionSynchronizationManager {
 		if (!isSynchronizationActive()) {
 			throw new IllegalStateException("Transaction synchronization is not active");
 		}
+
+		// ThreadLocal 里面放置的是一个 LinkedHashSet 集合
 		synchronizations.get().add(synchronization);
 	}
 
