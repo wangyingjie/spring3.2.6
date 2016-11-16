@@ -365,9 +365,8 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 
 	//-------------------------------------------------------------------------
 	// Methods dealing with static SQL (java.sql.Statement)
-	// 处理静态SQL方法
+	// 处理静态SQL方法：1、少了参数、参数类型的传递；2、少了PrepareStatementSetter类型的封装
 	//-------------------------------------------------------------------------
-
 	public <T> T execute(StatementCallback<T> action) throws DataAccessException {
 		Assert.notNull(action, "Callback object must not be null");
 		//DataSourceUtils 获取数据源链接的工具类
@@ -379,13 +378,22 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 					this.nativeJdbcExtractor.isNativeConnectionNecessaryForNativeStatements()) {
 				conToUse = this.nativeJdbcExtractor.getNativeConnection(con);
 			}
+			
+			// TODO: 2016/11/15 不带参数的sql 直接使用 con 创建sql   
 			stmt = conToUse.createStatement();
+
+			//应用用户查询参数设置
 			applyStatementSettings(stmt);
+
 			Statement stmtToUse = stmt;
 			if (this.nativeJdbcExtractor != null) {
 				stmtToUse = this.nativeJdbcExtractor.getNativeStatement(stmt);
 			}
+
+			//方法回调
 			T result = action.doInStatement(stmtToUse);
+
+			//处理警告信息
 			handleWarnings(stmt);
 			return result;
 		}
@@ -452,6 +460,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 		query(sql, new RowCallbackHandlerResultSetExtractor(rch));
 	}
 
+	//直接 sql 查询，无sql参数
 	public <T> List<T> query(String sql, RowMapper<T> rowMapper) throws DataAccessException {
 		return query(sql, new RowMapperResultSetExtractor<T>(rowMapper));
 	}
@@ -482,6 +491,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 	}
 
 	public <T> List<T> queryForList(String sql, Class<T> elementType) throws DataAccessException {
+		//返回单列对象，列值用 elementType 进行封装
 		return query(sql, getSingleColumnRowMapper(elementType));
 	}
 
@@ -573,6 +583,8 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 					this.nativeJdbcExtractor.isNativeConnectionNecessaryForNativePreparedStatements()) {
 				conToUse = this.nativeJdbcExtractor.getNativeConnection(con);
 			}
+
+			// TODO: 2016/11/15 带有条件的sql语句要使用 PreparedStatement
 			ps = psc.createPreparedStatement(conToUse);
 
 			//2、应用用户设定的输入参数
@@ -644,13 +656,18 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 				ResultSet rs = null;
 				try {
 					if (pss != null) {
+						// （该方法内部挺复杂！！！） 替换ps 里面sql的占位符
 						pss.setValues(ps);
 					}
+
+					//执行查询操作
 					rs = ps.executeQuery();
 					ResultSet rsToUse = rs;
 					if (nativeJdbcExtractor != null) {
 						rsToUse = nativeJdbcExtractor.getNativeResultSet(rs);
 					}
+
+					//将查询结果通过  mapper 封装成 POJO 对象集合
 					return rse.extractData(rsToUse);
 				}
 				finally {
