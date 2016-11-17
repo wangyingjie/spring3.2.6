@@ -16,18 +16,9 @@
 
 package org.springframework.aop.framework.autoproxy;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.aopalliance.aop.Advice;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.aop.Advisor;
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.AopInfrastructureBean;
@@ -46,6 +37,14 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.util.ClassUtils;
+
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * {@link org.springframework.beans.factory.config.BeanPostProcessor} implementation
@@ -314,7 +313,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 	}
 
 	/**
-	 *   如果bean是确定为一个代理类的创建与配置拦截器代理。
+	 * 如果bean确定为一个代理类的创建与配置拦截器代理。
 	 * Create a proxy with the configured interceptors if the bean is
 	 * identified as one to proxy by the subclass.
 	 * @see #getAdvicesAndAdvisorsForBean
@@ -325,7 +324,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyConfig
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
 			//是否由于避免循环依赖而创建的Bean代理
 			if (!this.earlyProxyReferences.containsKey(cacheKey)) {
-
+				//todo Spring Aop 发生的地方，通过该方法可以把 初始化完成的bean包装成一个代理对象。
+				//业务系统里面的事务管理bean，例如：xxxManager 就是从此处被包装成代理对象的，
+				//判断该类是否是代理对象是通过类、类方法、接口、接口方法循环找到切点
 				//对指定Bean进行封装
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
