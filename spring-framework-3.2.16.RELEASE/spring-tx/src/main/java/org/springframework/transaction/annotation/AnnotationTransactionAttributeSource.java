@@ -16,17 +16,17 @@
 
 package org.springframework.transaction.annotation;
 
+import org.springframework.transaction.interceptor.AbstractFallbackTransactionAttributeSource;
+import org.springframework.transaction.interceptor.TransactionAttribute;
+import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
+
 import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.springframework.transaction.interceptor.AbstractFallbackTransactionAttributeSource;
-import org.springframework.transaction.interceptor.TransactionAttribute;
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 
 /**
  * Implementation of the
@@ -132,9 +132,9 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	}
 
 	/**
-	 *   »ñÈ¡¸ø¶¨·½·¨»òÀàµÄÊÂÎñÊô
+	 *   è·å–ç»™å®šæ–¹æ³•æˆ–ç±»çš„äº‹åŠ¡å±
 	 * Determine the transaction attribute for the given method or class.
-	 * <p>This implementation delegates to configured    ÊµÏÖÎ¯ÍĞ¸øÁËÅäÖÃ
+	 * <p>This implementation delegates to configured    å®ç°å§”æ‰˜ç»™äº†é…ç½® SpringTransactionAnnotationParser ç±»
 	 * {@link TransactionAnnotationParser TransactionAnnotationParsers}
 	 * for parsing known annotations into Spring's metadata attribute class.
 	 * Returns {@code null} if it's not transactional.
@@ -145,11 +145,11 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	 */
 	protected TransactionAttribute determineTransactionAttribute(AnnotatedElement ae) {
 
-		// annotationParsers ÔÚAnnotationTransactionAttributeSource ³õÊ¼»¯µÄÊ±ºò³õÊ¼´¦Àí
+		// annotationParsers åœ¨AnnotationTransactionAttributeSource åˆå§‹åŒ–çš„æ—¶å€™åˆå§‹å¤„ç†
 		for (TransactionAnnotationParser annotationParser : this.annotationParsers) {
 
-			//½âÎöÊÂÎï×¢½â  ae ´ú±íµÄÊÇÒ»¸ö×¢½âµÄ·½·¨»òÕßÊÇÀà
-			// »ñÈ¡ÊôĞÔµÄÊ±ºò£¬Êµ¼ÊÉÏÊÇÍ¨¹ı SpringTransactionAnnotationParser#parseTransactionAnnotation ·½·¨½øĞĞ½âÎöµÄ
+			//è§£æäº‹ç‰©æ³¨è§£  ae ä»£è¡¨çš„æ˜¯ä¸€ä¸ªæ³¨è§£çš„æ–¹æ³•æˆ–è€…æ˜¯ç±»
+			// è·å–å±æ€§çš„æ—¶å€™ï¼Œå®é™…ä¸Šæ˜¯é€šè¿‡ SpringTransactionAnnotationParser#parseTransactionAnnotation æ–¹æ³•è¿›è¡Œè§£æçš„
 			TransactionAttribute attr = annotationParser.parseTransactionAnnotation(ae);
 			if (attr != null) {
 				return attr;

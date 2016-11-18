@@ -16,15 +16,15 @@
 
 package org.springframework.transaction.annotation;
 
-import java.io.Serializable;
-import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.transaction.interceptor.NoRollbackRuleAttribute;
 import org.springframework.transaction.interceptor.RollbackRuleAttribute;
 import org.springframework.transaction.interceptor.RuleBasedTransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionAttribute;
+
+import java.io.Serializable;
+import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
 
 /**
  * Strategy implementation for parsing Spring's {@link Transactional} annotation.
@@ -37,7 +37,7 @@ public class SpringTransactionAnnotationParser implements TransactionAnnotationP
 
 	public TransactionAttribute parseTransactionAnnotation(AnnotatedElement ae) {
 
-		//ÊÂÎï×¢½â
+		//äº‹ç‰©æ³¨è§£
 		Transactional ann = AnnotationUtils.getAnnotation(ae, Transactional.class);
 		if (ann != null) {
 			return parseTransactionAnnotation(ann);
@@ -48,26 +48,26 @@ public class SpringTransactionAnnotationParser implements TransactionAnnotationP
 	}
 
 	/**
-	 * Íê³ÉÊÂÎñ±êÇ©µÄ×îÖÕ½âÎö
+	 * å®Œæˆäº‹åŠ¡æ ‡ç­¾çš„æœ€ç»ˆè§£æ
 	 * @param ann
 	 * @return
 	 */
 	public TransactionAttribute parseTransactionAnnotation(Transactional ann) {
 
-		//´æ´¢Transactional ÊÂÎñµÄÅäÖÃÊôĞÔ
+		//å­˜å‚¨Transactional äº‹åŠ¡çš„é…ç½®å±æ€§
 		RuleBasedTransactionAttribute rbta = new RuleBasedTransactionAttribute();
-		//½âÎöÊÂÎñ´«²¥ÌØĞÔ
+		//è§£æäº‹åŠ¡ä¼ æ’­ç‰¹æ€§
 		rbta.setPropagationBehavior(ann.propagation().value());
-		//½âÎöÊÂÎñ¸ôÀë¼¶±ğ
+		//è§£æäº‹åŠ¡éš”ç¦»çº§åˆ«
 		rbta.setIsolationLevel(ann.isolation().value());
-		//½âÎöÊÂÎñ³¬Ê±Ê±¼ä
+		//è§£æäº‹åŠ¡è¶…æ—¶æ—¶é—´
 		rbta.setTimeout(ann.timeout());
-		//½âÎö readOnly ÊôĞÔ
+		//è§£æ readOnly å±æ€§
 		rbta.setReadOnly(ann.readOnly());
-		//½âÎö Qualifier ×Ê¸ñÊôĞÔ
+		//è§£æ Qualifier èµ„æ ¼å±æ€§
 		rbta.setQualifier(ann.value());
 
-		//½âÎö»Ø¹ö¹æÔò
+		//è§£æå›æ»šè§„åˆ™
 		ArrayList<RollbackRuleAttribute> rollBackRules = new ArrayList<RollbackRuleAttribute>();
 		Class[] rbf = ann.rollbackFor();
 		for (Class rbRule : rbf) {
@@ -91,7 +91,7 @@ public class SpringTransactionAnnotationParser implements TransactionAnnotationP
 		}
 		rbta.getRollbackRules().addAll(rollBackRules);
 
-		//·µ»ØÊÂÎñÊôĞÔ
+		//è¿”å›äº‹åŠ¡å±æ€§
 		return rbta;
 	}
 
