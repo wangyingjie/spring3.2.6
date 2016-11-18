@@ -669,8 +669,11 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 	/**
 	 * Simple callback interface for proceeding with the target invocation.
 	 * Concrete interceptors/aspects adapt this to their invocation mechanism.
+	 *
+	 * 该处将方法修饰符从：protected 修改成了 public
+	 * 不修改组：AbstractTransactionAspect 内部调用该方法时报错了！！！！
 	 */
-	protected interface InvocationCallback {
+	public interface InvocationCallback {
 
 		Object proceedWithInvocation() throws Throwable;
 	}

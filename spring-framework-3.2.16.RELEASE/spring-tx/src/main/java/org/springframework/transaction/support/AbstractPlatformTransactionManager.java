@@ -355,7 +355,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			throw new IllegalTransactionStateException(
 					"No existing transaction found for transaction marked with propagation 'mandatory'");
 		}
-		// 一下事务行为都需要新建事务
+		// 以下事务行为都需要新建事务 (事务的传播特性)
 		else if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
 				definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
 				definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
@@ -372,10 +372,11 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				DefaultTransactionStatus status = newTransactionStatus(
 						definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
 
-				//如果是 新链接绑定到当前线程   摄制数据库的链接 connectionss
+				// 构造了 transaction ，包括设置 isolation level 、timeout 、ConnectionHolder 等信息
+				// 如果是新链接绑定到当前线程
 				doBegin(transaction, definition);
 
-				//新同步事务的设置 ，针对当前线程的设置  threadLocal 存储事务信息
+				//新同步事务的设置，针对当前线程的设置  threadLocal 存储事务信息
 				prepareSynchronization(status, definition);
 				return status;
 			}
@@ -429,6 +430,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 						definition.getName() + "]");
 			}
 
+			// suspend  英 [sə'spend]   美 [sə'spɛnd] vt. 延缓，推迟；使暂停；使悬浮
 			//新事务的建立   suspend 方法将原事务挂起 主要目的是记录原事务的状态，以便于后续的操作对事物的恢复
 			SuspendedResourcesHolder suspendedResources = suspend(transaction);
 			try {
@@ -450,7 +452,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		}
 
 		//嵌入式事务处理
-		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
+		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {// NESTED ['nestɪd]  adj. 嵌套的，内装的
 			if (!isNestedTransactionAllowed()) {
 				throw new NestedTransactionNotSupportedException(
 						"Transaction manager does not allow nested transactions by default - " +
@@ -513,6 +515,8 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			}
 		}
 		boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
+
+		// 准备事务状态 TransactionStatus
 		return prepareTransactionStatus(definition, transaction, false, newSynchronization, debugEnabled, null);
 	}
 
@@ -549,6 +553,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	}
 
 	/**
+	 * 将事务绑定到当前线程
 	 * Initialize transaction synchronization as appropriate.
 	 */
 	protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) {

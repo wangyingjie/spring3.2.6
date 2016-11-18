@@ -151,13 +151,15 @@ public abstract class DataSourceUtils {
 
 		Assert.notNull(con, "No Connection specified");
 
+		// 以下代码其实就做了两件事情：1、设置只读属性 ；2、设置事务隔离级别  此处的代码应该抽成小方法，更易阅读，在此对 spring 提出批评！！！
+
 		// Set read-only flag.  // 事务只读
 		if (definition != null && definition.isReadOnly()) {
 			try {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Setting JDBC Connection [" + con + "] read-only");
 				}
-				// 事务只读
+				//1、 事务只读
 				con.setReadOnly(true);
 			}
 			catch (SQLException ex) {
@@ -197,7 +199,7 @@ public abstract class DataSourceUtils {
 			if (currentIsolation != definition.getIsolationLevel()) {
 				previousIsolationLevel = currentIsolation;
 
-				//设置事务隔离级别
+				//2、 设置事务隔离级别
 				con.setTransactionIsolation(definition.getIsolationLevel());
 			}
 		}
