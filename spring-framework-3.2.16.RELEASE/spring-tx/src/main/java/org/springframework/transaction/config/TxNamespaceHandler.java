@@ -37,7 +37,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * @author Juergen Hoeller
  * @since 2.0
  *
- * ×¢½â·½Ê½ÉùÃ÷µÄÊÂÎñ±êÇ©
+ * æ³¨è§£æ–¹å¼å£°æ˜çš„äº‹åŠ¡æ ‡ç­¾
  *
  */
 public class TxNamespaceHandler extends NamespaceHandlerSupport {
@@ -54,7 +54,7 @@ public class TxNamespaceHandler extends NamespaceHandlerSupport {
 
 
 	public void init() {
-		//ÊÂÎñadvice BeanDefinition ½âÎö
+		//äº‹åŠ¡advice BeanDefinition è§£æ
 		registerBeanDefinitionParser("advice", new TxAdviceBeanDefinitionParser());
 		registerBeanDefinitionParser("annotation-driven", new AnnotationDrivenBeanDefinitionParser());
 		registerBeanDefinitionParser("jta-transaction-manager", new JtaTransactionManagerBeanDefinitionParser());
