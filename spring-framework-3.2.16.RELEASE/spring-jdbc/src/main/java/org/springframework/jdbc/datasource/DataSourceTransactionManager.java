@@ -340,12 +340,12 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			TransactionSynchronizationManager.unbindResource(this.dataSource);
 		}
 
-		// Reset connection.
+		// Reset connection.  主要做三事：1、重置自动提交属性为 true；2、重置con的事务隔离级别；3、重置 con 的read-only属性为false
 		Connection con = txObject.getConnectionHolder().getConnection();
 		try {
 			//重置autoCommit
 			if (txObject.isMustRestoreAutoCommit()) {
-				con.setAutoCommit(true);
+				con.setAutoCommit(true); //1、重置自动提交属性为 true
 			}
 
 			//重置数据库连接

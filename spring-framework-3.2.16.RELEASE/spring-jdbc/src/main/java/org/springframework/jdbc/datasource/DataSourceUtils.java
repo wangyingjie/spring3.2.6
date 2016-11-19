@@ -223,7 +223,7 @@ public abstract class DataSourceUtils {
 					logger.debug("Resetting isolation level of JDBC Connection [" +
 							con + "] to " + previousIsolationLevel);
 				}
-				con.setTransactionIsolation(previousIsolationLevel);
+				con.setTransactionIsolation(previousIsolationLevel); //2、重置con的事务隔离级别；
 			}
 
 			// Reset read-only flag.
@@ -231,7 +231,7 @@ public abstract class DataSourceUtils {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Resetting read-only flag of JDBC Connection [" + con + "]");
 				}
-				con.setReadOnly(false);
+				con.setReadOnly(false); //3、重置 con 的read-only属性为false
 			}
 		}
 		catch (Throwable ex) {

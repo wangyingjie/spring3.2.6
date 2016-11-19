@@ -532,8 +532,12 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 						"] after exception: " + ex);
 			}
 
+			// todo Spring 事务回滚是需要满足回滚条件的，不是什么异常都能回滚的！
+
 			//异常是否是RuntimeException or error 类型
+			//执行过程：	DelegatingTransactionAttribute.rollbackOn()-->RuleBasedTransactionAttribute.rollbackOn()-->DefaultTransactionAttribute.rollbackOn()
 			if (txInfo.transactionAttribute.rollbackOn(ex)) { //事物的回滚条件
+
 				try {
 
 					// 根据TransactionStatus 信息进行回滚

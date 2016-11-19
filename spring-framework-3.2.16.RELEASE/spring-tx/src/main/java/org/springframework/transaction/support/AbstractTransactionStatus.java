@@ -146,7 +146,7 @@ public abstract class AbstractTransactionStatus implements TransactionStatus {
 		if (!hasSavepoint()) {
 			throw new TransactionUsageException("No savepoint associated with current transaction");
 		}
-		//∏˘æ›JDBC  JdbcTransactionObjectSupport
+		//Ê†πÊçÆJDBC  JdbcTransactionObjectSupport
 		getSavepointManager().rollbackToSavepoint(getSavepoint());
 		setSavepoint(null);
 	}

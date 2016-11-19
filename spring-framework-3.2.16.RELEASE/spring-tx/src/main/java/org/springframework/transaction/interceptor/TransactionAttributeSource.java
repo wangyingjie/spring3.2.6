@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
 public interface TransactionAttributeSource {
 
 	/**
-	 *  ·µ»Ø¸ø¶¨·½·¨µÄÊÂÎñÊôĞÔ£¬Èç¹û·½·¨ÊÇ·ÇÊÂÎñĞÔµÄ£¬Ôò{¡°Âë¡±¿Õ}¡£
+	 *  è¿”å›ç»™å®šæ–¹æ³•çš„äº‹åŠ¡å±æ€§ï¼Œå¦‚æœæ–¹æ³•æ˜¯éäº‹åŠ¡æ€§çš„ï¼Œåˆ™ä¸ºç©ºã€‚
 	 * Return the transaction attribute for the given method,
 	 * or {@code null} if the method is non-transactional.
 	 * @param method the method to introspect

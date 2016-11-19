@@ -798,12 +798,14 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 					if (status.isDebug()) {
 						logger.debug("Releasing transaction savepoint");
 					}
+					//清除保存点
 					status.releaseHeldSavepoint();
 				}
 				else if (status.isNewTransaction()) {//独立的事务则直接提交
 					if (status.isDebug()) {
 						logger.debug("Initiating transaction commit");
 					}
+					//新事务直接提交
 					doCommit(status);
 				}
 				// Throw UnexpectedRollbackException if we have a global rollback-only
@@ -1083,7 +1085,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			// 清空threadLocal信息
 			TransactionSynchronizationManager.clear();
 		}
-		//如果式新的同步状态   把绑定当前线程的事务信息清除
+		//如果是新的事务同步状态   把绑定当前线程的事务信息清除
 		if (status.isNewTransaction()) {
 			doCleanupAfterCompletion(status.getTransaction());
 		}
