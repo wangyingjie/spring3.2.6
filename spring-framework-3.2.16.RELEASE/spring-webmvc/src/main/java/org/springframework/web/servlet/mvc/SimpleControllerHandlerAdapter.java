@@ -16,11 +16,11 @@
 
 package org.springframework.web.servlet.mvc;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Adapter to use the plain {@link Controller} workflow interface with
@@ -35,10 +35,13 @@ import org.springframework.web.servlet.ModelAndView;
  * @see Controller
  * @see LastModified
  * @see HttpRequestHandlerAdapter
+ *
+ * 简单的 Spring mvc 的controrller 的映射适配器，
  */
 public class SimpleControllerHandlerAdapter implements HandlerAdapter {
 
 	public boolean supports(Object handler) {
+		// 只支持实现了 Controller 接口的子类
 		return (handler instanceof Controller);
 	}
 

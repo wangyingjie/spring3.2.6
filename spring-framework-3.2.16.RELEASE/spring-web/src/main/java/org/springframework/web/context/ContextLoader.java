@@ -16,17 +16,8 @@
 
 package org.springframework.web.context;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.servlet.ServletContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.access.BeanFactoryLocator;
 import org.springframework.beans.factory.access.BeanFactoryReference;
@@ -44,6 +35,14 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.ServletContext;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Performs the actual initialization work for the root application context.
@@ -321,7 +320,7 @@ public class ContextLoader {
 				}
 			}
 
-			// 将 XmlWebApplicationContext 放到Serverlet上下文中
+			// 将 XmlWebApplicationContext 放到Servlet上下文中
 			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
 
 			ClassLoader ccl = Thread.currentThread().getContextClassLoader();
@@ -423,8 +422,8 @@ public class ContextLoader {
 			}
 		}
 
-		// 它将servletContext这个上下文放到了wac中，也就是说，在容器中，有了servlet的上下文参数，
-		// 那么我们可以在spring后续的容器操作中，使用servlet的配置等信息了。
+		// 它将servletContext这个上下文放到了(wac) Spring IOC 上下文了中，也就是说，在IOC容器中，有了servlet的上下文参数，
+		// 那么我们可以在spring后续的容器操作中使用servlet的配置信息了。
 		wac.setServletContext(sc);
 
 		/**
@@ -531,6 +530,7 @@ public class ContextLoader {
 			}
 		}
 		else {
+			//在静态块里面会初始化  defaultStrategies
 			contextClassName = defaultStrategies.getProperty(WebApplicationContext.class.getName());
 			try {
 				return ClassUtils.forName(contextClassName, ContextLoader.class.getClassLoader());

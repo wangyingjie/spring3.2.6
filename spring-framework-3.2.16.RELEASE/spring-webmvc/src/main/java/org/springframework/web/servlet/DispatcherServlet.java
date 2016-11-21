@@ -431,6 +431,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	@Override
 	protected void onRefresh(ApplicationContext context) {
+		//todo 初始化策略
 		initStrategies(context);
 	}
 
@@ -850,6 +851,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			}
 		}
 
+		// 在Request 中放置对应的属性，一共接下来的处理中使用
 		// Make framework objects available to handlers and view objects.
 		request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());
 		request.setAttribute(LOCALE_RESOLVER_ATTRIBUTE, this.localeResolver);
@@ -892,8 +894,8 @@ public class DispatcherServlet extends FrameworkServlet {
 	 *
 	 *    1、  请求如何给前端控制器？这个应该在web.xml中进行部署描述
 	 *    2、  前端控制器如何根据请求信息选择页面控制器进行功能处理？ 我们需要配置HandlerMapping进行映射
-	 *    3、  如何支持多种页面控制器呢？配置HandlerAdapter从而支持多种类型的页面控制器
-	 *    4、  如何页面控制器如何使用业务对象？可以预料到，肯定利用Spring IoC容器的依赖注入功能
+	 *    3、  如何支持多种页面控制器呢？   配置HandlerAdapter从而支持多种类型的页面控制器
+	 *    4、  页面控制器如何使用业务对象？可以预料到，肯定利用Spring IoC容器的依赖注入功能
 	 *    5、  页面控制器如何返回模型数据？使用ModelAndView返回
 	 *    6、  前端控制器如何根据页面控制器返回的逻辑视图名选择具体的视图进行渲染？ 使用ViewResolver进行解析
 	 *

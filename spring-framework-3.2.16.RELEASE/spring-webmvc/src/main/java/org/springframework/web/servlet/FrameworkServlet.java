@@ -16,22 +16,8 @@
 
 package org.springframework.web.servlet;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextException;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.*;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.SourceFilteringListener;
 import org.springframework.context.i18n.LocaleContext;
@@ -61,6 +47,16 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.util.NestedServletException;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 /**
  * Base servlet for Spring's web framework. Provides integration with
@@ -496,6 +492,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
 		if (this.webApplicationContext != null) {
 			// A context instance was injected at construction time -> use it
+			// 构造函数注入
 			wac = this.webApplicationContext;
 			if (wac instanceof ConfigurableWebApplicationContext) {
 				ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext) wac;
@@ -520,6 +517,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 			wac = findWebApplicationContext();
 		}
 		if (wac == null) {
+			// 没有找到 wac 的情况下，通过 servlet 里面的  contextClass 参数获取自定义的  WebApplicationContext 配置
 			// No context instance is defined for this servlet -> create a local one
 			wac = createWebApplicationContext(rootContext);
 		}
@@ -528,6 +526,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 			// Either the context is not a ConfigurableApplicationContext with refresh
 			// support or the context injected at construction time had already been
 			// refreshed -> trigger initial onRefresh manually here.
+			// todo 调用 DispatcherServlet 的入口
 			onRefresh(wac);
 		}
 
@@ -607,6 +606,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 		return wac;
 	}
 
+	// WebApplicationContext 最终都会通过此方法对配置进行刷新操作
 	protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac) {
 		if (ObjectUtils.identityToString(wac).equals(wac.getId())) {
 			// The application context id is still set to its original default value
@@ -651,6 +651,8 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
 		postProcessWebApplicationContext(wac);
 		applyInitializers(wac);
+
+		// todo 此处就会调用到 spring IOC 容器的初始化逻辑，通过该方法，spring配置文件中的 bean 将会得以加载和初始化
 		wac.refresh();
 	}
 
@@ -929,6 +931,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 	}
 
 	/**
+	 * 处理Request请求
 	 * Process this request, publishing an event regardless of the outcome.
 	 * <p>The actual event handling is performed by the abstract
 	 * {@link #doService} template method.
@@ -939,6 +942,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 		long startTime = System.currentTimeMillis();
 		Throwable failureCause = null;
 
+		//提取当前request中的 Locale属性  存储到当前线程中
 		LocaleContext previousLocaleContext = LocaleContextHolder.getLocaleContext();
 		LocaleContext localeContext = buildLocaleContext(request);
 
@@ -951,6 +955,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 		initContextHolders(request, localeContext, requestAttributes);
 
 		try {
+			// doGet、doPost ……………… 核心处理方法
 			doService(request, response);
 		}
 		catch (ServletException ex) {
@@ -967,6 +972,8 @@ public abstract class FrameworkServlet extends HttpServletBean {
 		}
 
 		finally {
+
+			//重置当前线程变量
 			resetContextHolders(request, previousLocaleContext, previousAttributes);
 			if (requestAttributes != null) {
 				requestAttributes.requestCompleted();
@@ -986,6 +993,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 				}
 			}
 
+			//无论成功与否都会发布事件通知
 			publishRequestHandledEvent(request, startTime, failureCause);
 		}
 	}
