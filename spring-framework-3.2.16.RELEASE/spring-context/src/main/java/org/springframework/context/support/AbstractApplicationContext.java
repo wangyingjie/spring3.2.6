@@ -491,6 +491,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 			try {
 
+				//todo 接下来的三行代码对 Spring 的功能扩展性起了至关重要的作用。前两行主要是让你现在可以对已经构建的 BeanFactory 的配置做修改，
+				//todo 后面一行就是让你可以对以后再创建 Bean 的实例对象时添加一些自定义的操作。
 				//模板方法，在bean定义被装载后，提供一个修改容器 BeanFactory 的入口
 				// Allows post-processing of the bean factory in context subclasses. 子类覆盖方法做额外的处理
 				postProcessBeanFactory(beanFactory);
@@ -499,7 +501,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Invoke factory processors registered as beans in the context. 激活各种beanFactory处理
 				invokeBeanFactoryPostProcessors(beanFactory);
 
-				// 执行BeanFactoryPostProcessor（在beanFactory初始化过程中，bean初始化之前，修改beanfactory参数）、
+				// （在beanFactory初始化过程中，bean初始化之前，修改beanfactory参数）、
 				// BeanDefinitionRegistryPostProcessor 其实也是继承自BeanFactoryPostProcessor，
 				// 多了对BeanDefinitionRegistry的支持invokeBeanFactoryPostProcessors(beanFactory);
 				// 执行postProcess，那BeanPostProcessor是什么呢，是为了在bean加载过程中修改bean的内容，
@@ -607,11 +609,13 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/**
 	 * Configure the factory's standard context characteristics,
 	 * such as the context's ClassLoader and post-processors.
+	 *
 	 * @param beanFactory the BeanFactory to configure
-	 *
-	 *
 	 */
 	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+
+		//创建好 BeanFactory 后，接下去添加一些 Spring 本身需要的一些工具类
+
 		// Tell the internal bean factory to use the context's class loader etc.
 		beanFactory.setBeanClassLoader(getClassLoader());
 		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver());
@@ -665,6 +669,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Instantiate and invoke all registered BeanFactoryPostProcessor beans,
 	 * respecting explicit order if given.
 	 * <p>Must be called before singleton instantiation.
+	 * 它的参数是 beanFactory，说明可以对 beanFactory 做修改，
+	 * 这里注意这个 beanFactory 是 ConfigurableListableBeanFactory 类型的，
+	 * 这也印证了不同 BeanFactory 所使用的场合不同，这里只能是可配置的 BeanFactory，防止一些数据被用户随意修改
+	 *
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
 		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
@@ -764,6 +772,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Instantiate and invoke all registered BeanPostProcessor beans,
 	 * respecting explicit order if given.
 	 * <p>Must be called before any instantiation of application beans.
+	 *
+	 * registerBeanPostProcessors 方法也是可以获取用户定义的实现了 BeanPostProcessor 接口的子类，
+	 * 并执行把它们注册到 BeanFactory 对象中的 beanPostProcessors 变量中
 	 */
 	protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
 		String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanPostProcessor.class, true, false);

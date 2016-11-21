@@ -16,15 +16,6 @@
 
 package org.springframework.beans.factory.support;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TypeConverter;
@@ -32,14 +23,13 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.config.RuntimeBeanNameReference;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.config.TypedStringValue;
+import org.springframework.beans.factory.config.*;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Helper class for use in bean factory implementations,
@@ -105,7 +95,7 @@ class BeanDefinitionValueResolver {
 		// to another bean to be resolved.
 		if (value instanceof RuntimeBeanReference) {// Bean 定义载入的时候完成了 RuntimeBeanReference 的初始化设置
 			RuntimeBeanReference ref = (RuntimeBeanReference) value;
-			// 对Bean引用的解析过程
+			// todo 对Bean引用的解析过程
 			return resolveReference(argName, ref);
 		}
 		else if (value instanceof RuntimeBeanNameReference) {//Bean 名字的引用注入
@@ -339,6 +329,8 @@ class BeanDefinitionValueResolver {
 			else {
 				//todo  在当前IOC容器中获取Bean，这里会触发一个getBean的过程，如果依赖注入没有发生，这里会触发相应的依赖注入
 				Object bean = this.beanFactory.getBean(refName);
+
+				//todo 注册当前bean 依赖的bean实例
 				this.beanFactory.registerDependentBean(refName, this.beanName);
 				return bean;
 			}
