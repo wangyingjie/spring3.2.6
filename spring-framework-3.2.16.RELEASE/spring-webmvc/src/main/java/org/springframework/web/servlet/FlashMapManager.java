@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Rossen Stoyanchev
  * @since 3.1
  * @see FlashMap
+ *
+ * 主要功能是用于  redirect  中传递参数
  */
 public interface FlashMapManager {
 
@@ -39,6 +41,9 @@ public interface FlashMapManager {
 	 * @param request the current request
 	 * @param response the current response
 	 * @return a FlashMap matching the current request or {@code null}
+	 *
+	 * retrieve [rɪ'triːv] 检索；恢复；重新得到
+	 *
 	 */
 	FlashMap retrieveAndUpdate(HttpServletRequest request, HttpServletResponse response);
 
