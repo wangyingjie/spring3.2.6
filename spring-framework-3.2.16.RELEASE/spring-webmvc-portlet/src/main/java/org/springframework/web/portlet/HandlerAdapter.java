@@ -59,6 +59,8 @@ public interface HandlerAdapter {
 	 * }
 	 * @param handler handler object to check
 	 * @return whether or not this object can use the given handler
+	 *
+	 * 是否支持使用某一个 Handler 处理
 	 */
 	boolean supports(Object handler);
 

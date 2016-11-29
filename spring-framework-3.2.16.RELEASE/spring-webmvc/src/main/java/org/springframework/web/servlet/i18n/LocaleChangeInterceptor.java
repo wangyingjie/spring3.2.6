@@ -16,14 +16,14 @@
 
 package org.springframework.web.servlet.i18n;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.support.RequestContextUtils;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Interceptor that allows for changing the current locale on every request,
@@ -32,6 +32,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @author Juergen Hoeller
  * @since 20.06.2003
  * @see org.springframework.web.servlet.LocaleResolver
+ *
+ * 通过该拦截器可以实现 Locale 属性的动态改变，支持页面上进行修改
  */
 public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
 
@@ -59,7 +61,14 @@ public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
 		return this.paramName;
 	}
 
-
+	/**
+	 * 拦截器处理 Locale 属性
+	 * @param request
+	 * @param response
+	 * @param handler
+	 * @return
+	 * @throws ServletException
+	 */
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws ServletException {

@@ -840,7 +840,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		// Keep a snapshot of the request attributes in case of an include,
 		// to be able to restore the original attributes after the include.
 		Map<String, Object> attributesSnapshot = null;
-		if (WebUtils.isIncludeRequest(request)) {
+		if (WebUtils.isIncludeRequest(request)) {// 如果是 include 请求，首先对request做了一个快照
 			attributesSnapshot = new HashMap<String, Object>();
 			Enumeration<?> attrNames = request.getAttributeNames();
 			while (attrNames.hasMoreElements()) {
@@ -851,7 +851,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			}
 		}
 
-		// 在Request 中放置对应的属性，一共接下来的处理中使用
+		// 在Request 中放置对应的属性，供接下来的处理中使用
 		// Make framework objects available to handlers and view objects.
 		request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());
 		request.setAttribute(LOCALE_RESOLVER_ATTRIBUTE, this.localeResolver);
@@ -860,9 +860,13 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		FlashMap inputFlashMap = this.flashMapManager.retrieveAndUpdate(request, response);
 		if (inputFlashMap != null) {
+			//（1）、保存上次请求转发过来的属性
 			request.setAttribute(INPUT_FLASH_MAP_ATTRIBUTE, Collections.unmodifiableMap(inputFlashMap));
 		}
+		// （2）、本次处理需要转发的属性
 		request.setAttribute(OUTPUT_FLASH_MAP_ATTRIBUTE, new FlashMap());
+
+		//FlashMapManager 用于管理 （1）、（2） 中的两个 FlashMap
 		request.setAttribute(FLASH_MAP_MANAGER_ATTRIBUTE, this.flashMapManager);
 
 		try {
@@ -871,6 +875,8 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 		finally {
 			if (!WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) {
+
+				// 还原Request快照信息
 				// Restore the original attribute snapshot, in case of an include.
 				if (attributesSnapshot != null) {
 					restoreAttributesAfterInclude(request, attributesSnapshot);
@@ -914,6 +920,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
 
+		// todo 两层异常捕获
 		try {
 			ModelAndView mv = null;
 			Exception dispatchException = null;
@@ -959,15 +966,17 @@ public class DispatcherServlet extends FrameworkServlet {
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
+					// todo 如果需要异步处理则直接返回
 					return;
 				}
 
 				applyDefaultViewName(request, mv);
 
-				// 执行处理器相关的拦截器的后处理（HandlerInterceptor.postHandle）
+				// 执行处理器相关的拦截器的后处理（HandlerInterceptor.postHandle）  后置处理是一个：Interceptor 倒序执行 postHandle 方法的过程
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
+				// todo 注意：该Exception并不包含页面渲染出现的异常情况
 				dispatchException = ex;
 			}
 
@@ -977,6 +986,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {
+			// todo ex 处理页面渲染的异常情况
 			triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
 		}
 		catch (Error err) {
@@ -994,6 +1004,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			else {
 				// Clean up any resources used by a multipart request.
 				if (multipartRequestParsed) {
+					// 是上传请求则删除产生的临时文件
 					cleanupMultipart(processedRequest);
 				}
 			}
@@ -1005,6 +1016,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * Do we need view name translation?
 	 */
 	private void applyDefaultViewName(HttpServletRequest request, ModelAndView mv) throws Exception {
+		// 如果返回没有  view 则将应用默认的 view
 		if (mv != null && !mv.hasView()) {
 			mv.setViewName(getDefaultViewName(request));
 		}
@@ -1019,22 +1031,24 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		boolean errorView = false;
 
-		if (exception != null) {//检查是否发生了异常
+		if (exception != null) {//检查 业务代码执行的过程中 是否发生了异常
 			if (exception instanceof ModelAndViewDefiningException) {
 				logger.debug("ModelAndViewDefiningException encountered", exception);
 				mv = ((ModelAndViewDefiningException) exception).getModelAndView();
 			}
 			else {
+				// 发生了业务异常，处理业务异常
 				Object handler = (mappedHandler != null ? mappedHandler.getHandler() : null);
 				mv = processHandlerException(request, response, handler, exception);
 				errorView = (mv != null);
 			}
 		}
 
+		// todo 走到这说明业务操作未发生异常
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
 
-			//调用render方法进行页面渲染
+			// 调用render方法进行页面渲染
 			render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
@@ -1048,11 +1062,13 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		if (WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) {
+			// 开启了异步处理，则直接返回
 			// Concurrent handling started during a forward
 			return;
 		}
 
 		if (mappedHandler != null) {
+			// 发出请求处理完成通知
 			mappedHandler.triggerAfterCompletion(request, response, null);
 		}
 	}

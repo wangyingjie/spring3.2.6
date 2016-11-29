@@ -37,7 +37,7 @@ import org.springframework.core.AttributeAccessor;
  * @see org.springframework.beans.factory.support.ChildBeanDefinition
  *
  *
- * ´Ó¸Ã½Ó¿Ú¶¨Òå¿ÉÒÔ¿´³ö£¬Í¨¹ı bean ¶¨ÒåÄÜ¹»µÃµ½ bean µÄÏêÏ¸ĞÅÏ¢£¬ÈçÀàÃû×Ó¡¢¹¤³§ÀàÃû³Æ¡¢ scope ¡¢ÊÇ·ñµ¥Àı¡¢ÊÇ·ñ³éÏó¡¢ÊÇ·ñÑÓ³Ù¼ÓÔØµÈµÈ¡£
+ * ä»è¯¥æ¥å£å®šä¹‰å¯ä»¥çœ‹å‡ºï¼Œé€šè¿‡ bean å®šä¹‰èƒ½å¤Ÿå¾—åˆ° bean çš„è¯¦ç»†ä¿¡æ¯ï¼Œå¦‚ç±»åå­ã€å·¥å‚ç±»åç§°ã€ scope ã€æ˜¯å¦å•ä¾‹ã€æ˜¯å¦æŠ½è±¡ã€æ˜¯å¦å»¶è¿ŸåŠ è½½ç­‰ç­‰ã€‚
  */
 public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 

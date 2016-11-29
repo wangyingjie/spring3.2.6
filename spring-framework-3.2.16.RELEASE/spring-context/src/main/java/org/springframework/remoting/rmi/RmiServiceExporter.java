@@ -269,6 +269,7 @@ public class RmiServiceExporter extends RmiBasedExporter implements Initializing
 			this.createdRegistry = true;
 		}
 
+		// 初始化要导出的实体对象
 		// Initialize and cache exported object.
 		this.exportedObject = getObjectToExport();
 
@@ -276,7 +277,7 @@ public class RmiServiceExporter extends RmiBasedExporter implements Initializing
 			logger.info("Binding service '" + this.serviceName + "' to RMI registry: " + this.registry);
 		}
 
-		// Export RMI object.
+		// Export RMI object.   返回一个代理对象
 		if (this.clientSocketFactory != null) {
 			UnicastRemoteObject.exportObject(
 					this.exportedObject, this.servicePort, this.clientSocketFactory, this.serverSocketFactory);
@@ -285,7 +286,7 @@ public class RmiServiceExporter extends RmiBasedExporter implements Initializing
 			UnicastRemoteObject.exportObject(this.exportedObject, this.servicePort);
 		}
 
-		// Bind RMI object to registry.
+		// Bind RMI object to registry.  绑定 serviceName  到 exportedObject 对象，外面调用 serviceName 的时候会调用 exportedObject
 		try {
 			if (this.replaceExistingBinding) {
 				this.registry.rebind(this.serviceName, this.exportedObject);
@@ -327,6 +328,8 @@ public class RmiServiceExporter extends RmiBasedExporter implements Initializing
 			if (logger.isInfoEnabled()) {
 				logger.info("Looking for RMI registry at port '" + registryPort + "' of host [" + registryHost + "]");
 			}
+
+			//获取本机的 registry
 			Registry reg = LocateRegistry.getRegistry(registryHost, registryPort, clientSocketFactory);
 			testRegistry(reg);
 			return reg;

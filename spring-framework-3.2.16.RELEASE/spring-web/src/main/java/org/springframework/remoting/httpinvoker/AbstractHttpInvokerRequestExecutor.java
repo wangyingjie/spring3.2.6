@@ -16,22 +16,16 @@
 
 package org.springframework.remoting.httpinvoker;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.rmi.RemoteException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.remoting.rmi.CodebaseAwareObjectInputStream;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationResult;
 import org.springframework.util.Assert;
+
+import java.io.*;
+import java.rmi.RemoteException;
 
 /**
  * Abstract base implementation of the HttpInvokerRequestExecutor interface.
@@ -128,11 +122,15 @@ public abstract class AbstractHttpInvokerRequestExecutor
 	public final RemoteInvocationResult executeRequest(
 			HttpInvokerClientConfiguration config, RemoteInvocation invocation) throws Exception {
 
+		//获取输出流
 		ByteArrayOutputStream baos = getByteArrayOutputStream(invocation);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Sending HTTP invoker request for service at [" + config.getServiceUrl() +
 					"], with size " + baos.size());
 		}
+
+		//实现了对远程方法地 构造和通信
+		// org.springframework.remoting.httpinvoker.CommonsHttpInvokerRequestExecutor.doExecuteRequest()   利用了httpClient的实现模式
 		return doExecuteRequest(config, baos);
 	}
 

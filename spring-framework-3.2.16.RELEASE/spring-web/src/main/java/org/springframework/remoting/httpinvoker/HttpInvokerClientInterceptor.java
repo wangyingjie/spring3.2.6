@@ -130,15 +130,24 @@ public class HttpInvokerClientInterceptor extends RemoteInvocationBasedAccessor
 		getHttpInvokerRequestExecutor();
 	}
 
-
+	/**
+	 * 客户端与服务端通信的核心处理方法
+	 * @param methodInvocation
+	 * @return
+	 * @throws Throwable
+	 */
 	public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 		if (AopUtils.isToStringMethod(methodInvocation.getMethod())) {
 			return "HTTP invoker proxy for service URL [" + getServiceUrl() + "]";
 		}
 
+		//将要调用的服务端方法封装为  RemoteInvocation 对象
 		RemoteInvocation invocation = createRemoteInvocation(methodInvocation);
 		RemoteInvocationResult result;
 		try {
+
+			// RemoteInvocation 中包括  方法名称、参数类型、参数 并实现了序列化接口
+			// 远程方法执行
 			result = executeRequest(invocation, methodInvocation);
 		}
 		catch (Throwable ex) {
@@ -189,6 +198,8 @@ public class HttpInvokerClientInterceptor extends RemoteInvocationBasedAccessor
 	 * @see HttpInvokerClientConfiguration
 	 */
 	protected RemoteInvocationResult executeRequest(RemoteInvocation invocation) throws Exception {
+
+		//获取执行器  默认为：SimpleHttpInvokerRequestExecutor
 		return getHttpInvokerRequestExecutor().executeRequest(this, invocation);
 	}
 

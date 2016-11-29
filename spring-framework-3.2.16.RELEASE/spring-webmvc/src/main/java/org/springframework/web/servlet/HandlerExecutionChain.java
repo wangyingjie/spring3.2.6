@@ -172,6 +172,7 @@ public class HandlerExecutionChain {
 			for (int i = this.interceptorIndex; i >= 0; i--) {
 				HandlerInterceptor interceptor = interceptors[i];
 				try {
+					// 无论业务操作执行成功 与 失败 拦截器的：afterCompletion 方法都会执行
 					interceptor.afterCompletion(request, response, this.handler, ex);
 				}
 				catch (Throwable ex2) {

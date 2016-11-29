@@ -185,6 +185,7 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 	public void cleanupMultipart(MultipartHttpServletRequest request) {
 		if (request != null) {
 			try {
+				// 删除临时文件
 				cleanupFileItems(request.getMultiFileMap());
 			}
 			catch (Throwable ex) {

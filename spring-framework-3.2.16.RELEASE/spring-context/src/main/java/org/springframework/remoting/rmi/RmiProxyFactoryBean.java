@@ -69,6 +69,8 @@ public class RmiProxyFactoryBean extends RmiClientInterceptor implements Factory
 		if (getServiceInterface() == null) {
 			throw new IllegalArgumentException("Property 'serviceInterface' is required");
 		}
+
+		//创建接口代理，并使用当前类作为增强器
 		this.serviceProxy = new ProxyFactory(getServiceInterface(), this).getProxy(getBeanClassLoader());
 	}
 

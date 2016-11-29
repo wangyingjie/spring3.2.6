@@ -16,21 +16,17 @@
 
 package org.springframework.web.servlet.support;
 
-import java.util.Locale;
-import java.util.Map;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.ui.context.Theme;
 import org.springframework.ui.context.ThemeSource;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.FlashMap;
-import org.springframework.web.servlet.FlashMapManager;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.ThemeResolver;
+import org.springframework.web.servlet.*;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Utility class for easy access to request-specific state which has been
@@ -44,6 +40,8 @@ import org.springframework.web.servlet.ThemeResolver;
  * @since 03.03.2003
  * @see RequestContext
  * @see org.springframework.web.servlet.DispatcherServlet
+ *
+ * 该工具类包装了从Request 里面获取一些 Spring mvc 框架中保存的信息，其本质还是从 Request 中获取属性
  */
 public abstract class RequestContextUtils {
 

@@ -44,6 +44,7 @@ public abstract class LocaleContextHolder {
 	private static final ThreadLocal<LocaleContext> localeContextHolder =
 			new NamedThreadLocal<LocaleContext>("Locale context");
 
+	//inheritable  可继承的；会遗传的
 	private static final ThreadLocal<LocaleContext> inheritableLocaleContextHolder =
 			new NamedInheritableThreadLocal<LocaleContext>("Locale context");
 

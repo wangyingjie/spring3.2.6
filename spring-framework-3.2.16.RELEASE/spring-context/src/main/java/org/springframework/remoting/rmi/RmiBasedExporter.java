@@ -16,11 +16,11 @@
 
 package org.springframework.remoting.rmi;
 
-import java.lang.reflect.InvocationTargetException;
-import java.rmi.Remote;
-
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationBasedExporter;
+
+import java.lang.reflect.InvocationTargetException;
+import java.rmi.Remote;
 
 /**
  * Convenient superclass for RMI-based remote exporters. Provides a facility
@@ -58,6 +58,8 @@ public abstract class RmiBasedExporter extends RemoteInvocationBasedExporter {
 			if (logger.isDebugEnabled()) {
 				logger.debug("RMI service [" + getService() + "] is an RMI invoker");
 			}
+
+			//对 Service 进行封装
 			return new RmiInvocationWrapper(getProxyForService(), this);
 		}
 	}

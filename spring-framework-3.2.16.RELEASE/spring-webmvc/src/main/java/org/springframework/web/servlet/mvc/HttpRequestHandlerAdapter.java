@@ -16,12 +16,12 @@
 
 package org.springframework.web.servlet.mvc;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Adapter to use the plain {@link org.springframework.web.HttpRequestHandler}
@@ -36,6 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @see org.springframework.web.HttpRequestHandler
  * @see LastModified
  * @see SimpleControllerHandlerAdapter
+ *
+ * 远程过程调用  rmi  的实现
  */
 public class HttpRequestHandlerAdapter implements HandlerAdapter {
 

@@ -246,6 +246,7 @@ public class RmiClientInterceptor extends RemoteInvocationBasedAccessor
 	 * Fetches an RMI stub and delegates to {@code doInvoke}.
 	 * If configured to refresh on connect failure, it will call
 	 * {@link #refreshAndRetry} on corresponding RMI exceptions.
+	 *
 	 * @see #getStub
 	 * @see #doInvoke(MethodInvocation, Remote)
 	 * @see #refreshAndRetry
@@ -254,18 +255,19 @@ public class RmiClientInterceptor extends RemoteInvocationBasedAccessor
 	 * @see java.rmi.NoSuchObjectException
 	 */
 	public Object invoke(MethodInvocation invocation) throws Throwable {
+
+		//获取远端 注册的remote对象， 序列化传输，客户端调用服务端关键的一步
 		Remote stub = getStub();
 		try {
+
+			//  stub 从服务器回传切经过 spring 的包装
 			return doInvoke(invocation, stub);
-		}
-		catch (RemoteConnectFailureException ex) {
+		} catch (RemoteConnectFailureException ex) {
 			return handleRemoteConnectFailure(invocation, ex);
-		}
-		catch (RemoteException ex) {
+		} catch (RemoteException ex) {
 			if (isConnectFailure(ex)) {
 				return handleRemoteConnectFailure(invocation, ex);
-			}
-			else {
+			} else {
 				throw ex;
 			}
 		}
@@ -338,6 +340,9 @@ public class RmiClientInterceptor extends RemoteInvocationBasedAccessor
 	 * @throws Throwable in case of invocation failure
 	 */
 	protected Object doInvoke(MethodInvocation invocation, Remote stub) throws Throwable {
+
+		// stub 分成两种情况进行执行
+
 		if (stub instanceof RmiInvocationHandler) {
 			// RMI invoker
 			try {
@@ -358,8 +363,9 @@ public class RmiClientInterceptor extends RemoteInvocationBasedAccessor
 			}
 		}
 		else {
-			// traditional RMI stub
+			// traditional RMI stub   //adj. 传统的；惯例的 rmi stub 的处理
 			try {
+				// 通过反射的方法直接激活、执行
 				return RmiClientInterceptorUtils.invokeRemoteMethod(invocation, stub);
 			}
 			catch (InvocationTargetException ex) {
@@ -394,7 +400,7 @@ public class RmiClientInterceptor extends RemoteInvocationBasedAccessor
 		if (AopUtils.isToStringMethod(methodInvocation.getMethod())) {
 			return "RMI invoker proxy for service URL [" + getServiceUrl() + "]";
 		}
-
+		// 将 methodInvocation 中的方法名、参数信息重新封装成 emoteInvocation 并通过远程代理方法直接调用
 		return invocationHandler.invoke(createRemoteInvocation(methodInvocation));
 	}
 

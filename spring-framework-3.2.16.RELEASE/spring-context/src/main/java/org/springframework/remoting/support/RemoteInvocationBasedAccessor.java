@@ -63,11 +63,13 @@ public abstract class RemoteInvocationBasedAccessor extends UrlBasedRemoteAccess
 	 * subclasses, containing additional invocation parameters (e.g. user credentials).
 	 * <p>Note that it is preferable to build a custom RemoteInvocationFactory
 	 * as a reusable strategy, instead of overriding this method.
+	 *
 	 * @param methodInvocation the current AOP method invocation
 	 * @return the RemoteInvocation object
 	 * @see RemoteInvocationFactory#createRemoteInvocation
 	 */
 	protected RemoteInvocation createRemoteInvocation(MethodInvocation methodInvocation) {
+		//包装方法名称、参数类型、参数 到RemoteInvocation
 		return getRemoteInvocationFactory().createRemoteInvocation(methodInvocation);
 	}
 

@@ -825,10 +825,13 @@ public abstract class FrameworkServlet extends HttpServletBean {
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		// 1、添加了对 Patch 的处理
 		if (RequestMethod.PATCH.name().equalsIgnoreCase(request.getMethod())) {
 			processRequest(request, response);
 		}
 		else {
+			// 调用父类的 service 完成请求方法的分发 ---> 具体的请求方法的处理又被 FrameWorkServlet 聚合到了 processRequest 方法中
+			// 如此做的主要目的在于方便对具体请求方法的功能进行扩展
 			super.service(request, response);
 		}
 	}
@@ -931,7 +934,8 @@ public abstract class FrameworkServlet extends HttpServletBean {
 	}
 
 	/**
-	 * 处理Request请求
+	 * 2、聚合不同请求方法的Request处理
+	 *
 	 * Process this request, publishing an event regardless of the outcome.
 	 * <p>The actual event handling is performed by the abstract
 	 * {@link #doService} template method.
@@ -942,16 +946,19 @@ public abstract class FrameworkServlet extends HttpServletBean {
 		long startTime = System.currentTimeMillis();
 		Throwable failureCause = null;
 
-		//提取当前request中的 Locale属性  存储到当前线程中
+		// 提取当前request中的 Locale属性
 		LocaleContext previousLocaleContext = LocaleContextHolder.getLocaleContext();
 		LocaleContext localeContext = buildLocaleContext(request);
 
 		RequestAttributes previousAttributes = RequestContextHolder.getRequestAttributes();
 		ServletRequestAttributes requestAttributes = buildRequestAttributes(request, response, previousAttributes);
 
+		//异步请求处理
 		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
 		asyncManager.registerCallableInterceptor(FrameworkServlet.class.getName(), new RequestBindingInterceptor());
 
+		//3、将当前请求的 locale、attribute 属性添加到当前线程，方便在 doService方法中进行调用
+		//   同时可以在应用程序的任何一层都可以去到  local、request、response 对象
 		initContextHolders(request, localeContext, requestAttributes);
 
 		try {
@@ -973,7 +980,8 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
 		finally {
 
-			//重置当前线程变量
+			//4、恢复方法开始保存的当前线程中保存的  local、attribute 属性
+			// todo 恢复的主要目的在于保证servlet外部的操作不受影响  例如：filter
 			resetContextHolders(request, previousLocaleContext, previousAttributes);
 			if (requestAttributes != null) {
 				requestAttributes.requestCompleted();
@@ -993,7 +1001,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 				}
 			}
 
-			//无论成功与否都会发布事件通知
+			//5、发布事件通知（无论请求成功与否）
 			publishRequestHandledEvent(request, startTime, failureCause);
 		}
 	}

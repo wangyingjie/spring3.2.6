@@ -16,20 +16,16 @@
 
 package org.springframework.remoting.httpinvoker;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.remoting.rmi.RemoteInvocationSerializingExporter;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationResult;
 import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.util.NestedServletException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 
 /**
  * Servlet-API-based HTTP request handler that exports the specified service bean
@@ -64,13 +60,21 @@ public class HttpInvokerServiceExporter extends RemoteInvocationSerializingExpor
 	 * @see #readRemoteInvocation(HttpServletRequest)
 	 * @see #invokeAndCreateResult(org.springframework.remoting.support.RemoteInvocation, Object)
 	 * @see #writeRemoteInvocationResult(HttpServletRequest, HttpServletResponse, RemoteInvocationResult)
+	 *
+	 * 处理客户端上来的 Http 请求
+	 *
 	 */
 	public void handleRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		try {
+			//从request中获取序列化对象
 			RemoteInvocation invocation = readRemoteInvocation(request);
+
+			//执行调用
 			RemoteInvocationResult result = invokeAndCreateResult(invocation, getProxy());
+
+			//将执行结果的序列化对象写入输出流
 			writeRemoteInvocationResult(request, response, result);
 		}
 		catch (ClassNotFoundException ex) {
@@ -168,6 +172,7 @@ public class HttpInvokerServiceExporter extends RemoteInvocationSerializingExpor
 			HttpServletRequest request, HttpServletResponse response, RemoteInvocationResult result, OutputStream os)
 			throws IOException {
 
+		// 对象输出流
 		ObjectOutputStream oos = createObjectOutputStream(decorateOutputStream(request, response, os));
 		try {
 			doWriteRemoteInvocationResult(result, oos);

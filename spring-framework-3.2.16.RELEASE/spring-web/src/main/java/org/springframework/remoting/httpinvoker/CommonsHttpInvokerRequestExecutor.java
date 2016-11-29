@@ -16,23 +16,22 @@
 
 package org.springframework.remoting.httpinvoker;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
-
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
-
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.remoting.support.RemoteInvocationResult;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
 
 /**
  * {@link HttpInvokerRequestExecutor} implementation that uses
@@ -133,13 +132,23 @@ public class CommonsHttpInvokerRequestExecutor extends AbstractHttpInvokerReques
 	protected RemoteInvocationResult doExecuteRequest(
 			HttpInvokerClientConfiguration config, ByteArrayOutputStream baos)
 			throws IOException, ClassNotFoundException {
-
+		//创建 httpPost
 		PostMethod postMethod = createPostMethod(config);
 		try {
+
+			//设置含有方法的输出流到post里面
 			setRequestBody(config, postMethod, baos);
+
+			//执行 http方法并等待返回
 			executePostMethod(config, getHttpClient(), postMethod);
+
+			//验证响应码: 大于 300 为非正常的响应码
 			validateResponse(config, postMethod);
+
+			//获取响应报文体
 			InputStream responseBody = getResponseBody(config, postMethod);
+
+			//将响应结果读入到  RemoteInvocationResult  响应结果里面, 通过的是对象流的方式
 			return readRemoteInvocationResult(responseBody, config.getCodebaseUrl());
 		}
 		finally {
@@ -152,18 +161,25 @@ public class CommonsHttpInvokerRequestExecutor extends AbstractHttpInvokerReques
 	 * Create a PostMethod for the given configuration.
 	 * <p>The default implementation creates a standard PostMethod with
 	 * "application/x-java-serialized-object" as "Content-Type" header.
+	 *
 	 * @param config the HTTP invoker configuration that specifies the
-	 * target service
+	 *               target service
 	 * @return the PostMethod instance
 	 * @throws IOException if thrown by I/O methods
 	 */
 	protected PostMethod createPostMethod(HttpInvokerClientConfiguration config) throws IOException {
+
+		// 设置需要访问的 api
 		PostMethod postMethod = new PostMethod(config.getServiceUrl());
 		LocaleContext locale = LocaleContextHolder.getLocaleContext();
 		if (locale != null) {
+
+			// 加入 Accept-Language 属性
 			postMethod.addRequestHeader(HTTP_HEADER_ACCEPT_LANGUAGE, StringUtils.toLanguageTag(locale.getLocale()));
 		}
 		if (isAcceptGzipEncoding()) {
+
+			//编码方式
 			postMethod.addRequestHeader(HTTP_HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
 		}
 		return postMethod;
@@ -219,6 +235,7 @@ public class CommonsHttpInvokerRequestExecutor extends AbstractHttpInvokerReques
 	protected void validateResponse(HttpInvokerClientConfiguration config, PostMethod postMethod)
 			throws IOException {
 
+		// http 的响应码验证
 		if (postMethod.getStatusCode() >= 300) {
 			throw new HttpException(
 					"Did not receive successful HTTP response: status code = " + postMethod.getStatusCode() +
