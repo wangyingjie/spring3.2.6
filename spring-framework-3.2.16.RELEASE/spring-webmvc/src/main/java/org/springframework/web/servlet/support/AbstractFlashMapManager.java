@@ -16,24 +16,19 @@
 
 package org.springframework.web.servlet.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.util.*;
+import org.springframework.web.servlet.FlashMap;
+import org.springframework.web.servlet.FlashMapManager;
+import org.springframework.web.util.UrlPathHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.FlashMap;
-import org.springframework.web.servlet.FlashMapManager;
-import org.springframework.web.util.UrlPathHelper;
 
 /**
  * A base class for {@link FlashMapManager} implementations.
@@ -159,7 +154,8 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
 	 * Whether the given FlashMap matches the current request.
 	 * Uses the expected request path and query parameters saved in the FlashMap.
 	 */
-	protected boolean isFlashMapForRequest(FlashMap flashMap, HttpServletRequest request) {
+	protected boolean
+	isFlashMapForRequest(FlashMap flashMap, HttpServletRequest request) {
 		String expectedPath = flashMap.getTargetRequestPath();
 		if (expectedPath != null) {
 			String requestUri = this.urlPathHelper.getOriginatingRequestUri(request);
@@ -183,13 +179,18 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
 			return;
 		}
 
+		// 进行编码  request 主要用来获取当前的编码方式
 		String path = decodeAndNormalizePath(flashMap.getTargetRequestPath(), request);
 		flashMap.setTargetRequestPath(path);
+
+
 		decodeParameters(flashMap.getTargetRequestParams(), request);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Saving FlashMap=" + flashMap);
 		}
+
+		// 设置有效期
 		flashMap.startExpirationPeriod(this.flashMapTimeout);
 
 		synchronized (writeLock) {

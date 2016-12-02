@@ -16,16 +16,15 @@
 
 package org.springframework.web.servlet.handler;
 
-import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Set;
 
 /**
  * Abstract base class for {@link HandlerExceptionResolver} implementations.
@@ -36,6 +35,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Arjen Poutsma
  * @author Juergen Hoeller
  * @since 3.0
+ *
+ * 模板类，具体的解析由子类处理
  */
 public abstract class AbstractHandlerExceptionResolver implements HandlerExceptionResolver, Ordered {
 
@@ -122,6 +123,8 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	 * Checks whether this resolver is supposed to apply (i.e. the handler matches
 	 * in case of "mappedHandlers" having been specified), then delegates to the
 	 * {@link #doResolveException} template method.
+	 *
+	 * 解析异常
 	 */
 	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response,
 			Object handler, Exception ex) {
@@ -131,8 +134,13 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 			if (logger.isDebugEnabled()) {
 				logger.debug("Resolving exception from handler [" + handler + "]: " + ex);
 			}
+			//打印日常
 			logException(ex, request);
+
+			//设置response缓存的属性
 			prepareResponse(ex, response);
+
+			//解析异常
 			return doResolveException(request, response, handler, ex);
 		}
 		else {
@@ -154,6 +162,8 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	 */
 	protected boolean shouldApplyTo(HttpServletRequest request, Object handler) {
 		if (handler != null) {
+
+			//包含处理的 handler
 			if (this.mappedHandlers != null && this.mappedHandlers.contains(handler)) {
 				return true;
 			}
@@ -206,6 +216,8 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	 * @see #preventCaching
 	 */
 	protected void prepareResponse(Exception ex, HttpServletResponse response) {
+
+		// 是否禁用
 		if (this.preventResponseCaching) {
 			preventCaching(response);
 		}

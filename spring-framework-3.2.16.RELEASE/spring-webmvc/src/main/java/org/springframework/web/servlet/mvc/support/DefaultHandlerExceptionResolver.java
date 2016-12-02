@@ -16,12 +16,6 @@
 
 package org.springframework.web.servlet.mvc.support;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.ConversionNotSupportedException;
@@ -49,6 +43,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Default implementation of the {@link org.springframework.web.servlet.HandlerExceptionResolver
  * HandlerExceptionResolver} interface that resolves standard Spring exceptions and translates
@@ -73,6 +72,8 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
  * @see #handleMissingServletRequestParameter
  * @see #handleMissingServletRequestPartException
  * @see #handleBindException
+ *
+ * 按不同类型分别对异常进行处理
  */
 public class DefaultHandlerExceptionResolver extends AbstractHandlerExceptionResolver {
 
@@ -97,10 +98,12 @@ public class DefaultHandlerExceptionResolver extends AbstractHandlerExceptionRes
 	}
 
 
+	// 按不同类型分别对异常进行处理
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response,
 			Object handler, Exception ex) {
 
+		// 主要就是设置 response 的相关属性
 		try {
 			if (ex instanceof NoSuchRequestHandlingMethodException) {
 				return handleNoSuchRequestHandlingMethod((NoSuchRequestHandlingMethodException) ex, request, response,

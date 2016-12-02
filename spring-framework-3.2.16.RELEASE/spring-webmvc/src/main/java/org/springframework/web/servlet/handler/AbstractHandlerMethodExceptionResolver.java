@@ -16,11 +16,11 @@
 
 package org.springframework.web.servlet.handler;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Abstract base class for
@@ -42,7 +42,7 @@ public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHan
 		if (handler == null) {
 			return super.shouldApplyTo(request, handler);
 		}
-		else if (handler instanceof HandlerMethod) {
+		else if (handler instanceof HandlerMethod) {// handler 属于 HandlerMethod 类型
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
 			handler = handlerMethod.getBean();
 			return super.shouldApplyTo(request, handler);
@@ -57,6 +57,7 @@ public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHan
 			HttpServletRequest request, HttpServletResponse response,
 			Object handler, Exception ex) {
 
+		// 模板方法
 		return doResolveHandlerMethodException(request, response, (HandlerMethod) handler, ex);
 	}
 

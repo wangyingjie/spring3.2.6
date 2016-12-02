@@ -16,16 +16,12 @@
 
 package org.springframework.web.servlet.handler;
 
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 /**
  * {@link org.springframework.web.servlet.HandlerExceptionResolver} implementation
@@ -40,6 +36,8 @@ import org.springframework.web.util.WebUtils;
  * @author Rossen Stoyanchev
  * @since 22.11.2003
  * @see org.springframework.web.servlet.DispatcherServlet
+ *
+ * 通过配置的异常类和 View 的对应关系来解析异常
  */
 public class SimpleMappingExceptionResolver extends AbstractHandlerExceptionResolver {
 
@@ -175,15 +173,23 @@ public class SimpleMappingExceptionResolver extends AbstractHandlerExceptionReso
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response,
 			Object handler, Exception ex) {
 
+		// 根据异常查找逻辑视图
 		// Expose ModelAndView for chosen error view.
 		String viewName = determineViewName(ex, request);
 		if (viewName != null) {
 			// Apply HTTP status code for error views, if specified.
 			// Only apply it if we're processing a top-level request.
+
+			// 逻辑视图是否有对应的 statusCode
 			Integer statusCode = determineStatusCode(request, viewName);
+
 			if (statusCode != null) {
+
+				// 设置 response 属性
 				applyStatusCodeIfPossible(request, response, statusCode);
 			}
+
+			// 返回 ModelAndView
 			return getModelAndView(viewName, ex, request);
 		}
 		else {
@@ -202,6 +208,8 @@ public class SimpleMappingExceptionResolver extends AbstractHandlerExceptionReso
 	 */
 	protected String determineViewName(Exception ex, HttpServletRequest request) {
 		String viewName = null;
+
+		// 如果异常在排除的异常之内则返回 null
 		if (this.excludedExceptions != null) {
 			for (Class<?> excludedEx : this.excludedExceptions) {
 				if (excludedEx.equals(ex.getClass())) {
@@ -211,8 +219,12 @@ public class SimpleMappingExceptionResolver extends AbstractHandlerExceptionReso
 		}
 		// Check for specific exception mappings.
 		if (this.exceptionMappings != null) {
+
+			// 查找 viewName
 			viewName = findMatchingViewName(this.exceptionMappings, ex);
 		}
+
+		// 没找到且有默认的 viewName 则使用默认的
 		// Return default error view else, if defined.
 		if (viewName == null && this.defaultErrorView != null) {
 			if (logger.isDebugEnabled()) {
@@ -340,6 +352,8 @@ public class SimpleMappingExceptionResolver extends AbstractHandlerExceptionReso
 			if (logger.isDebugEnabled()) {
 				logger.debug("Exposing Exception as model attribute '" + this.exceptionAttribute + "'");
 			}
+
+			// 异常不为  null  则加入到 mv 中
 			mv.addObject(this.exceptionAttribute, ex);
 		}
 		return mv;

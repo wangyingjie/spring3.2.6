@@ -16,14 +16,14 @@
 
 package org.springframework.web.servlet.theme;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * {@link ThemeResolver} implementation that uses a cookie sent back to the user
@@ -76,7 +76,7 @@ public class CookieThemeResolver extends CookieGenerator implements ThemeResolve
 		return defaultThemeName;
 	}
 
-
+	//从 cookie 里面解析
 	public String resolveThemeName(HttpServletRequest request) {
 		// Check request for preparsed or preset theme.
 		String themeName = (String) request.getAttribute(THEME_REQUEST_ATTRIBUTE_NAME);

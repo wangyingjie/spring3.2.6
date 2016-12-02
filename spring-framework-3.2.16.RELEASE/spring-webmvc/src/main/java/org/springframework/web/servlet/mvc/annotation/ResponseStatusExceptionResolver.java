@@ -16,9 +16,6 @@
 
 package org.springframework.web.servlet.mvc.annotation;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -27,6 +24,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Implementation of the {@link org.springframework.web.servlet.HandlerExceptionResolver HandlerExceptionResolver}
@@ -37,6 +37,8 @@ import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
  * @since 3.0
+ *
+ * 解析具有 @ResponseStatus 注解类型的异常
  */
 public class ResponseStatusExceptionResolver extends AbstractHandlerExceptionResolver implements MessageSourceAware {
 
@@ -51,9 +53,12 @@ public class ResponseStatusExceptionResolver extends AbstractHandlerExceptionRes
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response,
 			Object handler, Exception ex) {
 
+		//使用 AnnotationUtils 查找 ResponseStatus 注解
 		ResponseStatus responseStatus = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
 		if (responseStatus != null) {
 			try {
+
+				//注解信息不为 null 处理异常
 				return resolveResponseStatus(responseStatus, request, response, handler, ex);
 			}
 			catch (Exception resolveEx) {

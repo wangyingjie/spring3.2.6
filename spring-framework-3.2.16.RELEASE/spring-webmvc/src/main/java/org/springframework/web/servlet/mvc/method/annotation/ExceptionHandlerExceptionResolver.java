@@ -16,18 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.Source;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,14 +34,18 @@ import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver;
 import org.springframework.web.method.annotation.MapMethodProcessor;
 import org.springframework.web.method.annotation.ModelAttributeMethodProcessor;
 import org.springframework.web.method.annotation.ModelMethodProcessor;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.method.support.HandlerMethodArgumentResolverComposite;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
-import org.springframework.web.method.support.ModelAndViewContainer;
+import org.springframework.web.method.support.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.handler.AbstractHandlerMethodExceptionResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Source;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An {@link AbstractHandlerMethodExceptionResolver} that resolves exceptions
@@ -66,6 +58,10 @@ import org.springframework.web.servlet.handler.AbstractHandlerMethodExceptionRes
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 完成使用 @ExceptionHandler 注解的方法进行异常解析
+ *
+ * todo 注意：其实 ExceptionHandlerExceptionResolver 就是一个简化版的 RequestMappingHandlerAdapter
  */
 public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExceptionResolver
 		implements ApplicationContextAware, InitializingBean {
@@ -211,6 +207,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	}
 
 
+	//初始化解析器
 	public void afterPropertiesSet() {
 		if (this.argumentResolvers == null) {
 			List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
@@ -297,16 +294,20 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 
 	/**
 	 * Find an {@code @ExceptionHandler} method and invoke it to handle the raised exception.
+	 *
+	 * 实现了父类的模板方法。解析 ServletInvocableHandlerMethod 抛出的异常
 	 */
 	@Override
 	protected ModelAndView doResolveHandlerMethodException(HttpServletRequest request,
 			HttpServletResponse response, HandlerMethod handlerMethod, Exception exception) {
 
+		// 获取 ServletInvocableHandlerMethod 方法
 		ServletInvocableHandlerMethod exceptionHandlerMethod = getExceptionHandlerMethod(handlerMethod, exception);
 		if (exceptionHandlerMethod == null) {
 			return null;
 		}
 
+		// 由于是 ervletInvocableHandlerMethod 实例作为处理器，所有需要对方法的 参数、返回值做解析，如下设置了相关解析器（afterPropertiesSet 方法已经初始化）
 		exceptionHandlerMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 		exceptionHandlerMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
 
@@ -317,6 +318,8 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 			if (logger.isDebugEnabled()) {
 				logger.debug("Invoking @ExceptionHandler method: " + exceptionHandlerMethod);
 			}
+
+			// 异常处理方法执行，反射应用
 			exceptionHandlerMethod.invokeAndHandle(webRequest, mavContainer, exception);
 		}
 		catch (Exception invocationEx) {
@@ -326,11 +329,13 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 			return null;
 		}
 
-		if (mavContainer.isRequestHandled()) {
+		if (mavContainer.isRequestHandled()) {//已完成处理
 			return new ModelAndView();
 		}
 		else {
 			ModelAndView mav = new ModelAndView().addAllObjects(mavContainer.getModel());
+
+			//设置 viewName
 			mav.setViewName(mavContainer.getViewName());
 			if (!mavContainer.isViewReference()) {
 				mav.setView((View) mavContainer.getView());
@@ -348,6 +353,9 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	 * @param handlerMethod the method where the exception was raised (may be {@code null})
 	 * @param exception the raised exception
 	 * @return a method to handle the exception, or {@code null}
+	 *
+	 * 找到所有注解了  @ControllerAdvice  @ExceptionHandler 的方法，然后在匹配异常
+	 * 最终创建出一个  ServletInvocableHandlerMethod 实例
 	 */
 	protected ServletInvocableHandlerMethod getExceptionHandlerMethod(HandlerMethod handlerMethod, Exception exception) {
 		if (handlerMethod != null) {
@@ -363,6 +371,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 			}
 		}
 
+		// 遍历
 		for (Entry<ControllerAdviceBean, ExceptionHandlerMethodResolver> entry : this.exceptionHandlerAdviceCache.entrySet()) {
 			Method method = entry.getValue().resolveMethod(exception);
 			if (method != null) {
