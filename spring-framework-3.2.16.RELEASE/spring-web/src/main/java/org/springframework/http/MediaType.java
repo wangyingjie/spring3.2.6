@@ -16,25 +16,15 @@
 
 package org.springframework.http;
 
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeSet;
-
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 import org.springframework.util.StringUtils;
 import org.springframework.util.comparator.CompoundComparator;
+
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.*;
 
 /**
  * Represents an Internet Media Type, as defined in the HTTP specification.
@@ -519,6 +509,8 @@ public class MediaType implements Comparable<MediaType> {
 		if (other == null) {
 			return false;
 		}
+
+		// Wildcard 通配符
 		if (isWildcardType() || other.isWildcardType()) {
 			return true;
 		}

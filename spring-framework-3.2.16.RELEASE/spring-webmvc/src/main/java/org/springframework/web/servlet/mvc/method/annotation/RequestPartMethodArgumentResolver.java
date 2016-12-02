@@ -16,11 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.core.GenericCollectionTypeResolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -46,6 +41,11 @@ import org.springframework.web.multipart.support.RequestPartServletServerHttpReq
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Resolves the following method arguments:
  * <ul>
@@ -69,6 +69,8 @@ import org.springframework.web.util.WebUtils;
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 解析 @RequestPart 类型的参数
  */
 public class RequestPartMethodArgumentResolver extends AbstractMessageConverterMethodArgumentResolver {
 

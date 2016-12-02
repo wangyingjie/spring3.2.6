@@ -16,14 +16,14 @@
 
 package org.springframework.web.servlet.mvc.method;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.core.Ordered;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.WebContentGenerator;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Abstract base class for {@link HandlerAdapter} implementations that support
@@ -31,6 +31,8 @@ import org.springframework.web.servlet.support.WebContentGenerator;
  *
  * @author Arjen Poutsma
  * @since 3.1
+ *
+ * 实现了接口中的 3个方法，但实际上又委托给了内部的 3个模板方法
  */
 public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator implements HandlerAdapter, Ordered {
 
@@ -38,6 +40,7 @@ public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator i
 
 
 	public AbstractHandlerMethodAdapter() {
+		// 不会设置 supportedMethods
 		// no restriction of HTTP methods by default
 		super(false);
 	}

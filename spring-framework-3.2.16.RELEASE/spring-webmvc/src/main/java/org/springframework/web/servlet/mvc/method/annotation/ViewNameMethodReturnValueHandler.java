@@ -37,6 +37,8 @@ import org.springframework.web.servlet.RequestToViewNameTranslator;
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 返回值为 Void 或者 String 类型的处理
  */
 public class ViewNameMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
 
@@ -54,6 +56,8 @@ public class ViewNameMethodReturnValueHandler implements HandlerMethodReturnValu
 			return;
 		}
 		else if (returnValue instanceof String) {
+
+			// String 类型必须为 viewName
 			String viewName = (String) returnValue;
 			mavContainer.setViewName(viewName);
 			if (isRedirectViewName(viewName)) {

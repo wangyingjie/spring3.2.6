@@ -29,6 +29,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  *
  * @author Rossen Stoyanchev
  * @since 3.2
+ *
+ * 处理 WebAsyncTask  类型的返回
+ *
+ * 使用 WebAsyncManager 完成
  */
 public class AsyncTaskMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
 
@@ -55,6 +59,8 @@ public class AsyncTaskMethodReturnValueHandler implements HandlerMethodReturnVal
 
 		WebAsyncTask<?> webAsyncTask = (WebAsyncTask<?>) returnValue;
 		webAsyncTask.setBeanFactory(this.beanFactory);
+
+		//使用 WebAsyncManager 完成
 		WebAsyncUtils.getAsyncManager(webRequest).startCallableProcessing(webAsyncTask, mavContainer);
 	}
 

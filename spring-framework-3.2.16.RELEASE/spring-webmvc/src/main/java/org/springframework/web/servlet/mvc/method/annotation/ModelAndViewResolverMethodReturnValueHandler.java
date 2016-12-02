@@ -16,9 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -27,6 +24,9 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.annotation.ModelAndViewResolver;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * This return value handler is intended to be ordered after all others as it
@@ -50,6 +50,8 @@ import org.springframework.web.servlet.mvc.annotation.ModelAndViewResolver;
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 处理所有返回
  */
 public class ModelAndViewResolverMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
 
@@ -66,6 +68,8 @@ public class ModelAndViewResolverMethodReturnValueHandler implements HandlerMeth
 
 	/**
 	 * Always returns {@code true}. See class-level note.
+	 *
+	 * 来者不拒
 	 */
 	public boolean supportsReturnType(MethodParameter returnType) {
 		return true;
@@ -76,6 +80,8 @@ public class ModelAndViewResolverMethodReturnValueHandler implements HandlerMeth
 			ModelAndViewContainer mavContainer, NativeWebRequest request)
 			throws Exception {
 
+
+		// mavResolvers 自定义的解析器如果执行了则直接返回   否则使用 modelAttributeProcessor 解析返回值
 		if (this.mavResolvers != null) {
 			for (ModelAndViewResolver mavResolver : this.mavResolvers) {
 				Class<?> handlerType = returnType.getDeclaringClass();
@@ -94,7 +100,7 @@ public class ModelAndViewResolverMethodReturnValueHandler implements HandlerMeth
 		}
 
 		// No suitable ModelAndViewResolver..
-
+		// 使用  modelAttributeProcessor 解析返回值
 		if (this.modelAttributeProcessor.supportsReturnType(returnType)) {
 			this.modelAttributeProcessor.handleReturnValue(returnValue, returnType, mavContainer, request);
 		}

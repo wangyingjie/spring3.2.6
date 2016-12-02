@@ -16,12 +16,12 @@
 
 package org.springframework.web.servlet.mvc.support;
 
+import org.springframework.web.servlet.handler.AbstractDetectingUrlHandlerMapping;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.springframework.web.servlet.handler.AbstractDetectingUrlHandlerMapping;
 
 /**
  * Base class for {@link org.springframework.web.servlet.HandlerMapping} implementations
@@ -31,6 +31,9 @@ import org.springframework.web.servlet.handler.AbstractDetectingUrlHandlerMappin
  * @since 2.5.3
  * @see ControllerClassNameHandlerMapping
  * @see ControllerBeanNameHandlerMapping
+ *
+ * 处理注解了 Controller 或 实现了Controller接口的Bean作为 Handler 处理类
+ *
  */
 public abstract class AbstractControllerUrlHandlerMapping extends AbstractDetectingUrlHandlerMapping  {
 
@@ -81,9 +84,13 @@ public abstract class AbstractControllerUrlHandlerMapping extends AbstractDetect
 	 */
 	@Override
 	protected String[] determineUrlsForHandler(String beanName) {
+
 		Class<?> beanClass = getApplicationContext().getType(beanName);
+
 		//主要将符合条件的 Handler 找出来
 		if (isEligibleForMapping(beanName, beanClass)) {
+
+			// 两个子类：BeanName、ClassName
 			return buildUrlsForHandler(beanName, beanClass);
 		}
 		else {
@@ -107,6 +114,8 @@ public abstract class AbstractControllerUrlHandlerMapping extends AbstractDetect
 			}
 			return false;
 		}
+
+		// beanClass 在排除的 excludedPackages 包内则不符合
 		if (this.excludedClasses.contains(beanClass)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Excluding controller bean '" + beanName + "' from class name mapping " +
@@ -115,6 +124,8 @@ public abstract class AbstractControllerUrlHandlerMapping extends AbstractDetect
 			return false;
 		}
 		String beanClassName = beanClass.getName();
+
+		// beanClassName 在排除的 excludedPackages 包内则不符合
 		for (String packageName : this.excludedPackages) {
 			if (beanClassName.startsWith(packageName)) {
 				if (logger.isDebugEnabled()) {
@@ -124,6 +135,8 @@ public abstract class AbstractControllerUrlHandlerMapping extends AbstractDetect
 				return false;
 			}
 		}
+
+		// beanClass 可转为Controller类型
 		return isControllerType(beanClass);
 	}
 

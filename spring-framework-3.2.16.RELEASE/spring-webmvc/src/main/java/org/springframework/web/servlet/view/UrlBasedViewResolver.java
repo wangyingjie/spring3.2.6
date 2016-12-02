@@ -80,6 +80,8 @@ import java.util.Properties;
  * @see InternalResourceView
  * @see org.springframework.web.servlet.view.velocity.VelocityView
  * @see org.springframework.web.servlet.view.freemarker.FreeMarkerView
+ *
+ * 根据模板进行解析
  */
 public class UrlBasedViewResolver extends AbstractCachingViewResolver implements Ordered {
 
@@ -131,6 +133,8 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	 * @see AbstractUrlBasedView
 	 */
 	public void setViewClass(Class<?> viewClass) {
+
+		// 检查设置的viewClass 是否是 AbstractUrlBasedView 类型的
 		if (viewClass == null || !requiredViewClass().isAssignableFrom(viewClass)) {
 			throw new IllegalArgumentException(
 					"Given view class [" + (viewClass != null ? viewClass.getName() : null) +
@@ -445,11 +449,18 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	 */
 	@Override
 	protected View loadView(String viewName, Locale locale) throws Exception {
+
+		//1、创建 View 对象
 		AbstractUrlBasedView view = buildView(viewName);
+
+		//2、初始化 View 对象
 		View result = applyLifecycleMethods(viewName, view);
+
+		//3、检查 View 对象是否有对应的模板
 		return (view.checkResource(locale) ? result : null);
 	}
 
+	// 执行生命周期初始化方法
 	private View applyLifecycleMethods(String viewName, AbstractView view) {
 		return (View) getApplicationContext().getAutowireCapableBeanFactory().initializeBean(view, viewName);
 	}

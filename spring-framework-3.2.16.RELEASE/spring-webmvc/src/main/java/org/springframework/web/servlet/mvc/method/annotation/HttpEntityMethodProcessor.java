@@ -16,11 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +31,11 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+
 /**
  * Resolves {@link HttpEntity} method argument values and also handles
  * both {@link HttpEntity} and {@link ResponseEntity} return values.
@@ -48,6 +48,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 处理　HttpEntity　类型的返回值
  */
 public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodProcessor {
 
@@ -94,6 +96,7 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
 				"' in method " + parameter.getMethod() + " is not parameterized or has more than one parameter");
 	}
 
+	// 处理返回值
 	public void handleReturnValue(Object returnValue, MethodParameter returnType,
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
 

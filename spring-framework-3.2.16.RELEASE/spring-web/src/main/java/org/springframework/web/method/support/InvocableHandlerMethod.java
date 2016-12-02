@@ -16,10 +16,6 @@
 
 package org.springframework.web.method.support;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
@@ -30,6 +26,10 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Provides a method for invoking the handler method for a given request after resolving its method argument
@@ -121,6 +121,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	public final Object invokeForRequest(NativeWebRequest request, ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
 
+		// todo 准备方法执行的参数信息 重点理解的方法
 		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 		if (logger.isTraceEnabled()) {
 			StringBuilder sb = new StringBuilder("Invoking [");
@@ -129,6 +130,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			sb.append(Arrays.asList(args));
 			logger.trace(sb.toString());
 		}
+
+		// 执行方法
 		Object returnValue = invoke(args);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Method [" + getMethod().getName() + "] returned [" + returnValue + "]");
@@ -142,18 +145,32 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	private Object[] getMethodArgumentValues(NativeWebRequest request, ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
 
+		//参数列表
 		MethodParameter[] parameters = getMethodParameters();
+
+		//获取参数列表
 		Object[] args = new Object[parameters.length];
+
+		// 解析到方法执行的多个参数
 		for (int i = 0; i < parameters.length; i++) {
 			MethodParameter parameter = parameters[i];
+
 			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
+
+			//解析到参数类型
 			GenericTypeResolver.resolveParameterType(parameter, getBean().getClass());
+
+			//解析到参数值
 			args[i] = resolveProvidedArgument(parameter, providedArgs);
 			if (args[i] != null) {
 				continue;
 			}
+
+			// 参数解析器的应用
 			if (this.argumentResolvers.supportsParameter(parameter)) {
 				try {
+
+					//解析参数
 					args[i] = this.argumentResolvers.resolveArgument(
 							parameter, mavContainer, request, this.dataBinderFactory);
 					continue;
@@ -165,6 +182,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
 					throw ex;
 				}
 			}
+
+			// 未解析到参数则报异常
 			if (args[i] == null) {
 				String msg = getArgumentResolutionErrorMessage("No suitable resolver for argument", i);
 				throw new IllegalStateException(msg);
@@ -212,6 +231,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	private Object invoke(Object... args) throws Exception {
 		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
+
+			// 执行被桥的业务方法，
 			return getBridgedMethod().invoke(getBean(), args);
 		}
 		catch (IllegalArgumentException ex) {

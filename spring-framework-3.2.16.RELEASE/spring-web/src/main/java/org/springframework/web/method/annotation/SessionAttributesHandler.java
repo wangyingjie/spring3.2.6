@@ -16,19 +16,15 @@
 
 package org.springframework.web.method.annotation;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionAttributeStore;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.WebRequest;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manages controller-specific session attributes declared via
@@ -140,6 +136,7 @@ public class SessionAttributesHandler {
 	 */
 	public Map<String, Object> retrieveAttributes(WebRequest request) {
 		Map<String, Object> attributes = new HashMap<String, Object>();
+		//遍历 knownAttributeNames 从sessionAttributeStore中检索 属性信息
 		for (String name : this.knownAttributeNames.keySet()) {
 			Object value = this.sessionAttributeStore.retrieveAttribute(request, name);
 			if (value != null) {
@@ -156,6 +153,7 @@ public class SessionAttributesHandler {
 	 * @param request the current request
 	 */
 	public void cleanupAttributes(WebRequest request) {
+		//遍历 knownAttributeNames 从sessionAttributeStore中清除 属性信息
 		for (String attributeName : this.knownAttributeNames.keySet()) {
 			this.sessionAttributeStore.cleanupAttribute(request, attributeName);
 		}
@@ -168,6 +166,8 @@ public class SessionAttributesHandler {
 	 * @return the attribute value or {@code null}
 	 */
 	Object retrieveAttribute(WebRequest request, String attributeName) {
+		// 根据 attributeName 来检索属性的时候，就没有  knownAttributeNames  什么事了
+		// 此处要主要不同的 Handler 中如果使用了相同的 attributeName 他们之间会相互影响
 		return this.sessionAttributeStore.retrieveAttribute(request, attributeName);
 	}
 

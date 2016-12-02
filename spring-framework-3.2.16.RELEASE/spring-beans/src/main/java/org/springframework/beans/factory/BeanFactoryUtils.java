@@ -16,15 +16,11 @@
 
 package org.springframework.beans.factory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.BeansException;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.util.*;
 
 /**
  * Convenience methods operating on bean factories, in particular
@@ -184,7 +180,7 @@ public abstract class BeanFactoryUtils {
 
 		Assert.notNull(lbf, "ListableBeanFactory must not be null");
 
-		// 获取 type 类型的类   ListableBeanFactory#getBeanNamesForType
+		// 鑾峰彇 type 绫诲瀷鐨勭被   ListableBeanFactory#getBeanNamesForType
 		String[] result = lbf.getBeanNamesForType(type, includeNonSingletons, allowEagerInit);
 		if (lbf instanceof HierarchicalBeanFactory) {
 			HierarchicalBeanFactory hbf = (HierarchicalBeanFactory) lbf;

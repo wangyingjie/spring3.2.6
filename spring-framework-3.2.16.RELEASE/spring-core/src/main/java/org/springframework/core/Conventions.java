@@ -16,6 +16,9 @@
 
 package org.springframework.core;
 
+import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
+
 import java.io.Externalizable;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -24,9 +27,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 
 /**
  * Provides methods to support various naming and other conventions used
@@ -104,6 +104,9 @@ public abstract class Conventions {
 	 * taking the generic collection type (if any) into account.
 	 * @param parameter the method or constructor parameter to generate a variable name for
 	 * @return the generated variable name
+	 *
+	 * 该方法与 getVariableNameForReturnType 的逻辑是一样的
+	 * 最终都是为了获取 参数短名称
 	 */
 	public static String getVariableNameForParameter(MethodParameter parameter) {
 		Assert.notNull(parameter, "MethodParameter must not be null");
@@ -201,6 +204,7 @@ public abstract class Conventions {
 			valueClass = resolvedType;
 		}
 
+		// 工具方法 ClassUtils.getShortNameAsProperty 可以获取返回值的短名称
 		String name = ClassUtils.getShortNameAsProperty(valueClass);
 		return (pluralize ? pluralize(name) : name);
 	}

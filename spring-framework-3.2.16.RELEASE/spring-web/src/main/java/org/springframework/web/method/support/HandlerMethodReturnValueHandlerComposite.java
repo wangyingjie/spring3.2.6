@@ -16,15 +16,15 @@
 
 package org.springframework.web.method.support;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.NativeWebRequest;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Handles method return values by delegating to a list of registered {@link HandlerMethodReturnValueHandler}s.
@@ -64,8 +64,12 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest)
 			throws Exception {
 
+		// todo 获取满足条件的方法返回值处理器
 		HandlerMethodReturnValueHandler handler = getReturnValueHandler(returnType);
+
 		Assert.notNull(handler, "Unknown return value type [" + returnType.getParameterType().getName() + "]");
+
+		// todo  根据返回值处理返回结果，并将返回值载入 mavContainer (需要深入理解的方法)
 		handler.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
 	}
 
@@ -73,11 +77,15 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
 	 * Find a registered {@link HandlerMethodReturnValueHandler} that supports the given return type.
 	 */
 	private HandlerMethodReturnValueHandler getReturnValueHandler(MethodParameter returnType) {
+
+		// 循环所有的返回值处理器
 		for (HandlerMethodReturnValueHandler returnValueHandler : returnValueHandlers) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("Testing if return value handler [" + returnValueHandler + "] supports [" +
 						returnType.getGenericParameterType() + "]");
 			}
+
+			// 找到匹配的 returnValueHandler 直接返回
 			if (returnValueHandler.supportsReturnType(returnType)) {
 				return returnValueHandler;
 			}

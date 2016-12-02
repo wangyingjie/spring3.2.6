@@ -16,13 +16,13 @@
 
 package org.springframework.web.method.annotation;
 
-import javax.servlet.ServletException;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.request.NativeWebRequest;
+
+import javax.servlet.ServletException;
 
 /**
  * Resolves method arguments annotated with {@code @Value}.
@@ -36,6 +36,8 @@ import org.springframework.web.context.request.NativeWebRequest;
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 解析 @Value 注解表达式的参数，解析过程在父类里面完成
  */
 public class ExpressionValueMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver {
 

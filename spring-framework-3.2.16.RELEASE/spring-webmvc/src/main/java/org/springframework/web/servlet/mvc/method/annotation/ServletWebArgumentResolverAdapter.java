@@ -35,6 +35,8 @@ import org.springframework.web.method.annotation.AbstractWebArgumentResolverAdap
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 为父类提供了 NativeWebRequest
  */
 public class ServletWebArgumentResolverAdapter extends AbstractWebArgumentResolverAdapter {
 

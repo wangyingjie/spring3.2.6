@@ -16,16 +16,16 @@
 
 package org.springframework.web.servlet.view;
 
+import org.springframework.web.context.support.WebApplicationObjectSupport;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ViewResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.context.support.WebApplicationObjectSupport;
-import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.ViewResolver;
 
 /**
  * Convenient base class for {@link org.springframework.web.servlet.ViewResolver}
@@ -42,6 +42,7 @@ import org.springframework.web.servlet.ViewResolver;
  */
 public abstract class AbstractCachingViewResolver extends WebApplicationObjectSupport implements ViewResolver {
 
+	// 最多可以缓存 1024 个视图，超过的部分将把最前面的视图删除
 	/** Default maximum number of entries for the view cache: 1024 */
 	public static final int DEFAULT_CACHE_LIMIT = 1024;
 
@@ -61,6 +62,8 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 	/** Whether we should refrain from resolving views again if unresolved once */
 	private boolean cacheUnresolved = true;
 
+
+	// TODO: 2016/12/2   viewAccessCache(ConcurrentHashMap)    viewCreationCache(LinkedHashMap)  两种map结合使用的最佳实践
 	/** Fast access cache for Views, returning already cached instances without a global lock */
 	private final Map<Object, View> viewAccessCache = new ConcurrentHashMap<Object, View>(DEFAULT_CACHE_LIMIT);
 
@@ -68,13 +71,17 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 	@SuppressWarnings("serial")
 	private final Map<Object, View> viewCreationCache =
 			new LinkedHashMap<Object, View>(DEFAULT_CACHE_LIMIT, 0.75f, true) {
+
+				// 一方面删除  viewCreationCache 里面缓存的最早的记录
 				@Override
 				protected boolean removeEldestEntry(Map.Entry<Object, View> eldest) {
+					// 缓存超限，则将最早缓存的视图删除
 					if (size() > getCacheLimit()) {
+
+						// 另一方面删除 viewAccessCache 里面缓存的最早的记录
 						viewAccessCache.remove(eldest.getKey());
 						return true;
-					}
-					else {
+					} else {
 						return false;
 					}
 				}
@@ -140,20 +147,22 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 
 	public View resolveViewName(String viewName, Locale locale) throws Exception {
 		if (!isCache()) {
+			// 创建视图
 			return createView(viewName, locale);
-		}
-		else {
+		} else {
 			Object cacheKey = getCacheKey(viewName, locale);
 			View view = this.viewAccessCache.get(cacheKey);
 			if (view == null) {
 				synchronized (this.viewCreationCache) {
 					view = this.viewCreationCache.get(cacheKey);
 					if (view == null) {
-						// Ask the subclass to create the View object.
+						// Ask the subclass to create the View object.  根据viewName / locale 创建视图
 						view = createView(viewName, locale);
 						if (view == null && this.cacheUnresolved) {
 							view = UNRESOLVED_VIEW;
 						}
+
+						// 视图放缓存
 						if (view != null) {
 							this.viewAccessCache.put(cacheKey, view);
 							this.viewCreationCache.put(cacheKey, view);

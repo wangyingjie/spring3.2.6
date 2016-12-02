@@ -44,6 +44,8 @@ import org.springframework.util.ClassUtils;
  * @see #setRequestContextAttribute
  * @see InternalResourceView
  * @see JstlView
+ *
+ * 常用的 jsp 视图解析器
  */
 public class InternalResourceViewResolver extends UrlBasedViewResolver {
 
@@ -63,10 +65,13 @@ public class InternalResourceViewResolver extends UrlBasedViewResolver {
 	 * is present.
 	 */
 	public InternalResourceViewResolver() {
+
 		Class<?> viewClass = requiredViewClass();
 		if (viewClass.equals(InternalResourceView.class) && jstlPresent) {
 			viewClass = JstlView.class;
 		}
+
+		// 构造方法中直接设置 viewClass
 		setViewClass(viewClass);
 	}
 
@@ -115,7 +120,11 @@ public class InternalResourceViewResolver extends UrlBasedViewResolver {
 
 	@Override
 	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
+
+		// 调用不累方法 buildView
 		InternalResourceView view = (InternalResourceView) super.buildView(viewName);
+
+		// 设置 view 特有的属性
 		if (this.alwaysInclude != null) {
 			view.setAlwaysInclude(this.alwaysInclude);
 		}
@@ -125,6 +134,8 @@ public class InternalResourceViewResolver extends UrlBasedViewResolver {
 		if (this.exposedContextBeanNames != null) {
 			view.setExposedContextBeanNames(this.exposedContextBeanNames);
 		}
+
+		// 阻止循环调用
 		view.setPreventDispatchLoop(true);
 		return view;
 	}

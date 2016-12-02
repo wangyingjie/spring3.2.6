@@ -16,12 +16,12 @@
 
 package org.springframework.web.servlet.view;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
 import org.springframework.web.util.UrlPathHelper;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * {@link org.springframework.web.servlet.RequestToViewNameTranslator}
@@ -173,6 +173,8 @@ public class DefaultRequestToViewNameTranslator implements RequestToViewNameTran
 	 */
 	public String getViewName(HttpServletRequest request) {
 		String lookupPath = this.urlPathHelper.getLookupPathForRequest(request);
+
+		// viewName 拼接
 		return (this.prefix + transformPath(lookupPath) + this.suffix);
 	}
 

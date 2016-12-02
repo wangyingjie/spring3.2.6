@@ -16,9 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -26,12 +23,17 @@ import org.springframework.web.method.annotation.AbstractCookieValueMethodArgume
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * An {@link org.springframework.web.method.annotation.AbstractCookieValueMethodArgumentResolver} that resolves cookie
  * values from an {@link HttpServletRequest}.
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 解析cookie 的键值对
  */
 public class ServletCookieValueMethodArgumentResolver extends AbstractCookieValueMethodArgumentResolver {
 
@@ -49,6 +51,8 @@ public class ServletCookieValueMethodArgumentResolver extends AbstractCookieValu
 	protected Object resolveName(String cookieName, MethodParameter parameter, NativeWebRequest webRequest)
 			throws Exception {
 		HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+
+		//工具方法解析cookie
 		Cookie cookieValue = WebUtils.getCookie(servletRequest, cookieName);
 		if (Cookie.class.isAssignableFrom(parameter.getParameterType())) {
 			return cookieValue;

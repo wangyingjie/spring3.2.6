@@ -109,6 +109,8 @@ public class VelocityViewResolver extends AbstractTemplateViewResolver {
 			if (VelocityView.class.equals(getViewClass())) {
 				logger.info("Using VelocityToolboxView instead of default VelocityView " +
 						"due to specified toolboxConfigLocation");
+
+				// 设置 ViewClass
 				setViewClass(VelocityToolboxView.class);
 			}
 			else if (!VelocityToolboxView.class.isAssignableFrom(getViewClass())) {
@@ -123,7 +125,11 @@ public class VelocityViewResolver extends AbstractTemplateViewResolver {
 
 	@Override
 	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
+
+		// 创建 VelocityView
 		VelocityView view = (VelocityView) super.buildView(viewName);
+
+		// 设置特有属性
 		view.setDateToolAttribute(this.dateToolAttribute);
 		view.setNumberToolAttribute(this.numberToolAttribute);
 		if (this.toolboxConfigLocation != null) {

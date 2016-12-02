@@ -16,18 +16,18 @@
 
 package org.springframework.web.servlet.support;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.util.StringUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Convenient superclass for any kind of web content generator,
@@ -64,7 +64,7 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
 
 
-	/** Set of supported HTTP methods */
+	/** Set of supported HTTP methods  默认会初始化 get、post、head */
 	private Set<String>	supportedMethods;
 
 	private boolean requireSession = false;
@@ -98,6 +98,8 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 	 * or {@code false} if it should be unrestricted
 	 */
 	public WebContentGenerator(boolean restrictDefaultSupportedMethods) {
+
+		// AbstractHandlerMethodAdapter  默认不会设置 supportedMethods
 		if (restrictDefaultSupportedMethods) {
 			this.supportedMethods = new HashSet<String>(4);
 			this.supportedMethods.add(METHOD_GET);
@@ -258,7 +260,7 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 	 * @param request current HTTP request
 	 * @param response current HTTP response
 	 * @param cacheSeconds positive number of seconds into the future that the
-	 * response should be cacheable for, 0 to prevent caching
+	 * response should be cacheable for, 0 to prevent caching    只有两种值：0  or  1  用来控制缓存时间的
 	 * @param lastModified if the mapped handler provides Last-Modified support
 	 * @throws ServletException if the request cannot be handled because a check failed
 	 */
@@ -269,22 +271,23 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 		//检查请求类型是否支持
 		// Check whether we should support the request method.
 		String method = request.getMethod();
+		// AbstractHandlerMethodAdapter 不会设置supportedMethods 也就是默认情况下是不会检查请求方法类型的
 		if (this.supportedMethods != null && !this.supportedMethods.contains(method)) {
 			throw new HttpRequestMethodNotSupportedException(
 					method, StringUtils.toStringArray(this.supportedMethods));
 		}
 
 		// Check whether a session is required.
-		if (this.requireSession) {
+		if (this.requireSession) { // 默认不检查
 			// session 不存在则抛异常
 			if (request.getSession(false) == null) {
 				throw new HttpSessionRequiredException("Pre-existing session required but none found");
 			}
 		}
 
-		//给response设置缓存失效时间
 		// Do declarative cache control.
 		// Revalidate if the controller supports last-modified.
+		//给response设置缓存失效时间
 		applyCacheSeconds(response, cacheSeconds, lastModified);
 	}
 
@@ -293,6 +296,8 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 	 * See {@code http://www.mnot.net/cache_docs}.
 	 */
 	protected final void preventCaching(HttpServletResponse response) {
+
+		//不用缓存
 		response.setHeader(HEADER_PRAGMA, "no-cache");
 		if (this.useExpiresHeader) {
 			// HTTP 1.0 header

@@ -16,12 +16,6 @@
 
 package org.springframework.web.method.annotation;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.Conventions;
 import org.springframework.core.GenericTypeResolver;
@@ -39,6 +33,12 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.support.InvocableHandlerMethod;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides methods to initialize the {@link Model} before controller method
@@ -97,7 +97,7 @@ public final class ModelFactory {
 
 		// 1 从sessionAttribute中取出保存的参数  并合并到 mavContainer 中
 		Map<String, ?> attributesInSession = this.sessionAttributesHandler.retrieveAttributes(request);
-		// 设置 SessionAttributes 参数
+		// 合并 SessionAttributes 参数
 		mavContainer.mergeAttributes(attributesInSession);
 
 		// 2 执行注解了　@ModelAttribute 的方法并将结果设置到Model
@@ -227,11 +227,11 @@ public final class ModelFactory {
 			this.sessionAttributesHandler.cleanupAttributes(request);
 		}
 		else {
-			//设置 sessionAttribute 蛇形
+			//保存 sessionAttribute 属性到 sessionAttributeStore 中
 			this.sessionAttributesHandler.storeAttributes(request, mavContainer.getModel());
 		}
 
-		if (!mavContainer.isRequestHandled()) {
+		if (!mavContainer.isRequestHandled()) {//请求未完成
 			// 给Model设置   BindingResult
 			updateBindingResult(request, mavContainer.getModel());
 		}

@@ -16,10 +16,10 @@
 
 package org.springframework.web.servlet.mvc.support;
 
+import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.util.StringUtils;
 
 /**
  * Implementation of {@link org.springframework.web.servlet.HandlerMapping} that
@@ -81,10 +81,14 @@ public class ControllerBeanNameHandlerMapping extends AbstractControllerUrlHandl
 	protected String generatePathMapping(String beanName) {
 		String name = (beanName.startsWith("/") ? beanName : "/" + beanName);
 		StringBuilder path = new StringBuilder();
+
+		// 拼接path = 前缀 + name + 后缀
 		if (!name.startsWith(this.urlPrefix)) {
 			path.append(this.urlPrefix);
 		}
+
 		path.append(name);
+
 		if (!name.endsWith(this.urlSuffix)) {
 			path.append(this.urlSuffix);
 		}

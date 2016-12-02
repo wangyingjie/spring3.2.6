@@ -28,6 +28,8 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 class ControllerTypePredicate {
 
 	public boolean isControllerType(Class beanClass) {
+		// Assignable  [ə'saɪnəbl] adj. [经] 可分配的；可指定的；可让渡的; 可转让的
+		// beanClass  是可以进行  Controller 类型转换的
 		return Controller.class.isAssignableFrom(beanClass);
 	}
 

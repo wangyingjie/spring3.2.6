@@ -65,11 +65,17 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 
 	private PathMatcher pathMatcher = new AntPathMatcher();
 
+	//  interceptors 只用于配置拦截器  最终会将所有的拦截器 按类别放入到下面：adapted 、mapped 的集合中
 	private final List<Object> interceptors = new ArrayList<Object>();
 
-	// AbstractHandlerMapping中的a daptedInterceptors和mappedInterceptors属性，共同构成 HandlerExecutionChain的拦截器
+
+	// AbstractHandlerMapping中的adaptedInterceptors和mappedInterceptors属性，共同构成 HandlerExecutionChain的拦截器
+	// adaptedInterceptors 和 mappedInterceptors属性 的区别在于mapped 需要通过url进行匹配而 adapter 是无条件加入 HandlerExecutionChain 中
 	private final List<HandlerInterceptor> adaptedInterceptors = new ArrayList<HandlerInterceptor>();
 
+	/**
+	 * @see AbstractHandlerMapping#detectMappedInterceptors 方法初始化 interceptor
+	 */
 	private final List<MappedInterceptor> mappedInterceptors = new ArrayList<MappedInterceptor>();
 
 
@@ -192,8 +198,13 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 */
 	@Override
 	protected void initApplicationContext() throws BeansException {
+		//扩展接口
 		extendInterceptors(this.interceptors);
+
+		//探测父容器的 interceptor
 		detectMappedInterceptors(this.mappedInterceptors);
+
+		//初始化 interceptor
 		initInterceptors();
 	}
 
@@ -217,6 +228,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * @param mappedInterceptors an empty list to add {@link MappedInterceptor} instances to
 	 */
 	protected void detectMappedInterceptors(List<MappedInterceptor> mappedInterceptors) {
+		// 用于将 Ancestor （父类） 父容器中的所有 MappedInterceptor 类型的 Bean 添加到 mappedInterceptors 中
 		mappedInterceptors.addAll(
 				BeanFactoryUtils.beansOfTypeIncludingAncestors(
 						getApplicationContext(), MappedInterceptor.class, true, false).values());
@@ -227,6 +239,8 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * adapting {@link HandlerInterceptor}s and {@link WebRequestInterceptor}s if necessary.
 	 * @see #setInterceptors
 	 * @see #adaptInterceptor
+	 *
+	 * 主要对 interceptor 进行了分类整理，分别对应到了相应的  list 里面
 	 */
 	protected void initInterceptors() {
 
@@ -303,20 +317,22 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * @see #getHandlerInternal
 	 */
 	public final HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
-		// 获取HandlerMethod
+		// 1、获取HandlerMethod，主要由子类来负责实现
 		Object handler = getHandlerInternal(request);
 		if (handler == null) {
+			// 2、获取默认的 Handler
 			handler = getDefaultHandler();
 		}
 		if (handler == null) {
 			return null;
 		}
 		// Bean name or resolved handler?
+		// 3、如果是 String 类型则考虑从 spring mvc 的容器中进行查找
 		if (handler instanceof String) {
 			String handlerName = (String) handler;
 			handler = getApplicationContext().getBean(handlerName);
 		}
-		//构造HandlerExecutionChain
+		//4、构造HandlerExecutionChain
 		return getHandlerExecutionChain(handler, request);
 	}
 
@@ -361,11 +377,16 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 		HandlerExecutionChain chain = (handler instanceof HandlerExecutionChain ?
 				(HandlerExecutionChain) handler : new HandlerExecutionChain(handler));
 
+		// 注意： adaptedInterceptors 、 mappedInterceptors 的区别在于adapter 是无条件加入 HandlerExecutionChain 中
 		//将拦截器加入到 HandlerExecutionChain 中
 		chain.addInterceptors(getAdaptedInterceptors());
 
 		String lookupPath = this.urlPathHelper.getLookupPathForRequest(request);
+
+		// 注意：mappedInterceptors 需要通过url进行匹配
 		for (MappedInterceptor mappedInterceptor : this.mappedInterceptors) {
+
+			// 只有 url 匹配成功的 MappedInterceptor 才会添加到 HandlerExecutionChain 中
 			if (mappedInterceptor.matches(lookupPath, this.pathMatcher)) {
 				chain.addInterceptor(mappedInterceptor.getInterceptor());
 			}

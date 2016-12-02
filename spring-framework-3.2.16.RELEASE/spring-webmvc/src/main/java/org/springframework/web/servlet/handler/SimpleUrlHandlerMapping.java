@@ -16,12 +16,12 @@
 
 package org.springframework.web.servlet.handler;
 
+import org.springframework.beans.BeansException;
+import org.springframework.util.CollectionUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import org.springframework.beans.BeansException;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Implementation of the {@link org.springframework.web.servlet.HandlerMapping}
@@ -101,6 +101,8 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	@Override
 	public void initApplicationContext() throws BeansException {
 		super.initApplicationContext();
+
+		// 将自身 urlMap 注册到父类的 handlerMap 中
 		registerHandlers(this.urlMap);
 	}
 
@@ -113,19 +115,24 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	protected void registerHandlers(Map<String, Object> urlMap) throws BeansException {
 		if (urlMap.isEmpty()) {
 			logger.warn("Neither 'urlMap' nor 'mappings' set on SimpleUrlHandlerMapping");
-		}
-		else {
+		} else {
+			// 循环注册  handler
 			for (Map.Entry<String, Object> entry : urlMap.entrySet()) {
 				String url = entry.getKey();
 				Object handler = entry.getValue();
+
+				// 1、对url做一些简单的处理，确保url都是以 "/" 开头
 				// Prepend with slash if not already present.
 				if (!url.startsWith("/")) {
 					url = "/" + url;
 				}
 				// Remove whitespace from handler bean name.
 				if (handler instanceof String) {
+					// 2、去除空格
 					handler = ((String) handler).trim();
 				}
+
+				// 3、完成注册
 				registerHandler(url, handler);
 			}
 		}

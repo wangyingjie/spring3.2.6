@@ -53,6 +53,8 @@ public class DefaultSessionAttributeStore implements SessionAttributeStore {
 		Assert.notNull(attributeName, "Attribute name must not be null");
 		Assert.notNull(attributeValue, "Attribute value must not be null");
 		String storeAttributeName = getAttributeNameInSession(request, attributeName);
+
+		//最后一个参数指定的参数保存的范围
 		request.setAttribute(storeAttributeName, attributeValue, WebRequest.SCOPE_SESSION);
 	}
 
@@ -69,6 +71,8 @@ public class DefaultSessionAttributeStore implements SessionAttributeStore {
 		Assert.notNull(request, "WebRequest must not be null");
 		Assert.notNull(attributeName, "Attribute name must not be null");
 		String storeAttributeName = getAttributeNameInSession(request, attributeName);
+
+		//最后一个参数指定的参数保存的范围
 		request.removeAttribute(storeAttributeName, WebRequest.SCOPE_SESSION);
 	}
 

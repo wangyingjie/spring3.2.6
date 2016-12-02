@@ -34,6 +34,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 解析 Model 类型参数，直接返回  mavContainer.getModel()
  */
 public class ModelMethodProcessor implements HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler {
 
@@ -46,6 +48,7 @@ public class ModelMethodProcessor implements HandlerMethodArgumentResolver, Hand
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
 			throws Exception {
 
+		// 直接返回了  mavContainer 中的 Model
 		return mavContainer.getModel();
 	}
 
@@ -62,6 +65,8 @@ public class ModelMethodProcessor implements HandlerMethodArgumentResolver, Hand
 			return;
 		}
 		else if (returnValue instanceof Model) {
+
+			//将model中的值放入到 mavContainer 中
 			mavContainer.addAllAttributes(((Model) returnValue).asMap());
 		}
 		else {

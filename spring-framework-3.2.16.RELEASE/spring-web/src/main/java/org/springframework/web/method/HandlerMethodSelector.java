@@ -16,16 +16,16 @@
 
 package org.springframework.web.method;
 
+import org.springframework.core.BridgeMethodResolver;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.ReflectionUtils.MethodFilter;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.springframework.core.BridgeMethodResolver;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.ReflectionUtils.MethodFilter;
 
 /**
  * Defines the algorithm for searching handler methods exhaustively including interfaces and parent
@@ -52,12 +52,18 @@ public abstract class HandlerMethodSelector {
 			specificHandlerType = handlerType;
 		}
 		handlerTypes.addAll(Arrays.asList(handlerType.getInterfaces()));
+
 		for (Class<?> currentHandlerType : handlerTypes) {
+
 			final Class<?> targetClass = (specificHandlerType != null ? specificHandlerType : currentHandlerType);
+
 			ReflectionUtils.doWithMethods(currentHandlerType, new ReflectionUtils.MethodCallback() {
+
 				public void doWith(Method method) {
+
 					Method specificMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
 					Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
+
 					//MethodFilter 回调方法  匹配满足条件的方法
 					if (handlerMethodFilter.matches(specificMethod) &&
 							(bridgedMethod == specificMethod || !handlerMethodFilter.matches(bridgedMethod))) {
@@ -66,6 +72,7 @@ public abstract class HandlerMethodSelector {
 				}
 			}, ReflectionUtils.USER_DECLARED_METHODS);
 		}
+
 		return handlerMethods;
 	}
 

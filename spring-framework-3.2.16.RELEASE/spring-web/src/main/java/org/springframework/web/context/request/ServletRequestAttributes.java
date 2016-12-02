@@ -118,6 +118,13 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 		}
 	}
 
+	/**
+	 * 根据 scope 的范围将属性 key - value 保存到不同的作用
+	 *
+	 * @param name the name of the attribute
+	 * @param value the value for the attribute
+	 * @param scope the scope identifier
+	 */
 	public void setAttribute(String name, Object value, int scope) {
 
 		//根据属性  scope 指定的范围往request里面存数据

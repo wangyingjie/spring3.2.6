@@ -16,14 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.core.Conventions;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -45,6 +37,14 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.List;
+
 /**
  * Resolves method arguments annotated with {@code @RequestBody} and handles return
  * values from methods annotated with {@code @ResponseBody} by reading and writing
@@ -58,6 +58,8 @@ import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolv
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 返回值注解了 @RequestBody 的处理
  */
 public class RequestResponseBodyMethodProcessor extends AbstractMessageConverterMethodProcessor {
 
@@ -137,6 +139,9 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 		return !hasBindingResult;
 	}
 
+	/**
+	 * 用流的形式将参数值读入
+	 */
 	@Override
 	protected <T> Object readWithMessageConverters(NativeWebRequest webRequest, MethodParameter methodParam,
 			Type paramType) throws IOException, HttpMediaTypeNotSupportedException {
@@ -179,6 +184,10 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 		return super.readWithMessageConverters(inputMessage, methodParam, paramType);
 	}
 
+
+	/**
+	 * 用流的形式将返回结果输出
+	 */
 	public void handleReturnValue(Object returnValue, MethodParameter returnType,
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest)
 			throws IOException, HttpMediaTypeNotAcceptableException {

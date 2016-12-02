@@ -39,6 +39,8 @@ import org.springframework.web.servlet.View;
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 支持 ModelAndView 的返回值
  */
 public class ModelAndViewMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
 
@@ -46,6 +48,7 @@ public class ModelAndViewMethodReturnValueHandler implements HandlerMethodReturn
 		return ModelAndView.class.isAssignableFrom(returnType.getParameterType());
 	}
 
+	// 将返回值中的 model 、 view  保存进 mavContainer 中
 	public void handleReturnValue(
 			Object returnValue, MethodParameter returnType,
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest)

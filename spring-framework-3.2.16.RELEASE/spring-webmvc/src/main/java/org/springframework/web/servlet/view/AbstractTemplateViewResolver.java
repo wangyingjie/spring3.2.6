@@ -100,12 +100,17 @@ public class AbstractTemplateViewResolver extends UrlBasedViewResolver {
 
 	@Override
 	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
+
+		// 调用父类的 buildView 方法
 		AbstractTemplateView view = (AbstractTemplateView) super.buildView(viewName);
+
+		// 加入 AbstractTemplateView 的特定属性
 		view.setExposeRequestAttributes(this.exposeRequestAttributes);
-		view.setAllowRequestOverride(this.allowRequestOverride);
+		view.setAllowRequestOverride(this.allowRequestOverride);// 同名属性是否允许覆盖
 		view.setExposeSessionAttributes(this.exposeSessionAttributes);
-		view.setAllowSessionOverride(this.allowSessionOverride);
-		view.setExposeSpringMacroHelpers(this.exposeSpringMacroHelpers);
+		view.setAllowSessionOverride(this.allowSessionOverride);// 同名属性是否允许覆盖
+		view.setExposeSpringMacroHelpers(this.exposeSpringMacroHelpers);// 将requestContext暴露给spring的宏使用
+
 		return view;
 	}
 

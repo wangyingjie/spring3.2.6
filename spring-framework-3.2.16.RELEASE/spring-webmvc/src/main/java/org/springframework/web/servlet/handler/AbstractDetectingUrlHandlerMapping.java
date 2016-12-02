@@ -29,6 +29,12 @@ import org.springframework.util.ObjectUtils;
  * @author Juergen Hoeller
  * @since 2.5
  * @see #determineUrlsForHandler
+ *
+ * Detecting  [di'tektiŋ] n. 检测；检定
+ *
+ * 检测 Handler 处理类并注册到中
+ * @see org.springframework.web.servlet.handler.AbstractUrlHandlerMapping#handlerMap
+ *
  */
 public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
@@ -54,8 +60,10 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
 	 */
 	@Override
 	public void initApplicationContext() throws ApplicationContextException {
+
 		//初始化Spring容器
 		super.initApplicationContext();
+
 		//探测Handler 并注册到父类Map容器
 		detectHandlers();
 	}
@@ -73,16 +81,20 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
 			logger.debug("Looking for URL mappings in application context: " + getApplicationContext());
 		}
 
-		// 拿到Spring中所有的 beanname
+		// 获取到Spring中所有的 beanname
+		// detectHandlersInAncestorContexts 属性决定是否从父容器中获取 beanName
 		String[] beanNames = (this.detectHandlersInAncestorContexts ?
 				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(getApplicationContext(), Object.class) :
 				getApplicationContext().getBeanNamesForType(Object.class));
 
 		// Take any bean name that we can determine URLs for.
 		for (String beanName : beanNames) {
+
 			//解析url  将解析的具体url返回数据
 			String[] urls = determineUrlsForHandler(beanName);
+
 			if (!ObjectUtils.isEmpty(urls)) {
+
 				// URL paths found: Let's consider it a handler.
 				// 循环每一个beanName 与url匹配
 				registerHandler(urls, beanName);
@@ -100,6 +112,11 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
 	 * @param beanName the name of the candidate bean
 	 * @return the URLs determined for the bean,
 	 * or {@code null} or an empty array if none
+	 *
+	 * // 三个子类实现了以下的模板方法
+	 * AbstractControllerUrlHandlerMapping (org.springframework.web.servlet.mvc.support)
+	 * BeanNameUrlHandlerMapping           (org.springframework.web.servlet.handler)
+	 * DefaultAnnotationHandlerMapping     (org.springframework.web.servlet.mvc.annotation)
 	 */
 	protected abstract String[] determineUrlsForHandler(String beanName);
 

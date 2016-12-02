@@ -16,11 +16,6 @@
 
 package org.springframework.web.method.annotation;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.ServletException;
-
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -33,6 +28,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestScope;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import javax.servlet.ServletException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Abstract base class for resolving method arguments from a named value.
@@ -54,6 +53,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ *  解析 NameValue类型的参数，如：cookie、requestParam、requestHeader 类型
  */
 public abstract class AbstractNamedValueMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -81,15 +82,23 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 			throws Exception {
 
 		Class<?> paramType = parameter.getParameterType();
+
+		// 获取NameValueInfo
 		NamedValueInfo namedValueInfo = getNamedValueInfo(parameter);
 
+		// 解析参数
 		Object arg = resolveName(namedValueInfo.name, parameter, webRequest);
+
+		// 如果没有解析到参数
 		if (arg == null) {
 			if (namedValueInfo.defaultValue != null) {
+
+				//使用默认解析的值0
 				arg = resolveDefaultValue(namedValueInfo.defaultValue);
-			}
-			else if (namedValueInfo.required) {
-				handleMissingValue(namedValueInfo.name, parameter);
+			} else {
+				if (namedValueInfo.required) {
+					handleMissingValue(namedValueInfo.name, parameter);
+				}
 			}
 			arg = handleNullValue(namedValueInfo.name, arg, paramType);
 		}
@@ -97,11 +106,15 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 			arg = resolveDefaultValue(namedValueInfo.defaultValue);
 		}
 
+		// 从 binderFactory 中解析
 		if (binderFactory != null) {
 			WebDataBinder binder = binderFactory.createBinder(webRequest, null, namedValueInfo.name);
+
+			//做必要的转换
 			arg = binder.convertIfNecessary(arg, paramType, parameter);
 		}
 
+		//对解析的参数进行后置处理，扩展的模板方法
 		handleResolvedValue(arg, namedValueInfo.name, parameter, mavContainer, webRequest);
 
 		return arg;
@@ -112,9 +125,20 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 	 */
 	private NamedValueInfo getNamedValueInfo(MethodParameter parameter) {
 		NamedValueInfo namedValueInfo = this.namedValueInfoCache.get(parameter);
+
+		//cache 未找到
 		if (namedValueInfo == null) {
+
+			// 子类都使用了继承父类的 NamedValueInfo 重写调用父类构造方法的实现创建了 NamedValueInfo 对象
+			// 以上的代码设计风格可以借鉴
+
+			//创建之
 			namedValueInfo = createNamedValueInfo(parameter);
+
+			//更新之
 			namedValueInfo = updateNamedValueInfo(parameter, namedValueInfo);
+
+			//放缓存
 			this.namedValueInfoCache.put(parameter, namedValueInfo);
 		}
 		return namedValueInfo;
@@ -160,7 +184,11 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 		if (this.configurableBeanFactory == null) {
 			return defaultValue;
 		}
+
+		// 默认值中有 占位符，则要替换之
 		String placeholdersResolved = this.configurableBeanFactory.resolveEmbeddedValue(defaultValue);
+
+		//
 		BeanExpressionResolver exprResolver = this.configurableBeanFactory.getBeanExpressionResolver();
 		if (exprResolver == null) {
 			return defaultValue;
@@ -173,6 +201,8 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 	 * returned {@code null} and there is no default value. Subclasses typically throw an exception in this case.
 	 * @param name the name for the value
 	 * @param parameter the method parameter
+	 *
+	 * 模板方法
 	 */
 	protected abstract void handleMissingValue(String name, MethodParameter parameter) throws ServletException;
 
@@ -180,11 +210,14 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 	 * A {@code null} results in a {@code false} value for {@code boolean}s or an exception for other primitives.
 	 */
 	private Object handleNullValue(String name, Object value, Class<?> paramType) {
+
+		// 即没有返回值也没有默认值
 		if (value == null) {
+
+			// 如果类型为  boolean  则直接返回 false  否则抛异常
 			if (Boolean.TYPE.equals(paramType)) {
 				return Boolean.FALSE;
-			}
-			else if (paramType.isPrimitive()) {
+			} else if (paramType.isPrimitive()) {
 				throw new IllegalStateException("Optional " + paramType + " parameter '" + name +
 						"' is present but cannot be translated into a null value due to being declared as a " +
 						"primitive type. Consider declaring it as object wrapper for the corresponding primitive type.");
@@ -200,6 +233,8 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 	 * @param parameter the argument parameter type
 	 * @param mavContainer the {@link ModelAndViewContainer}, which may be {@code null}
 	 * @param webRequest the current request
+	 *
+	 * 子类扩展
 	 */
 	protected void handleResolvedValue(Object arg, String name, MethodParameter parameter,
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) {

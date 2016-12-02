@@ -16,18 +16,17 @@
 
 package org.springframework.web.method;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * Encapsulates information about a handler method consisting of a {@linkplain #getMethod() method}
@@ -44,18 +43,19 @@ import org.springframework.util.ClassUtils;
  */
 public class HandlerMethod {
 
+	// 所有的属性都是 final 的，所以创建之后就不可以修改了
 	/** Logger that is available to subclasses */
 	protected final Log logger = LogFactory.getLog(HandlerMethod.class);
 
 	private final Object bean;
 
-	private final BeanFactory beanFactory;
+	private final BeanFactory beanFactory;//解析传入的 bean 为String 类型的情况
 
 	private final Method method;
 
 	private final Method bridgedMethod;
 
-	private final MethodParameter[] parameters;
+	private final MethodParameter[] parameters;//方法执行的参数
 
 
 	/**
@@ -211,6 +211,10 @@ public class HandlerMethod {
 	/**
 	 * If the provided instance contains a bean name rather than an object instance, the bean name is resolved
 	 * before a {@link HandlerMethod} is created and returned.
+	 *
+	 * 由于 HandlerMethod 所有的属性都是 final 修饰的，所以此处创建了一个新的 HandlerMethod 类，同时将自身传入
+	 *
+	 * 这个设计思想可以借鉴
 	 */
 	public HandlerMethod createWithResolvedBean() {
 		Object handler = this.bean;
@@ -218,6 +222,7 @@ public class HandlerMethod {
 			String beanName = (String) this.bean;
 			handler = this.beanFactory.getBean(beanName);
 		}
+		// 通过构造方法返回 HandlerMethod ，HandlerMethod 中的属性全部是 final 类型的
 		return new HandlerMethod(this, handler);
 	}
 
@@ -246,6 +251,8 @@ public class HandlerMethod {
 
 	/**
 	 * A MethodParameter with HandlerMethod-specific behavior.
+	 *
+	 * 用来封装方法调用的参数
 	 */
 	private class HandlerMethodParameter extends MethodParameter {
 
@@ -267,6 +274,8 @@ public class HandlerMethod {
 
 	/**
 	 * A MethodParameter for a HandlerMethod return type based on an actual return value.
+	 *
+	 * 用来封装方法返回的参数
 	 */
 	private class ReturnValueMethodParameter extends HandlerMethodParameter {
 

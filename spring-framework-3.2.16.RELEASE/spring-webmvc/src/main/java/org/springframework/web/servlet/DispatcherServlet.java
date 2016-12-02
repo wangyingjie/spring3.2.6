@@ -1016,8 +1016,10 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * Do we need view name translation?
 	 */
 	private void applyDefaultViewName(HttpServletRequest request, ModelAndView mv) throws Exception {
-		// 如果返回没有  view 则将应用默认的 view
+		// 如果返回没有  view 则将通过 Request 解析 viewName
 		if (mv != null && !mv.hasView()) {
+
+			// 最终通过 DefaultRequestToViewNameTranslator 获取 viewName
 			mv.setViewName(getDefaultViewName(request));
 		}
 	}

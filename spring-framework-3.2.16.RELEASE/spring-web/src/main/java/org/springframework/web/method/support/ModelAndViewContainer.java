@@ -16,13 +16,13 @@
 
 package org.springframework.web.method.support;
 
-import java.util.Map;
-
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.support.BindingAwareModelMap;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.bind.support.SimpleSessionStatus;
+
+import java.util.Map;
 
 /**
  * Records model and view related decisions made by
@@ -46,6 +46,7 @@ public class ModelAndViewContainer {
 
 	private Object view;
 
+	//请求是否处理完的标志
 	private boolean requestHandled = false;
 
 	private final ModelMap defaultModel = new BindingAwareModelMap();
@@ -133,6 +134,8 @@ public class ModelAndViewContainer {
 	 * method argument) and {@code ignoreDefaultModelOnRedirect=false}.
 	 */
 	public ModelMap getModel() {
+
+		//根据条件返回不会的 ModelMap
 		if (useDefaultModel()) {
 			return this.defaultModel;
 		}

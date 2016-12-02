@@ -16,10 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
@@ -32,6 +28,10 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerMapping;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Resolves method arguments annotated with an {@link MatrixVariable @PathParam}.
  *
@@ -40,6 +40,8 @@ import org.springframework.web.servlet.HandlerMapping;
  *
  * @author Rossen Stoyanchev
  * @since 3.2
+ *
+ * 解析 @MatrixVariable 注解而且不是Map 的类型参数
  */
 public class MatrixVariableMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver {
 

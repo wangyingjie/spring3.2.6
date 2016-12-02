@@ -47,10 +47,12 @@ import java.util.*;
  */
 public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
+	// 单独处理 "/" 请求的 handler
 	private Object rootHandler;
 
 	private boolean lazyInitHandlers = false;
 
+	// 保存 url ---> handler 的映射map
 	private final Map<String, Object> handlerMap = new LinkedHashMap<String, Object>();
 
 
@@ -101,9 +103,10 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 		if (handler == null) {
 			// We need to care for the default handler directly, since we need to
 			// expose the PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE for it as well.
+			// raw  英 [rɔː] adj. 生的；未加工的；阴冷的；刺痛的；擦掉皮的；无经验的；
 			Object rawHandler = null;
 			if ("/".equals(lookupPath)) {
-				//根路径组使用 rootHandler 处理
+				//根路径使用 rootHandler 处理
 				rawHandler = getRootHandler();
 			}
 			if (rawHandler == null) {
@@ -119,7 +122,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 				//子类提供实现
 				validateHandler(rawHandler, request);
 
-				//根据path 构建暴漏的 Handler 对象
+				//根据path 构建暴漏的 Handler 对象、同时注册 2 个拦截器
 				handler = buildPathExposingHandler(rawHandler, lookupPath, lookupPath, null);
 			}
 		}
@@ -186,6 +189,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 			// for all of them
 			Map<String, String> uriTemplateVariables = new LinkedHashMap<String, String>();
 			for (String matchingPattern : matchingPatterns) {
+				// 之前已经进行了 sort 的排序，然而还是可能有多个 pattern 的顺序相同，也就是 sort 返回 0 的情况，下面就是处理这种情况
 				if (patternComparator.compare(bestPatternMatch, matchingPattern) == 0) {
 					Map<String, String> vars = getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath);
 					Map<String, String> decodedVars = getUrlPathHelper().decodePathVariables(request, vars);
@@ -196,7 +200,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 				logger.debug("URI Template variables for request [" + urlPath + "] are " + uriTemplateVariables);
 			}
 
-			// 构建Handler
+			// 构建HandlerChain、默认添加了两个 拦截器
 			return buildPathExposingHandler(handler, bestPatternMatch, pathWithinMapping, uriTemplateVariables);
 		}
 		// No handler found...
@@ -224,17 +228,19 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 	 * @param pathWithinMapping the path to expose before executing the handler
 	 * @param uriTemplateVariables the URI template variables, can be {@code null} if no variables found
 	 * @return the final handler object
+	 *
+	 * 给匹配到的 原始 raw Handler 注册两个拦截器
 	 */
 	protected Object buildPathExposingHandler(Object rawHandler, String bestMatchingPattern,
 			String pathWithinMapping, Map<String, String> uriTemplateVariables) {
 
 		HandlerExecutionChain chain = new HandlerExecutionChain(rawHandler);
 
-		// 加入 PathExposingHandlerInterceptor 拦截器
+		// 注册拦截器  PathExposingHandlerInterceptor
 		chain.addInterceptor(new PathExposingHandlerInterceptor(bestMatchingPattern, pathWithinMapping));
 		if (!CollectionUtils.isEmpty(uriTemplateVariables)) {
 
-			// 加入 UriTemplateVariablesHandlerInterceptor 拦截器
+			// 注册拦截器 UriTemplateVariablesHandlerInterceptor
 			chain.addInterceptor(new UriTemplateVariablesHandlerInterceptor(uriTemplateVariables));
 		}
 		return chain;
@@ -267,6 +273,8 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 	 * @param beanName the name of the handler bean
 	 * @throws BeansException if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
+	 *
+	 * 可以注册多个 Handler 处理器， 此处的处理器用的是  String 类型的 beanName
 	 */
 	protected void registerHandler(String[] urlPaths, String beanName) throws BeansException, IllegalStateException {
 		Assert.notNull(urlPaths, "URL path array must not be null");
@@ -283,6 +291,8 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 	 * (a bean name will automatically be resolved into the corresponding handler bean)
 	 * @throws BeansException if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
+	 *
+	 * 尽可以注册一个 handler 处理器，该方法属于重载实现
 	 */
 	protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException {
 		Assert.notNull(urlPath, "URL path must not be null");

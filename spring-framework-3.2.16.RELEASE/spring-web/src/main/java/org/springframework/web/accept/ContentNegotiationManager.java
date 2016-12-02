@@ -16,18 +16,12 @@
 
 package org.springframework.web.accept;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.context.request.NativeWebRequest;
+
+import java.util.*;
 
 /**
  * This class is used to determine the requested {@linkplain MediaType media types}
@@ -130,6 +124,8 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 	}
 
 	/**
+	 * 代表所有配置MediaTypeFileExtensionResolver实例和聚合所有文件扩展名的列表。
+	 *
 	 * Delegate to all configured MediaTypeFileExtensionResolver instances and aggregate
 	 * the list of all file extensions found.
 	 */

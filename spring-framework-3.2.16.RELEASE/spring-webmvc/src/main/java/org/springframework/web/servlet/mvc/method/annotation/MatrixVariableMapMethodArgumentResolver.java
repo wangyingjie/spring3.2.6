@@ -16,9 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -33,6 +30,9 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.HandlerMapping;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * Resolves method arguments of type Map annotated with
  * {@link MatrixVariable @MatrixVariable} where the annotation the does not
@@ -41,12 +41,19 @@ import org.springframework.web.servlet.HandlerMapping;
  *
  * @author Rossen Stoyanchev
  * @since 3.2
+ *
+ * Matrix ['meɪtrɪks]
+ *
+ * Map 的类型参数  n. [数] 矩阵；模型；
+ *
+ * 解析注解了 @ MatrixVariable 的Map类型的参数
  */
 public class MatrixVariableMapMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
 	public boolean supportsParameter(MethodParameter parameter) {
 		MatrixVariable paramAnnot = parameter.getParameterAnnotation(MatrixVariable.class);
 		if (paramAnnot != null) {
+			//属于Map 类型
 			if (Map.class.isAssignableFrom(parameter.getParameterType())) {
 				return !StringUtils.hasText(paramAnnot.value());
 			}

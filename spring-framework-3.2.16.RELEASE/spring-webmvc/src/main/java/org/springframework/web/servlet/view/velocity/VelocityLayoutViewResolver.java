@@ -91,7 +91,11 @@ public class VelocityLayoutViewResolver extends VelocityViewResolver {
 
 	@Override
 	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
+
+		// 迭代调用父类的 buildView 方法；  父类 build 的view对象由子类提供了，故此处可以进行强制转换
 		VelocityLayoutView view = (VelocityLayoutView) super.buildView(viewName);
+
+		// 设置一些特有属性
 		// Use not-null checks to preserve VelocityLayoutView's defaults.
 		if (this.layoutUrl != null) {
 			view.setLayoutUrl(this.layoutUrl);

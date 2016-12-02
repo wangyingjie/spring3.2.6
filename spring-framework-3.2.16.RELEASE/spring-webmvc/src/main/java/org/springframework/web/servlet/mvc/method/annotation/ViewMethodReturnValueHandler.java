@@ -37,6 +37,8 @@ import org.springframework.web.servlet.View;
  *
  * @author Rossen Stoyanchev
  * @since 3.1
+ *
+ * 处理 View 返回值
  */
 public class ViewMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
 
