@@ -94,3 +94,7 @@ The Spring Framework is released under version 2.0 of the [Apache License][].
 [team blog]: http://blog.springsource.org
 [news feed]: http://www.springsource.org/news-events
 [Apache License]: http://www.apache.org/licenses/LICENSE-2.0
+
+
+## 将源代码导入IDEA 
+参考文章：http://blog.csdn.net/wei987654wei/article/details/50635026
