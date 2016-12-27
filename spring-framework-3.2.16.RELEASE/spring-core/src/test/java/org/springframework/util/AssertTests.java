@@ -16,13 +16,7 @@
 
 package org.springframework.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -173,4 +167,19 @@ public class AssertTests {
 		Assert.state(true);
 	}
 
+	@Test
+	public  void testJson(){
+		String json = "dfd";
+
+        final Map<String, String> map = new LinkedHashMap<String, String>() {
+            {
+                put("xxx1", "ddddd");
+                put("xxx2", "ddddd");
+                put("xxx3", "ddddd");
+            }
+        };
+
+        System.out.println(map);
+
+    }
 }
