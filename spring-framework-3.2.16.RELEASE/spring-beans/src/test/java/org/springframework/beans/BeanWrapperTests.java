@@ -76,6 +76,8 @@ public final class BeanWrapperTests {
 		BeanWrapperImpl wrapper = new BeanWrapperImpl(foo);
 		wrapper.setConversionService(new DefaultConversionService());
 		wrapper.setAutoGrowNestedPaths(true);
+
+		// 比较高级的用法
 		wrapper.setPropertyValue("listOfMaps[0]['luckyNumber']", "9");
 		assertEquals("9", foo.listOfMaps.get(0).get("luckyNumber"));
 	}
@@ -92,6 +94,7 @@ public final class BeanWrapperTests {
 		assertEquals(map, foo.list.get(0));
 	}
 
+	// java 集合嵌套处理
 	@Test
 	public void testNullNestedTypeDescriptorWithNoConversionService() {
 		Foo foo = new Foo();
@@ -275,6 +278,7 @@ public final class BeanWrapperTests {
 		TestBean t = new TestBean();
 		int newAge = 33;
 		try {
+			// 设置属性值相互不冲突
 			BeanWrapper bw = new BeanWrapperImpl(t);
 			t.setAge(newAge);
 			Object bwAge = bw.getPropertyValue("age");
@@ -312,6 +316,7 @@ public final class BeanWrapperTests {
 
 	@Test
 	public void testConvertPrimitiveToString() {
+		//通过 MutablePropertyValues 可以同时给目标 bean 设置多个属性值
 		MutablePropertyValues values = new MutablePropertyValues();
 		values.add("name", new Integer(42));
 		TestBean tb = new TestBean();
@@ -357,6 +362,7 @@ public final class BeanWrapperTests {
 		BeanWrapper bw = new BeanWrapperImpl(tb);
 
 		try {
+			// 支持各类数值类型
 			bw.setPropertyValue("short2", "2");
 			bw.setPropertyValue("int2", "8");
 			bw.setPropertyValue("long2", "6");
@@ -421,6 +427,8 @@ public final class BeanWrapperTests {
 
 	@Test
 	public void testEnumByFieldName() {
+
+		// 支持枚举属性的设置
 		EnumTester et = new EnumTester();
 		BeanWrapper bw = new BeanWrapperImpl(et);
 
@@ -441,6 +449,8 @@ public final class BeanWrapperTests {
 
 	@Test
 	public void testPropertiesProperty() throws Exception {
+
+		//支持 Properties 属性的设置
 		PropsTester pt = new PropsTester();
 		BeanWrapper bw = new BeanWrapperImpl(pt);
 		bw.setPropertyValue("name", "ptest");
@@ -498,6 +508,8 @@ public final class BeanWrapperTests {
 	public void testStringArrayPropertyWithCustomStringEditor() throws Exception {
 		PropsTester pt = new PropsTester();
 		BeanWrapper bw = new BeanWrapperImpl(pt);
+
+		// 支持自定义的字符串的截取
 		bw.registerCustomEditor(String.class, "stringArray", new PropertyEditorSupport() {
 			@Override
 			public void setAsText(String text) {
@@ -548,8 +560,11 @@ public final class BeanWrapperTests {
 	public void testStringArrayPropertyWithCustomStringDelimiter() throws Exception {
 		PropsTester pt = new PropsTester();
 		BeanWrapper bw = new BeanWrapperImpl(pt);
+
+		//指定字符串的分隔符，可以获得字符串数组
 		bw.registerCustomEditor(String[].class, "stringArray", new StringArrayPropertyEditor("-"));
 		bw.setPropertyValue("stringArray", "a1-b2");
+
 		assertTrue("stringArray length = 2", pt.stringArray.length == 2);
 		assertTrue("correct values", pt.stringArray[0].equals("a1") && pt.stringArray[1].equals("b2"));
 	}

@@ -104,6 +104,8 @@ public class BeanWrapperGenericsTests {
 		GenericBean<?> gb = new GenericBean<Object>();
 		gb.setResourceList(new ArrayList<Resource>());
 		BeanWrapper bw = new BeanWrapperImpl(gb);
+
+		// 支持设置指定集合中的 某一个集合元素的值，这个厉害！！！
 		bw.setPropertyValue("resourceList[0]", "http://localhost:8080");
 		assertEquals(new UrlResource("http://localhost:8080"), gb.getResourceList().get(0));
 	}
@@ -125,6 +127,8 @@ public class BeanWrapperGenericsTests {
 		GenericBean<?> gb = new GenericBean<Object>();
 		gb.setShortMap(new HashMap<Short, Integer>());
 		BeanWrapper bw = new BeanWrapperImpl(gb);
+
+		// 支持设置指定集合中的 某一个集合元素的值，这个厉害！！！
 		bw.setPropertyValue("shortMap[4]", "5");
 		assertEquals(new Integer(5), bw.getPropertyValue("shortMap[4]"));
 		assertEquals(new Integer(5), gb.getShortMap().get(new Short("4")));
@@ -134,6 +138,8 @@ public class BeanWrapperGenericsTests {
 	public void testGenericMapWithKeyType() {
 		GenericBean<?> gb = new GenericBean<Object>();
 		BeanWrapper bw = new BeanWrapperImpl(gb);
+
+		// 支持设置属性类型 与 参数类型的自动转换
 		Map<String, String> input = new HashMap<String, String>();
 		input.put("4", "5");
 		input.put("6", "7");
@@ -149,6 +155,8 @@ public class BeanWrapperGenericsTests {
 		BeanWrapper bw = new BeanWrapperImpl(gb);
 		bw.setPropertyValue("longMap[4]", "5");
 		assertEquals("5", gb.getLongMap().get(new Long("4")));
+
+		//支持从指定对象集合的第几个元素
 		assertEquals("5", bw.getPropertyValue("longMap[4]"));
 	}
 
@@ -186,6 +194,8 @@ public class BeanWrapperGenericsTests {
 		GenericBean<String> gb = new GenericBean<String>();
 		List<List<Integer>> list = new LinkedList<List<Integer>>();
 		list.add(new LinkedList<Integer>());
+
+		// 支持对二维数组的设置
 		gb.setListOfLists(list);
 		BeanWrapper bw = new BeanWrapperImpl(gb);
 		bw.setPropertyValue("listOfLists[0][0]", new Integer(5));

@@ -70,6 +70,7 @@ public class XmlBeanDefinitionReaderTests extends TestCase {
 			fail("Should have thrown BeanDefinitionStoreException (can't determine validation mode)");
 		}
 		catch (BeanDefinitionStoreException expected) {
+			expected.printStackTrace();
 		}
 	}
 

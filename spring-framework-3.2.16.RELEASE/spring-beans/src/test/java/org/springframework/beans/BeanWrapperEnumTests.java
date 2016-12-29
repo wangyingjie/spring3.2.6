@@ -32,6 +32,8 @@ public final class BeanWrapperEnumTests {
 	public void testCustomEnum() {
 		GenericBean<?> gb = new GenericBean<Object>();
 		BeanWrapper bw = new BeanWrapperImpl(gb);
+
+		// 可以给属性为：枚举类型的变量设值
 		bw.setPropertyValue("customEnum", "VALUE_1");
 		assertEquals(CustomEnum.VALUE_1, gb.getCustomEnum());
 	}
@@ -56,6 +58,8 @@ public final class BeanWrapperEnumTests {
 	public void testCustomEnumArrayWithSingleValue() {
 		GenericBean<?> gb = new GenericBean<Object>();
 		BeanWrapper bw = new BeanWrapperImpl(gb);
+
+		// 支持设置枚举数组
 		bw.setPropertyValue("customEnumArray", "VALUE_1");
 		assertEquals(1, gb.getCustomEnumArray().length);
 		assertEquals(CustomEnum.VALUE_1, gb.getCustomEnumArray()[0]);
@@ -65,6 +69,8 @@ public final class BeanWrapperEnumTests {
 	public void testCustomEnumArrayWithMultipleValues() {
 		GenericBean<?> gb = new GenericBean<Object>();
 		BeanWrapper bw = new BeanWrapperImpl(gb);
+
+		// 支持设置枚举数组
 		bw.setPropertyValue("customEnumArray", new String[] {"VALUE_1", "VALUE_2"});
 		assertEquals(2, gb.getCustomEnumArray().length);
 		assertEquals(CustomEnum.VALUE_1, gb.getCustomEnumArray()[0]);
@@ -85,6 +91,8 @@ public final class BeanWrapperEnumTests {
 	public void testCustomEnumSetWithSingleValue() {
 		GenericBean<?> gb = new GenericBean<Object>();
 		BeanWrapper bw = new BeanWrapperImpl(gb);
+
+		// 支持设置枚举 set 集合
 		bw.setPropertyValue("customEnumSet", "VALUE_1");
 		assertEquals(1, gb.getCustomEnumSet().size());
 		assertTrue(gb.getCustomEnumSet().contains(CustomEnum.VALUE_1));
@@ -94,6 +102,8 @@ public final class BeanWrapperEnumTests {
 	public void testCustomEnumSetWithMultipleValues() {
 		GenericBean<?> gb = new GenericBean<Object>();
 		BeanWrapper bw = new BeanWrapperImpl(gb);
+
+		// 支持设置枚举 set 集合
 		bw.setPropertyValue("customEnumSet", new String[] {"VALUE_1", "VALUE_2"});
 		assertEquals(2, gb.getCustomEnumSet().size());
 		assertTrue(gb.getCustomEnumSet().contains(CustomEnum.VALUE_1));

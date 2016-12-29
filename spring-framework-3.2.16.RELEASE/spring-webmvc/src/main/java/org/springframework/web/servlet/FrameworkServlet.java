@@ -598,7 +598,9 @@ public abstract class FrameworkServlet extends HttpServletBean {
 				(ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass);
 
 		wac.setEnvironment(getEnvironment());
-		wac.setParent(parent);
+
+		// 设置SpringMVC 容器的父容器，容器的初始化过程为：spring --> springmvc
+		wac.setParent(parent);//此处的 parent 为spring容器
 		wac.setConfigLocation(getContextConfigLocation());
 
 		configureAndRefreshWebApplicationContext(wac);
