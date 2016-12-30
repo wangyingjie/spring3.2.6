@@ -39,6 +39,7 @@ public class PropertyComparatorTests {
 		Dog dog2 = new Dog();
 		dog2.setNickName("biscy");
 
+		// 用于对象字符串的大小比较
 		PropertyComparator c = new PropertyComparator("nickName", false, true);
 		assertTrue(c.compare(dog, dog2) > 0);
 		assertTrue(c.compare(dog, dog) == 0);
@@ -55,7 +56,9 @@ public class PropertyComparatorTests {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testCompoundComparator() {
+	public void testCompoundComparator() {//可以添加多属性的比较器
+
+		//Compound  vt. 合成；混合；和解妥协；搀合
 		CompoundComparator<Dog> c = new CompoundComparator<Dog>();
 		c.addComparator(new PropertyComparator("lastName", false, true));
 
@@ -69,6 +72,7 @@ public class PropertyComparatorTests {
 
 		assertTrue(c.compare(dog1, dog2) == 0);
 
+		// 在添加一个属性的比较器
 		c.addComparator(new PropertyComparator("firstName", false, true));
 		assertTrue(c.compare(dog1, dog2) > 0);
 
@@ -80,6 +84,8 @@ public class PropertyComparatorTests {
 	@Test
 	public void testCompoundComparatorInvert() {
 		CompoundComparator<Dog> c = new CompoundComparator<Dog>();
+
+		// 添加了两个比较器
 		c.addComparator(new PropertyComparator("lastName", false, true));
 		c.addComparator(new PropertyComparator("firstName", false, true));
 		Dog dog1 = new Dog();
@@ -91,6 +97,8 @@ public class PropertyComparatorTests {
 		dog2.setLastName("grayspots");
 
 		assertTrue(c.compare(dog1, dog2) > 0);
+
+		//invert : 使…反转；使…前后倒置
 		c.invertOrder();
 		assertTrue(c.compare(dog1, dog2) < 0);
 	}

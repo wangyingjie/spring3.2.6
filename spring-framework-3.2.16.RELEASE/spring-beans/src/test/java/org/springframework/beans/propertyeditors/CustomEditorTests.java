@@ -70,13 +70,19 @@ public class CustomEditorTests {
 		String tbString = "Kerry_34";
 
 		BeanWrapper bw = new BeanWrapperImpl(tb);
+
+		// 注册自定义的属性设置 Editor
 		bw.registerCustomEditor(ITestBean.class, new TestBeanEditor());
 		MutablePropertyValues pvs = new MutablePropertyValues();
+
 		pvs.addPropertyValue(new PropertyValue("age", new Integer(55)));
 		pvs.addPropertyValue(new PropertyValue("name", newName));
 		pvs.addPropertyValue(new PropertyValue("touchy", "valid"));
+
+		// 最终会执行 setSpouse 方法
 		pvs.addPropertyValue(new PropertyValue("spouse", tbString));
 		bw.setPropertyValues(pvs);
+
 		assertTrue("spouse is non-null", tb.getSpouse() != null);
 		assertTrue("spouse name is Kerry and age is 34",
 				tb.getSpouse().getName().equals("Kerry") && tb.getSpouse().getAge() == 34);
@@ -232,6 +238,7 @@ public class CustomEditorTests {
 		BooleanTestBean tb = new BooleanTestBean();
 		BeanWrapper bw = new BeanWrapperImpl(tb);
 
+		// BeanWrapper 可以对属性为 boolean 的类型，进行灵活的逻辑值设置
 		bw.setPropertyValue("bool2", "true");
 		assertTrue("Correct bool2 value", Boolean.TRUE.equals(bw.getPropertyValue("bool2")));
 		assertTrue("Correct bool2 value", tb.getBool2().booleanValue());
@@ -304,6 +311,7 @@ public class CustomEditorTests {
 		String trueString = "pechorin";
 		String falseString = "nash";
 
+		// 用户自定义的逻辑属性编辑器
 		CustomBooleanEditor editor = new CustomBooleanEditor(trueString, falseString, false);
 
 		editor.setAsText(trueString);
@@ -378,6 +386,8 @@ public class CustomEditorTests {
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.GERMAN);
 		NumberTestBean tb = new NumberTestBean();
 		BeanWrapper bw = new BeanWrapperImpl(tb);
+
+		// 自定义的属性编辑器
 		bw.registerCustomEditor(short.class, new CustomNumberEditor(Short.class, nf, false));
 		bw.registerCustomEditor(Short.class, new CustomNumberEditor(Short.class, nf, false));
 		bw.registerCustomEditor(int.class, new CustomNumberEditor(Integer.class, nf, false));
@@ -500,6 +510,7 @@ public class CustomEditorTests {
 
 	@Test
 	public void testCharArrayPropertyEditor() {
+		// 支持char数组
 		PrimitiveArrayBean bean = new PrimitiveArrayBean();
 		BeanWrapper bw = new BeanWrapperImpl(bean);
 		bw.setPropertyValue("charArray", "myvalue");
@@ -514,6 +525,7 @@ public class CustomEditorTests {
 		bw.setPropertyValue("myChar", new Character('c'));
 		assertEquals('c', cb.getMyChar());
 
+		// 字符串自动转 char
 		bw.setPropertyValue("myChar", "c");
 		assertEquals('c', cb.getMyChar());
 
@@ -843,6 +855,7 @@ public class CustomEditorTests {
 
 	@Test
 	public void testStringTrimmerEditorWithCharsToDelete() {
+		//trimmer  ['trɪmə] n. 整理者；装饰者；机会主义者
 		StringTrimmerEditor editor = new StringTrimmerEditor("\r\n\f", false);
 		editor.setAsText("te\ns\ft");
 		assertEquals("test", editor.getValue());
@@ -875,6 +888,8 @@ public class CustomEditorTests {
 
 	@Test
 	public void testIndexedPropertiesWithCustomEditorForType() {
+
+		// 构造方法内部进行了属性初始化
 		IndexedTestBean bean = new IndexedTestBean();
 		BeanWrapper bw = new BeanWrapperImpl(bean);
 		bw.registerCustomEditor(String.class, new PropertyEditorSupport() {
@@ -1063,6 +1078,8 @@ public class CustomEditorTests {
 		pvs.add("list[1].name", "name2");
 		pvs.add("map[key1].name", "name1");
 		pvs.add("map['key2'].name", "name0");
+
+		//此处将会根据自定义的 PropertyEditorSupport 设置属性值
 		bw.setPropertyValues(pvs);
 		assertEquals("array0name5", tb0.getName());
 		assertEquals("array1name4", tb1.getName());
@@ -1101,7 +1118,7 @@ public class CustomEditorTests {
 			}
 
 			@Override
-			public String getAsText() {
+			public String getAsText() {// 取值方法被重写
 				return ((String) getValue()).substring(5);
 			}
 		});
@@ -1140,6 +1157,7 @@ public class CustomEditorTests {
 		assertEquals("name4", bw.getPropertyValue("map[key1].nestedIndexedBean.map[key1].name"));
 		assertEquals("name5", bw.getPropertyValue("map['key2'].nestedIndexedBean.map[\"key2\"].name"));
 
+		//支持内嵌的属性设置
 		MutablePropertyValues pvs = new MutablePropertyValues();
 		pvs.add("array[0].nestedIndexedBean.array[0].name", "name5");
 		pvs.add("array[1].nestedIndexedBean.array[1].name", "name4");
@@ -1499,12 +1517,16 @@ public class CustomEditorTests {
 	}
 
 
+	// 用户自定义的 Editor 从 PropertyEditorSupport 继承，重写调 setAsText 方法
 	private static class TestBeanEditor extends PropertyEditorSupport {
 
 		@Override
 		public void setAsText(String text) {
 			TestBean tb = new TestBean();
+
+			// 字符串截取工具
 			StringTokenizer st = new StringTokenizer(text, "_");
+			// 从字符串上获取到
 			tb.setName(st.nextToken());
 			tb.setAge(Integer.parseInt(st.nextToken()));
 			setValue(tb);

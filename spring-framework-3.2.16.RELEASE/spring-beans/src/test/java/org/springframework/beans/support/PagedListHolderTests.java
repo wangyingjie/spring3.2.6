@@ -33,6 +33,8 @@ import static org.junit.Assert.*;
  * @author Jean-Pierre PAWLAK
  * @author Chris Beams
  * @since 20.05.2003
+ *
+ * 将List里面的元素进行分页
  */
 public class PagedListHolderTests {
 
@@ -112,7 +114,9 @@ public class PagedListHolderTests {
 		holder.setPageSize(2);
 		holder.setPage(1);
 		((MutableSortDefinition) holder.getSort()).setProperty("name");
-		((MutableSortDefinition) holder.getSort()).setIgnoreCase(false);
+		((MutableSortDefinition) holder.getSort()).setIgnoreCase(false);//忽略大小写
+
+		// 重排序
 		holder.resort();
 		assertTrue("Correct source", holder.getSource() == tbs);
 		assertTrue("Correct number of elements", holder.getNrOfElements() == 3);
@@ -165,7 +169,34 @@ public class PagedListHolderTests {
 		assertEquals(0, holder.getPage());
 	}
 
+	@Test
+	public void testPageList(){
+		List<String> list = new ArrayList<>();
+		for (int i = 0; i < 11; i++) {
+			list.add("xx" + i);
+		}
 
+		PagedListHolder<String> paged = new PagedListHolder(list);
+		paged.setPageSize(3);
+
+		System.out.println("总页数：" + paged.getPageCount());
+		System.out.println("当前页：" + paged.getPage());
+		System.out.println("当前页的元素：" + paged.getPageList());
+
+		System.out.println("当前页的元素：" ); paged.nextPage();
+
+		// 重排序
+		paged.resort();
+
+		System.out.println("当前页的元素：" + paged.getPageList());
+
+		System.out.println("被分页的原List数据：" + paged.getSource());
+
+		System.out.println("首页元素：" + paged.getFirstElementOnPage());
+		System.out.println("尾页元素：" + paged.getLastLinkedPage());
+		System.out.println("总页数：" + paged.getPageCount());
+
+	}
 
 	public static class MockFilter {
 

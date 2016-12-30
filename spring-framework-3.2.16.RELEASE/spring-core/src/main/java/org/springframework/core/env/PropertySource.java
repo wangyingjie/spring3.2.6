@@ -55,7 +55,7 @@ import org.springframework.util.ObjectUtils;
  * @see MutablePropertySources
  * @see org.springframework.context.annotation.PropertySource
  *
- * propertySource,ÊÇÒ»¸öÓÃÀ´´æ·ÅpropertyµÄkeyValueµÄÊµÌå
+ * propertySource,æ˜¯ä¸€ä¸ªç”¨æ¥å­˜æ”¾propertyçš„keyValueçš„å®ä½“
  *
  */
 public abstract class PropertySource<T> {
@@ -190,10 +190,10 @@ public abstract class PropertySource<T> {
 
 
 	/**
-	 * StubPropertySourceÊÇPropertyµÄ×ÓÀà£¬ÓÃÓÚ³äµ±´æ¸ù£¬ Êµ¼ÊµÄPropertySourceµÄ³õÊ¼»¯¹¤×÷£¬
-	 * ²»ÄÜÔÚÈİÆ÷´´½¨Ö®Ç°½øĞĞ£¬ËùÒÔÓÃ´æ¸ùÀ´³äµ±Ò»¸öÕ¼Î»·û£¬ËûÓÃÀ´Õ¼ÓÃÒ»¸öÔ¤ÆÚµÄpropertySourceÎ»ÖÃ£¬
-	 * µÈÈİÆ÷refreshµÄÊ±ºòÓÃÀ´½øĞĞÌæ»»£¬Ìæ»»ºó³ÉÒ»¸öÕæÕıµÄÖµ
-	 * ËüÊÇÒ»¸ö±äÁ¿£¬ÓÃÀ´Õ¼×ÅÄãµÄpropertyµÄÎ»ÖÃ£¬µÈË¢ĞÂµÄÊ±ºòÔÙ½øĞĞÌî³ä¡£
+	 * StubPropertySourceæ˜¯Propertyçš„å­ç±»ï¼Œç”¨äºå……å½“å­˜æ ¹ï¼Œ å®é™…çš„PropertySourceçš„åˆå§‹åŒ–å·¥ä½œï¼Œ
+	 * ä¸èƒ½åœ¨å®¹å™¨åˆ›å»ºä¹‹å‰è¿›è¡Œï¼Œæ‰€ä»¥ç”¨å­˜æ ¹æ¥å……å½“ä¸€ä¸ªå ä½ç¬¦ï¼Œä»–ç”¨æ¥å ç”¨ä¸€ä¸ªé¢„æœŸçš„propertySourceä½ç½®ï¼Œ
+	 * ç­‰å®¹å™¨refreshçš„æ—¶å€™ç”¨æ¥è¿›è¡Œæ›¿æ¢ï¼Œæ›¿æ¢åæˆä¸€ä¸ªçœŸæ­£çš„å€¼
+	 * å®ƒæ˜¯ä¸€ä¸ªå˜é‡ï¼Œç”¨æ¥å ç€ä½ çš„propertyçš„ä½ç½®ï¼Œç­‰åˆ·æ–°çš„æ—¶å€™å†è¿›è¡Œå¡«å……ã€‚
 	 *
 	 * {@code PropertySource} to be used as a placeholder in cases where an actual
 	 * property source cannot be eagerly initialized at application context
@@ -223,7 +223,7 @@ public abstract class PropertySource<T> {
 
 
 	/**
-	 * ComparisonPropertySourceÊÇ´æ¸ùµÄ×ÓÀà£¬½ö½öÓÃÓÚ¼¯ºÏµÄ²Ù×÷¡£
+	 * ComparisonPropertySourceæ˜¯å­˜æ ¹çš„å­ç±»ï¼Œä»…ä»…ç”¨äºé›†åˆçš„æ“ä½œã€‚
 	 *
 	 * @see PropertySource#named(String)
 	 */

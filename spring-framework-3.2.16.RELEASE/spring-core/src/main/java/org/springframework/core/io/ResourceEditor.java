@@ -118,6 +118,8 @@ public class ResourceEditor extends PropertyEditorSupport {
 	@Override
 	public void setAsText(String text) {
 		if (StringUtils.hasText(text)) {
+
+			// 当解析类例如：classpath:org/springframework/beans/propertyeditors/FileEditorTests.class 资源文件的时候，将会将在系统环境信息
 			String locationToUse = resolvePath(text).trim();
 			setValue(this.resourceLoader.getResource(locationToUse));
 		}

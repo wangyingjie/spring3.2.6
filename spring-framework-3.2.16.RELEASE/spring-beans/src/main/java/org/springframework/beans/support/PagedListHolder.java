@@ -46,6 +46,10 @@ import org.springframework.util.Assert;
  * @since 19.05.2003
  * @see #getPageList()
  * @see org.springframework.beans.support.MutableSortDefinition
+ *
+ *
+ * List 集合的内存分页工具类，可以应用到具体的项目当中
+ *
  */
 @SuppressWarnings("serial")
 public class PagedListHolder<E> implements Serializable {

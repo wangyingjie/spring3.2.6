@@ -1549,6 +1549,8 @@ public final class BeanWrapperTests {
 	public void testGenericEnum() {
 		EnumConsumer consumer = new EnumConsumer();
 		BeanWrapper bw = new BeanWrapperImpl(consumer);
+
+		//TestEnum.class.getName() 获取内部类的类全路径
 		bw.setPropertyValue("enumValue", TestEnum.class.getName() + ".TEST_VALUE");
 		assertEquals(TestEnum.TEST_VALUE, consumer.getEnumValue());
 	}
@@ -1587,6 +1589,7 @@ public final class BeanWrapperTests {
 	public void testPropertyTypeMismatch() {
 		PropertyTypeMismatch foo = new PropertyTypeMismatch();
 		BeanWrapperImpl bwi = new BeanWrapperImpl(foo);
+		// 任义一个属性类型可以通过 object 来统称此处的 object <==> value
 		bwi.setPropertyValue("object", "a String");
 		assertEquals("a String", foo.value);
 		assertEquals(8, bwi.getPropertyValue("object"));
@@ -1601,6 +1604,8 @@ public final class BeanWrapperTests {
 		values.add("2");
 		values.add("3");
 		values.add("4");
+
+		// 支持泛型类型属性的设置
 		bwi.setPropertyValue("items", values);
 		Object[] result = foo.items;
 		assertEquals(4, result.length);

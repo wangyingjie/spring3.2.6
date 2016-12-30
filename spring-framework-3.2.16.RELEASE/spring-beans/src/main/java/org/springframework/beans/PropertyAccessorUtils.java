@@ -136,6 +136,8 @@ public abstract class PropertyAccessorUtils {
 	 * {@code map["key"]} -> {@code map[key]}
 	 * @param propertyName the bean property path
 	 * @return the canonical representation of the property path
+	 *
+	 * canonical： [kə'nɒnɪk(ə)l]   adj. 依教规的；权威的；牧师的； n. 牧师礼服
 	 */
 	public static String canonicalPropertyName(String propertyName) {
 		if (propertyName == null) {

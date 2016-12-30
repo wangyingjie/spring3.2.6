@@ -43,13 +43,19 @@ public final class FileEditorTests {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testWithNonExistentResource() throws Exception {
+
+		// 测试不存在的资源文件
 		PropertyEditor propertyEditor = new FileEditor();
+
+		// classpath:
 		propertyEditor.setAsText("classpath:no_way_this_file_is_found.doc");
 	}
 
 	@Test
 	public void testWithNonExistentFile() throws Exception {
 		PropertyEditor fileEditor = new FileEditor();
+
+		// file:
 		fileEditor.setAsText("file:no_way_this_file_is_found.doc");
 		Object value = fileEditor.getValue();
 		assertTrue(value instanceof File);
@@ -67,6 +73,8 @@ public final class FileEditorTests {
 		assertTrue(!file.exists());
 	}
 
+
+	//Unqualified [ʌn'kwɒlɪfaɪd] adj. 不合格的；无资格的；不胜任的
 	@Test
 	public void testUnqualifiedFileNameFound() throws Exception {
 		PropertyEditor fileEditor = new FileEditor();

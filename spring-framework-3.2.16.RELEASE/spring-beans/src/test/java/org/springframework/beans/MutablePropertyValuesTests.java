@@ -26,6 +26,8 @@ import org.junit.Test;
  *
  * @author Rod Johnson
  * @author Chris Beams
+ *
+ * 对象多属性设置方式
  */
 public final class MutablePropertyValuesTests extends AbstractPropertyValuesTests {
 
