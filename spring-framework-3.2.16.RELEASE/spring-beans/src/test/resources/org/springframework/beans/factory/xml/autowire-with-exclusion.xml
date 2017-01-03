@@ -7,6 +7,7 @@
 
 	<bean id="sally" class="org.springframework.tests.sample.beans.TestBean"/>
 
+	<!-- 对于 properties 属性的配置方法 -->
 	<bean id="props1" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 	  <property name="properties">
 			<value>name=props1</value>

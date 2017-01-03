@@ -92,6 +92,8 @@ public class AutowireWithExclusionTests extends TestCase {
 		robDef.setAutowireMode(RootBeanDefinition.AUTOWIRE_BY_TYPE);
 		robDef.getPropertyValues().add("spouse", new RuntimeBeanReference("sally"));
 		child.registerBeanDefinition("rob2", robDef);
+
+		//编程式方式将 property 属性注入
 		RootBeanDefinition propsDef = new RootBeanDefinition(PropertiesFactoryBean.class);
 		propsDef.getPropertyValues().add("properties", "name=props3");
 		propsDef.setPrimary(true);
@@ -103,12 +105,16 @@ public class AutowireWithExclusionTests extends TestCase {
 
 	public void testByTypeAutowireWithPrimaryInParentAndChild() throws Exception {
 		CountingFactory.reset();
+
 		DefaultListableBeanFactory parent = getBeanFactory("autowire-with-exclusion.xml");
 		parent.getBeanDefinition("props1").setPrimary(true);
 		parent.preInstantiateSingletons();
+
+		// 子beanFactory在父工厂基础上进行创建
 		DefaultListableBeanFactory child = new DefaultListableBeanFactory(parent);
 		RootBeanDefinition robDef = new RootBeanDefinition(TestBean.class);
 		robDef.setAutowireMode(RootBeanDefinition.AUTOWIRE_BY_TYPE);
+
 		robDef.getPropertyValues().add("spouse", new RuntimeBeanReference("sally"));
 		child.registerBeanDefinition("rob2", robDef);
 		RootBeanDefinition propsDef = new RootBeanDefinition(PropertiesFactoryBean.class);

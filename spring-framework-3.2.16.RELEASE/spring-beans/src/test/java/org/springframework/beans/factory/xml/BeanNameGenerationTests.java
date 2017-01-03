@@ -41,6 +41,7 @@ public class BeanNameGenerationTests extends TestCase {
 	public void testNaming() {
 		String className = GeneratedNameBean.class.getName();
 
+		// 自动beanId生成策略
 		String targetName = className + BeanDefinitionReaderUtils.GENERATED_BEAN_NAME_SEPARATOR + "0";
 		GeneratedNameBean topLevel1 = (GeneratedNameBean) beanFactory.getBean(targetName);
 		assertNotNull(topLevel1);

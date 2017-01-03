@@ -3,6 +3,7 @@
 
 <beans>
 
+	<!-- spring 可以自动生成beanId -->
 	<bean class="org.springframework.beans.factory.xml.GeneratedNameBean">
 		<property name="child">
 			<bean class="org.springframework.beans.factory.xml.GeneratedNameBean"/>
