@@ -52,6 +52,8 @@ import org.springframework.tests.sample.beans.TestBean;
  * @author Juergen Hoeller
  * @author Chris Beams
  * @since 19.12.2004
+ *
+ * Spring 支持的各类数据集合的嵌套使用测试用例
  */
 public class XmlBeanCollectionTests {
 
@@ -324,6 +326,7 @@ public class XmlBeanCollectionTests {
 
 	@Test
 	public void testObjectArray() throws Exception {
+		// 集合类的嵌套使用
 		HasMap hasMap = (HasMap) this.beanFactory.getBean("objectArray");
 		assertTrue(hasMap.getObjectArray().length == 2);
 		assertTrue(hasMap.getObjectArray()[0].equals("one"));
@@ -417,7 +420,10 @@ public class XmlBeanCollectionTests {
 	@Test
 	public void testChoiceBetweenSetAndMap() {
 		MapAndSet sam = (MapAndSet) this.beanFactory.getBean("setAndMap");
+
 		assertTrue("Didn't choose constructor with Map argument", sam.getObject() instanceof Map);
+
+		//sam.getObject()  对象工厂方法
 		Map map = (Map) sam.getObject();
 		assertEquals(3, map.size());
 		assertEquals("val1", map.get("key1"));

@@ -35,6 +35,8 @@ public class SimplePropertyNamespaceHandlerTests {
 
 	@Test
 	public void simpleBeanConfigured() throws Exception {
+
+		// 测试自定义标签 P  对象的属性名可以通过 p.propertyName 来进行配置
 		DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 		new XmlBeanDefinitionReader(beanFactory).loadBeanDefinitions(
 				new ClassPathResource("simplePropertyNamespaceHandlerTests.xml", getClass()));

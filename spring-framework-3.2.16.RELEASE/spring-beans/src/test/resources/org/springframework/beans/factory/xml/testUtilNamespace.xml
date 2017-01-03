@@ -108,6 +108,7 @@
 		</property>
 		<property name="someSet">
 			<set>
+				<!--使用util 标签可以在配置文件中配置枚举类型-->
 				<util:constant static-field="java.lang.Thread$State.NEW"/>
 				<util:constant static-field="java.lang.Thread.State.RUNNABLE"/>
 			</set>
@@ -116,6 +117,7 @@
 			<map>
 				<entry>
 					<key><value>min</value></key>
+					<!--使用util 标签可以在配置文件中配置枚举类型-->
 					<util:constant static-field="org.springframework.tests.sample.beans.CustomEnum.VALUE_1"/>
 				</entry>
 			</map>
@@ -168,6 +170,7 @@
 		<prop key="foo2">bar2</prop>
 	</util:properties>
 
+	<!--直接通过 util 标签加载 properties 文件，功能强大-->
 	<util:properties id="myMergedProperties"
 			location="classpath:/org/springframework/beans/factory/xml/util.properties">
 		<prop key="foo2">bar2</prop>

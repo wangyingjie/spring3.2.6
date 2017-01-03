@@ -28,6 +28,8 @@ import org.springframework.tests.sample.beans.TestBean;
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
+ *
+ * 工厂方法测试类
  */
 public class FactoryMethods {
 

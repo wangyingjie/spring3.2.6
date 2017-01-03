@@ -8,6 +8,7 @@
 				http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 				http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+	<!-- 其中 p 标签对应的解析处理器为：SimplePropertyNamespaceHandler -->
 	<bean id="rob" class="org.springframework.tests.sample.beans.TestBean" p:name="Rob Harrop" p:spouse-ref="sally">
 		<property name="age" value="24"/>
 	</bean>

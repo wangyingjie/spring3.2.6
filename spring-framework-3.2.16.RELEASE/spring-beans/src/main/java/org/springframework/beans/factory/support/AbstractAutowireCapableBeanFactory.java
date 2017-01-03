@@ -430,7 +430,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * 完成Bean的创建操作
 	 *
-	 *  核心方法：创建一个bean实例，*填充bean实例，应用处理器后，等。
+	 *  核心方法：创建一个bean实例，填充bean实例，应用后置处理器等。
 	 * Central method of this class: creates a bean instance,
 	 * populates the bean instance, applies post-processors, etc.
 	 * @see #doCreateBean

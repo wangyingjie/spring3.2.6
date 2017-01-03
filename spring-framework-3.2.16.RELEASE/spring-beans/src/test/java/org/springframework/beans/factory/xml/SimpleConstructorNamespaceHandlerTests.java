@@ -28,11 +28,13 @@ import org.springframework.tests.sample.beans.TestBean;
 
 /**
  * @author Costin Leau
+ *
+ * 构造函数标签测试
  */
 public class SimpleConstructorNamespaceHandlerTests {
 
 	@Test
-	public void simpleValue() throws Exception {
+	public void simpleValue() throws Exception {//构造函数标签测试
 		DefaultListableBeanFactory beanFactory = createFactory("simpleConstructorNamespaceHandlerTests.xml");
 		String name = "simple";
 		//		beanFactory.getBean("simple1", DummyBean.class);

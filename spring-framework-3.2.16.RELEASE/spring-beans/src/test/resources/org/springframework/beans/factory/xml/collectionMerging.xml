@@ -3,6 +3,7 @@
 
 <beans>
 
+	<!-- 集合属性配置合并 -->
 	<bean id="parentWithList" class="org.springframework.tests.sample.beans.TestBean">
 		<property name="someList">
 			<list>

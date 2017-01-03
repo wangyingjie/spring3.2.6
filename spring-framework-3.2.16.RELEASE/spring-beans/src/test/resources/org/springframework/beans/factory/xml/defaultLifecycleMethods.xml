@@ -8,6 +8,7 @@
 	<bean id="lifecycleMethodsDisabled" class="org.springframework.beans.factory.xml.DefaultLifecycleMethodsTests$LifecycleAwareBean"
 			init-method="" destroy-method=""/>
 
+	<!-- 初始化方法、bean工厂销毁方法执行 -->
 	<bean id="overrideLifecycleMethods" class="org.springframework.beans.factory.xml.DefaultLifecycleMethodsTests$LifecycleAwareBean"
 			init-method="customInit" destroy-method="customDestroy"/>
 

@@ -232,11 +232,15 @@ public class UtilNamespaceHandlerTests {
 
 		Set set = bean.getSomeSet();
 		assertEquals(2, set.size());
+
+		//通过 util 标签注入的枚举类型
 		assertTrue(set.contains(Thread.State.NEW));
 		assertTrue(set.contains(Thread.State.RUNNABLE));
 
 		Map map = bean.getSomeMap();
 		assertEquals(1, map.size());
+
+		//根据key 获取指定枚举value
 		assertEquals(CustomEnum.VALUE_1, map.get("min"));
 
 		TestBean bean2 = (TestBean) this.beanFactory.getBean("nestedCustomTagBean");
@@ -266,7 +270,7 @@ public class UtilNamespaceHandlerTests {
 	}
 
 	@Test
-	public void testCircularCollectionBeansStartingWithList() {
+	public void testCircularCollectionBeansStartingWithList() {// 循环集合bean的依赖
 		this.beanFactory.getBean("circularList");
 		TestBean bean = (TestBean) this.beanFactory.getBean("circularCollectionBeansBean");
 

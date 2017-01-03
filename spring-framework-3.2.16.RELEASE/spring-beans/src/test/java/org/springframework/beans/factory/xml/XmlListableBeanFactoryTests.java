@@ -59,8 +59,9 @@ public class XmlListableBeanFactoryTests extends AbstractListableBeanFactoryTest
 		parent.registerBeanDefinition("rod", bd2);
 
 		this.factory = new DefaultListableBeanFactory(parent);
-		new XmlBeanDefinitionReader(this.factory).loadBeanDefinitions(
-				new ClassPathResource("test.xml", getClass()));
+
+		// 加载 bean 定义
+		new XmlBeanDefinitionReader(this.factory).loadBeanDefinitions(new ClassPathResource("test.xml", getClass()));
 		this.factory.addBeanPostProcessor(new BeanPostProcessor() {
 			@Override
 			public Object postProcessBeforeInitialization(Object bean, String name) throws BeansException {

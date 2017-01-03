@@ -345,7 +345,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
 			try {
 
-				//当程序走到这其Spring配置的标签已经解析完成了     开始注册Bean实例到：BeanDefinitionRegistry
+				//当程序走到这其Spring配置的标签已经解析完成了，开始注册Bean实例到：BeanDefinitionRegistry 中
 				// Register the final decorated instance.
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
 			} catch (BeanDefinitionStoreException ex) {

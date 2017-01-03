@@ -23,6 +23,8 @@ import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author Rob Harrop
+ *
+ * Bean 的生命周期方法测试
  */
 public class DefaultLifecycleMethodsTests extends TestCase {
 

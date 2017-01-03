@@ -55,6 +55,8 @@ public class EventPublicationTests extends TestCase {
 		List defaultsList = this.eventListener.getDefaults();
 		assertTrue(!defaultsList.isEmpty());
 		assertTrue(defaultsList.get(0) instanceof DocumentDefaultsDefinition);
+
+		//默认的 Document 文档定义
 		DocumentDefaultsDefinition defaults = (DocumentDefaultsDefinition) defaultsList.get(0);
 		assertEquals("true", defaults.getLazyInit());
 		assertEquals("constructor", defaults.getAutowire());

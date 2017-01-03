@@ -36,6 +36,8 @@ import org.springframework.core.io.ClassPathResource;
  * @author Chris Beams
  * @author Sam Brannen
  * @since 3.1
+ *
+ * Profile 的具体功能有待研究
  */
 public class ProfileXmlBeanDefinitionTests {
 

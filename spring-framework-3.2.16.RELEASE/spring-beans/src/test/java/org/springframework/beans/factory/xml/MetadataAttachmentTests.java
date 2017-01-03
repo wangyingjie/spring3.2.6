@@ -25,6 +25,8 @@ import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author Rob Harrop
+ *
+ * 通过 beanFactory 上可以直接获取 BeanDefinition 定义
  */
 public class MetadataAttachmentTests extends TestCase {
 
@@ -50,6 +52,7 @@ public class MetadataAttachmentTests extends TestCase {
 
 	public void testPropertyMetadata() throws Exception {
 		BeanDefinition beanDefinition = this.beanFactory.getMergedBeanDefinition("testBean3");
+		// 从 beanDefinition 上可以直接获取 MutablePropertyValues ，pvs 上存储了bean所有属性的key-value对
 		PropertyValue pv = beanDefinition.getPropertyValues().getPropertyValue("name");
 		assertEquals("Harrop", pv.getAttribute("surname"));
 	}

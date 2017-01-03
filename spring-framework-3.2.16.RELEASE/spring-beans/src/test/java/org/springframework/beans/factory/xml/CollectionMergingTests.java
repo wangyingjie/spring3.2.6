@@ -35,6 +35,8 @@ import org.springframework.tests.sample.beans.TestBean;
  *
  * @author Rob Harrop
  * @author Rick Evans
+ *
+ * 集合属性配置合并
  */
 public class CollectionMergingTests extends TestCase {
 
@@ -47,6 +49,7 @@ public class CollectionMergingTests extends TestCase {
 		reader.loadBeanDefinitions(new ClassPathResource("collectionMerging.xml", getClass()));
 	}
 
+	// 断点进入看源码如何实现了集合属性值的合并 merge
 	public void testMergeList() throws Exception {
 		TestBean bean = (TestBean) this.beanFactory.getBean("childWithList");
 		List list = bean.getSomeList();

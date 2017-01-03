@@ -34,53 +34,60 @@ import org.springframework.tests.sample.beans.TestBean;
  */
 public final class SharedBeanRegistryTests {
 
-	@Test
-	public void testSingletons() {
-		DefaultSingletonBeanRegistry beanRegistry = new DefaultSingletonBeanRegistry();
+    @Test
+    public void testSingletons() {
+        DefaultSingletonBeanRegistry beanRegistry = new DefaultSingletonBeanRegistry();
 
-		TestBean tb = new TestBean();
-		beanRegistry.registerSingleton("tb", tb);
-		assertSame(tb, beanRegistry.getSingleton("tb"));
+        TestBean tb = new TestBean();
+        tb.setName("tb");
 
-		TestBean tb2 = (TestBean) beanRegistry.getSingleton("tb2", new ObjectFactory<Object>() {
-			@Override
-			public Object getObject() throws BeansException {
-				return new TestBean();
-			}
-		});
-		assertSame(tb2, beanRegistry.getSingleton("tb2"));
+        beanRegistry.registerSingleton("tb", tb);
+        assertSame(tb, beanRegistry.getSingleton("tb"));
 
-		assertSame(tb, beanRegistry.getSingleton("tb"));
-		assertSame(tb2, beanRegistry.getSingleton("tb2"));
-		assertEquals(2, beanRegistry.getSingletonCount());
-		assertEquals(2, beanRegistry.getSingletonNames().length);
-		assertTrue(Arrays.asList(beanRegistry.getSingletonNames()).contains("tb"));
-		assertTrue(Arrays.asList(beanRegistry.getSingletonNames()).contains("tb2"));
+        TestBean tb2 = (TestBean) beanRegistry.getSingleton("tb2", new ObjectFactory<Object>() {
+            @Override
+            public Object getObject() throws BeansException {
+                return new TestBean();
+            }
+        });
+        tb2.setName("tb2");
 
-		beanRegistry.destroySingletons();
-		assertEquals(0, beanRegistry.getSingletonCount());
-		assertEquals(0, beanRegistry.getSingletonNames().length);
-	}
+        assertSame(tb2, beanRegistry.getSingleton("tb2"));
 
-	@Test
-	public void testDisposableBean() {
-		DefaultSingletonBeanRegistry beanRegistry = new DefaultSingletonBeanRegistry();
+        assertSame(tb, beanRegistry.getSingleton("tb"));
+        assertSame(tb2, beanRegistry.getSingleton("tb2"));
+        assertEquals(2, beanRegistry.getSingletonCount());
+        assertEquals(2, beanRegistry.getSingletonNames().length);
+        assertTrue(Arrays.asList(beanRegistry.getSingletonNames()).contains("tb"));
+        assertTrue(Arrays.asList(beanRegistry.getSingletonNames()).contains("tb2"));
 
-		DerivedTestBean tb = new DerivedTestBean();
-		beanRegistry.registerSingleton("tb", tb);
-		beanRegistry.registerDisposableBean("tb", tb);
-		assertSame(tb, beanRegistry.getSingleton("tb"));
+        beanRegistry.destroySingletons();
+        assertEquals(0, beanRegistry.getSingletonCount());
+        assertEquals(0, beanRegistry.getSingletonNames().length);
+    }
 
-		assertSame(tb, beanRegistry.getSingleton("tb"));
-		assertEquals(1, beanRegistry.getSingletonCount());
-		assertEquals(1, beanRegistry.getSingletonNames().length);
-		assertTrue(Arrays.asList(beanRegistry.getSingletonNames()).contains("tb"));
-		assertFalse(tb.wasDestroyed());
+    @Test
+    public void testDisposableBean() {
+        DefaultSingletonBeanRegistry beanRegistry = new DefaultSingletonBeanRegistry();
 
-		beanRegistry.destroySingletons();
-		assertEquals(0, beanRegistry.getSingletonCount());
-		assertEquals(0, beanRegistry.getSingletonNames().length);
-		assertTrue(tb.wasDestroyed());
-	}
+        DerivedTestBean tb = new DerivedTestBean();
+        tb.setName("destroy");
+        beanRegistry.registerSingleton("tb", tb);
+
+        //disposable [dɪ'spəʊzəb(ə)l] adj. 可任意处理的；可自由使用的；用完即可丢弃的
+        beanRegistry.registerDisposableBean("tb", tb);
+        assertSame(tb, beanRegistry.getSingleton("tb"));
+
+        assertSame(tb, beanRegistry.getSingleton("tb"));
+        assertEquals(1, beanRegistry.getSingletonCount());
+        assertEquals(1, beanRegistry.getSingletonNames().length);
+        assertTrue(Arrays.asList(beanRegistry.getSingletonNames()).contains("tb"));
+        assertFalse(tb.wasDestroyed());
+
+        beanRegistry.destroySingletons();
+        assertEquals(0, beanRegistry.getSingletonCount());
+        assertEquals(0, beanRegistry.getSingletonNames().length);
+        assertTrue(tb.wasDestroyed());
+    }
 
 }

@@ -38,6 +38,7 @@ import org.springframework.util.ObjectUtils;
 public class XmlBeanDefinitionReaderTests extends TestCase {
 
 	public void testSetParserClassSunnyDay() {
+		// 存储 bean 定义的数据结构
 		SimpleBeanDefinitionRegistry registry = new SimpleBeanDefinitionRegistry();
 		new XmlBeanDefinitionReader(registry).setDocumentReaderClass(DefaultBeanDefinitionDocumentReader.class);
 	}
@@ -65,7 +66,11 @@ public class XmlBeanDefinitionReaderTests extends TestCase {
 	public void testWithOpenInputStream() {
 		try {
 			SimpleBeanDefinitionRegistry registry = new SimpleBeanDefinitionRegistry();
+
+			// 通过 InputStreamResource 读取资源配置文件
 			Resource resource = new InputStreamResource(getClass().getResourceAsStream("test.xml"));
+
+			// 将配置文件解析为 BeanDefinition
 			new XmlBeanDefinitionReader(registry).loadBeanDefinitions(resource);
 			fail("Should have thrown BeanDefinitionStoreException (can't determine validation mode)");
 		}
@@ -75,11 +80,16 @@ public class XmlBeanDefinitionReaderTests extends TestCase {
 	}
 
 	public void testWithOpenInputStreamAndExplicitValidationMode() {
+
+		//1、BeanDefinition定义存储器
 		SimpleBeanDefinitionRegistry registry = new SimpleBeanDefinitionRegistry();
 		Resource resource = new InputStreamResource(getClass().getResourceAsStream("test.xml"));
+
+		//2、BeanDefinition定义加载器
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(registry);
 		reader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_DTD);
 		reader.loadBeanDefinitions(resource);
+
 		testBeanDefinitions(registry);
 	}
 

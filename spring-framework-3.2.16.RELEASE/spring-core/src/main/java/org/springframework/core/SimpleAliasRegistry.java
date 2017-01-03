@@ -126,8 +126,8 @@ public class SimpleAliasRegistry implements AliasRegistry {
 					if (existingName != null && !existingName.equals(resolvedName)) {
 						throw new IllegalStateException(
 								"Cannot register resolved alias '" + resolvedAlias + "' (original: '" + alias +
-								"') for name '" + resolvedName + "': It is already registered for name '" +
-								registeredName + "'.");
+										"') for name '" + resolvedName + "': It is already registered for name '" +
+										registeredName + "'.");
 					}
 					checkForAliasCircle(resolvedName, resolvedAlias);
 					this.aliasMap.remove(alias);
@@ -155,7 +155,7 @@ public class SimpleAliasRegistry implements AliasRegistry {
 				canonicalName = resolvedName;
 			}
 		}
-		// todo ÎªºÎÓÃÒ»¸ö while Ñ­»·  Ö´ĞĞÓï¾äÎªÒ»¸ö¿ÕÓï¾ä£¿
+		// todo ä¸ºä½•ç”¨ä¸€ä¸ª while å¾ªç¯  æ‰§è¡Œè¯­å¥ä¸ºä¸€ä¸ªç©ºè¯­å¥ï¼Ÿ
 		while (resolvedName != null);
 		return canonicalName;
 	}
