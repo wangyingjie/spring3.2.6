@@ -34,6 +34,7 @@ public class ManagedProperties extends Properties implements Mergeable, BeanMeta
 
 	private Object source;
 
+	// 属性控制是否可以进行 merge ，不可merge则抛异常
 	private boolean mergeEnabled;
 
 

@@ -523,7 +523,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
-		// 单例缓存 能够解决循环引用/即使引发周期BeanFactoryAware接口。
+		// 单例缓存 能够解决循环引用/即使引用周期BeanFactoryAware接口。
 		// Eagerly cache singletons to be able to resolve circular references
 		// even when triggered by lifecycle interfaces like BeanFactoryAware.
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&

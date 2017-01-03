@@ -24,7 +24,10 @@ import junit.framework.TestCase;
  */
 public class StringArrayPropertyEditorTests extends TestCase {
 
+	// 使用默认的分隔符的字符串
 	public void testWithDefaultSeparator() throws Exception {
+
+		// 将字符串转化为字符串数组
 		StringArrayPropertyEditor editor = new StringArrayPropertyEditor();
 		editor.setAsText("0,1,2");
 		Object value = editor.getValue();
@@ -49,6 +52,7 @@ public class StringArrayPropertyEditorTests extends TestCase {
 	}
 
 	public void testNoTrim() throws Exception {
+		// 空格不剔除
 		StringArrayPropertyEditor editor = new StringArrayPropertyEditor(",",false,false);
 		editor.setAsText("  0,1  , 2 ");
 		Object value = editor.getValue();
@@ -61,6 +65,8 @@ public class StringArrayPropertyEditorTests extends TestCase {
 	}
 
 	public void testWithCustomSeparator() throws Exception {
+
+		//使用自定义分隔符
 		StringArrayPropertyEditor editor = new StringArrayPropertyEditor(":");
 		editor.setAsText("0:1:2");
 		Object value = editor.getValue();
@@ -73,6 +79,7 @@ public class StringArrayPropertyEditorTests extends TestCase {
 	}
 
 	public void testWithCharsToDelete() throws Exception {
+		//删除特殊字符
 		StringArrayPropertyEditor editor = new StringArrayPropertyEditor(",", "\r\n", false);
 		editor.setAsText("0\r,1,\n2");
 		Object value = editor.getValue();

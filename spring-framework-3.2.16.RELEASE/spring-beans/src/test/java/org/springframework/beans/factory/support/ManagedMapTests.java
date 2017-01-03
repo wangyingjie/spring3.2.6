@@ -79,6 +79,8 @@ public class ManagedMapTests extends TestCase {
 		parent.put("one", "one");
 		parent.put("two", "two");
 		ManagedMap child = new ManagedMap();
+
+		// key 相同则覆盖之
 		child.put("one", "fork");
 		child.setMergeEnabled(true);
 		Map mergedMap = (Map) child.merge(parent);

@@ -39,11 +39,14 @@ public class BeanDefinitionTests extends TestCase {
 		otherBd.setAbstract(true);
 		otherBd.setLazyInit(true);
 		otherBd.setScope("request");
+
+		// RootBeanDefinition 将equals方法进行了重写，故此判断会返回 true
 		assertTrue(bd.equals(otherBd));
 		assertTrue(otherBd.equals(bd));
 		assertTrue(bd.hashCode() == otherBd.hashCode());
 	}
 
+	// 测试两个Bean 定义是否相同  实现采用了重写equals 方法的形式
 	public void testBeanDefinitionEqualityWithPropertyValues() {
 		RootBeanDefinition bd = new RootBeanDefinition(TestBean.class);
 		bd.getPropertyValues().add("name", "myName");
@@ -65,6 +68,8 @@ public class BeanDefinitionTests extends TestCase {
 		RootBeanDefinition bd = new RootBeanDefinition(TestBean.class);
 		bd.getConstructorArgumentValues().addGenericArgumentValue("test");
 		bd.getConstructorArgumentValues().addIndexedArgumentValue(1, new Integer(5));
+
+		// 通过构造方法来构建 bean 定义
 		RootBeanDefinition otherBd = new RootBeanDefinition(TestBean.class);
 		otherBd.getConstructorArgumentValues().addGenericArgumentValue("test");
 		assertTrue(!bd.equals(otherBd));

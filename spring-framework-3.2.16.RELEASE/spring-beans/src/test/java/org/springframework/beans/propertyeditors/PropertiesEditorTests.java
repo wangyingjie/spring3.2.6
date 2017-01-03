@@ -53,6 +53,8 @@ public class PropertiesEditorTests extends TestCase {
 	}
 
 	public void testHandlesEqualsInValue() {
+
+		// 以一行的第一个 '=' 号为分隔符
 		String s = "foo=bar\n" +
 			"me=mi\n" +
 			"x=y=z";
@@ -77,6 +79,8 @@ public class PropertiesEditorTests extends TestCase {
 	}
 
 	public void testHandlesEmptyPropertyWithoutEquals() {
+
+		// 通过换行符进行切分
 		String s = "foo\nme=mi\nx=x";
 		PropertiesEditor pe= new PropertiesEditor();
 		pe.setAsText(s);
@@ -111,6 +115,8 @@ public class PropertiesEditorTests extends TestCase {
 	 * still ignored: The standard syntax doesn't allow this on JDK 1.3.
 	 */
 	public void testIgnoresLeadingSpacesAndTabs() {
+
+		// 自动过滤掉注释的字符串
 		String s = "    #Ignore this comment\n" +
 			"\t\tfoo=bar\n" +
 			"\t#Another comment more junk \n" +
@@ -144,6 +150,8 @@ public class PropertiesEditorTests extends TestCase {
 		map.put("one", "1");
 		map.put("two", "2");
 		map.put("three", "3");
+
+		//Properties 继承自　Map-->Hashtable
 		PropertiesEditor pe = new PropertiesEditor();
 		pe.setValue(map);
 		Object value = pe.getValue();

@@ -623,6 +623,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * Set whether this bean is a primary autowire candidate.
 	 * If this value is true for exactly one bean among multiple
 	 * matching candidates, it will serve as a tie-breaker.
+	 *
+	 * exactly  [ɪg'zæk(t)lɪ; eg-] adv. 恰好地；正是；精确地；正确地
 	 */
 	public void setPrimary(boolean primary) {
 		this.primary = primary;

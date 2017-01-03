@@ -73,11 +73,11 @@ public abstract class PropertyResourceConfigurer extends PropertiesLoaderSupport
 	 * {@linkplain #processProperties process} properties against the given bean factory.
 	 * @throws BeanInitializationException if any properties cannot be loaded
 	 *
-	 * Spring bean ½âÎöµÄºóÖÃ´¦Àí·½·¨
+	 * Spring bean è§£æçš„åç½®å¤„ç†æ–¹æ³•
 	 */
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		try {
-			// ½âÎö PropertyPlaceholderConfigurer ÅäÖÃµÄ  *.properties ÎÄ¼ş
+			// è§£æ PropertyPlaceholderConfigurer é…ç½®çš„  *.properties æ–‡ä»¶
 			Properties mergedProps = mergeProperties();
 
 			// Convert the merged properties, if necessary.

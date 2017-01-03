@@ -31,12 +31,15 @@ import org.springframework.util.ClassUtils;
 public class URIEditorTests {
 
 	private void doTestURI(String uriSpec) {
+		// 将字符串的地址转化为 URI 资源
 		PropertyEditor uriEditor = new URIEditor();
 		uriEditor.setAsText(uriSpec);
 		Object value = uriEditor.getValue();
 		assertTrue(value instanceof URI);
 		URI uri = (URI) value;
 		assertEquals(uriSpec, uri.toString());
+
+		System.out.println("uri=====>" + uri);
 	}
 
 	@Test

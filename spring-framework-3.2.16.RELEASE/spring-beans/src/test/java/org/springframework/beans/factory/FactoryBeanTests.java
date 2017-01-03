@@ -38,6 +38,8 @@ import static org.springframework.tests.TestResourceUtils.*;
  * @author Rob Harrop
  * @author Juergen Hoeller
  * @author Chris Beams
+ *
+ *  FactoryBean 的测试用例
  */
 public final class FactoryBeanTests {
 
@@ -92,16 +94,21 @@ public final class FactoryBeanTests {
 	public void testAbstractFactoryBeanViaAnnotation() throws Exception {
 		DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
 		new XmlBeanDefinitionReader(factory).loadBeanDefinitions(ABSTRACT_CONTEXT);
-		factory.getBeansWithAnnotation(Component.class);
+		Map<String, Object> beansWithAnnotation = factory.getBeansWithAnnotation(Component.class);
+
+		System.out.println(beansWithAnnotation);
 	}
 
 	@Test
 	public void testAbstractFactoryBeanViaType() throws Exception {
 		DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
 		new XmlBeanDefinitionReader(factory).loadBeanDefinitions(ABSTRACT_CONTEXT);
-		factory.getBeansOfType(AbstractFactoryBean.class);
+		Map<String, AbstractFactoryBean> beansOfType = factory.getBeansOfType(AbstractFactoryBean.class);
+
+		System.out.println(beansOfType);
 	}
 
+	//测试 bean 的循环依赖
 	@Test
 	public void testCircularReferenceWithPostProcessor() {
 		DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
@@ -110,6 +117,7 @@ public final class FactoryBeanTests {
 		CountingPostProcessor counter = new CountingPostProcessor();
 		factory.addBeanPostProcessor(counter);
 
+		//根据bean的实现类型直接获取bean
 		BeanImpl1 impl1 = factory.getBean(BeanImpl1.class);
 		assertNotNull(impl1);
 		assertNotNull(impl1.getImpl2());
@@ -281,8 +289,10 @@ public final class FactoryBeanTests {
 			AtomicInteger c = count.get(beanName);
 			if (c == null) {
 				c = new AtomicInteger(0);
+				//将计数器放入缓存
 				count.put(beanName, c);
 			}
+			// 计数器自增
 			c.incrementAndGet();
 			return bean;
 		}

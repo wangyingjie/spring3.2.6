@@ -27,6 +27,8 @@ import org.junit.Test;
  *
  * @author Rick Evans
  * @author Chris Beams
+ *
+ * 该测试类会去加载当前目录下面的配置文件，从中解析对应的 key - value 内容
  */
 public final class ResourceBundleEditorTests {
 

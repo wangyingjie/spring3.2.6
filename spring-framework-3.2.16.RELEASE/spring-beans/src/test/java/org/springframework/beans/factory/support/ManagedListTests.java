@@ -33,6 +33,8 @@ public class ManagedListTests extends TestCase {
 		ManagedList child = new ManagedList();
 		child.add("three");
 		child.setMergeEnabled(true);
+
+		// 将list 中的元素进行合并
 		List mergedList = child.merge(parent);
 		assertEquals("merge() obviously did not work.", 3, mergedList.size());
 	}
@@ -59,6 +61,7 @@ public class ManagedListTests extends TestCase {
 		child.add("one");
 		child.setMergeEnabled(true);
 		try {
+			// 非法的参数
 			child.merge("hello");
 			fail("Must have failed by this point.");
 		}

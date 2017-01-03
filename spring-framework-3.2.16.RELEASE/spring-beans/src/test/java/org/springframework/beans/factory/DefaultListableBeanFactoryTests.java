@@ -1322,7 +1322,9 @@ public class DefaultListableBeanFactoryTests {
 		lbf.registerBeanDefinition("bd2", bd2);
 		thrown.expect(NoUniqueBeanDefinitionException.class);
 		thrown.expectMessage(containsString("more than one 'primary'"));
-		lbf.getBean(TestBean.class);
+		TestBean bean = lbf.getBean(TestBean.class);
+
+		System.out.println("bean=====>" + bean);
 	}
 
 	@Test
@@ -2266,6 +2268,8 @@ public class DefaultListableBeanFactoryTests {
 		assertThat(bf.containsBean("bogus"), equalTo(false));
 	}
 
+
+	//Embedded [ɪm'bedɪd] adj. 嵌入式的；植入的；内含的
 	@Test
 	public void resolveEmbeddedValue() throws Exception {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
