@@ -258,6 +258,7 @@ public class ServiceLocatorFactoryBean implements FactoryBean<Object>, BeanFacto
 			throw new IllegalArgumentException("Property 'serviceLocatorInterface' is required");
 		}
 
+		// 创建代理实例，将目标对象 proxy 进行了包装代理
 		// Create service locator proxy.
 		this.proxy = Proxy.newProxyInstance(
 				this.serviceLocatorInterface.getClassLoader(),

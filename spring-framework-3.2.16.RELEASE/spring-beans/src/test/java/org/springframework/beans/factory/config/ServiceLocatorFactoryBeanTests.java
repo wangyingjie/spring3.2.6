@@ -48,6 +48,7 @@ public final class ServiceLocatorFactoryBeanTests {
 
 	@Test
 	public void testNoArgGetter() {
+		//org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition(java.lang.Class)  获取Builder
 		bf.registerBeanDefinition("testService", genericBeanDefinition(TestService.class).getBeanDefinition());
 		bf.registerBeanDefinition("factory",
 				genericBeanDefinition(ServiceLocatorFactoryBean.class)
@@ -77,6 +78,8 @@ public final class ServiceLocatorFactoryBeanTests {
 				.getBeanDefinition());
 
 		try {
+
+			// TestServiceLocator factory 返回的是 ServiceLocatorFactoryBean 的代理实例
 			TestServiceLocator factory = (TestServiceLocator) bf.getBean("factory");
 			factory.getTestService();
 			fail("Must fail on more than one matching type");

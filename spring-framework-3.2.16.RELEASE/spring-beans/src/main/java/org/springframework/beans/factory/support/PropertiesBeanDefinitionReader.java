@@ -487,6 +487,8 @@ public class PropertiesBeanDefinitionReader extends AbstractBeanDefinitionReader
 			bd.setLazyInit(lazyInit);
 			bd.setConstructorArgumentValues(cas);
 			bd.setPropertyValues(pvs);
+
+			// 获取Bean Registry 注册器，将BeanDefinition注册到注册器
 			getRegistry().registerBeanDefinition(beanName, bd);
 		}
 		catch (ClassNotFoundException ex) {

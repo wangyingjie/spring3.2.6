@@ -99,6 +99,7 @@ public class PropertyResourceConfigurerTests {
 			poc2.setProperties(props);
 		}
 
+		// 通过此处的处理之后即可将 properties 文件配置的对应属性添加到 BeanDefinition 里面
 		// emulate what happens when BFPPs are added to an application context: It's LIFO-based
 		poc2.postProcessBeanFactory(factory);
 		poc1.postProcessBeanFactory(factory);
@@ -114,7 +115,10 @@ public class PropertyResourceConfigurerTests {
 
 	@Test
 	public void testPropertyOverrideConfigurerWithNestedProperty() {
+
 		BeanDefinition def = BeanDefinitionBuilder.genericBeanDefinition(IndexedTestBean.class).getBeanDefinition();
+
+		//BeanDefinition 注册到 DefaultListableBeanFactory 的ioc工厂里
 		factory.registerBeanDefinition("tb", def);
 
 		PropertyOverrideConfigurer poc;
@@ -175,6 +179,8 @@ public class PropertyResourceConfigurerTests {
 		PropertyOverrideConfigurer poc;
 		poc = new PropertyOverrideConfigurer();
 		Properties props = new Properties();
+
+		// heldProperties 对应的是 setHeldProperties 的方法名
 		props.setProperty("tb.heldProperties[mail.smtp.auth]", "true");
 		poc.setProperties(props);
 		poc.postProcessBeanFactory(factory);
@@ -203,6 +209,8 @@ public class PropertyResourceConfigurerTests {
 		factory.registerBeanDefinition("tb", def);
 
 		PropertyOverrideConfigurer poc = new PropertyOverrideConfigurer();
+
+		//设置资源路径
 		poc.setLocations(TEST_PROPS, XTEST_PROPS);
 		poc.setIgnoreResourceNotFound(true);
 		poc.postProcessBeanFactory(factory);
@@ -250,7 +258,7 @@ public class PropertyResourceConfigurerTests {
 
 		{
 			PropertyOverrideConfigurer poc = new PropertyOverrideConfigurer();
-			poc.setIgnoreInvalidKeys(true);
+			poc.setIgnoreInvalidKeys(true);// 忽略非法的key
 			Properties props = new Properties();
 			props.setProperty("argh", "hgra");
 			props.setProperty("tb2.name", "test");
@@ -296,7 +304,7 @@ public class PropertyResourceConfigurerTests {
 			PropertyOverrideConfigurer poc = new PropertyOverrideConfigurer();
 			poc.setIgnoreInvalidKeys(true);
 			Properties props = new Properties();
-			props.setProperty("argh", "hgra");
+			props.setProperty("argh", "hgra");// 允许非法的key
 			props.setProperty("tb1.age", "99");
 			props.setProperty("tb2.name", "test");
 			poc.setProperties(props);
@@ -321,6 +329,7 @@ public class PropertyResourceConfigurerTests {
 		doTestPropertyPlaceholderConfigurer(true);
 	}
 
+	//separation 英 [sepə'reɪʃ(ə)n]  n. 分离，分开；间隔，距离；[法] 分居；缺口
 	private void doTestPropertyPlaceholderConfigurer(boolean parentChildSeparation) {
 		Map singletonMap = Collections.singletonMap("myKey", "myValue");
 		if (parentChildSeparation) {
@@ -382,6 +391,7 @@ public class PropertyResourceConfigurerTests {
 		RootBeanDefinition bd = new RootBeanDefinition(TestBean.class, cas, pvs);
 		factory.registerBeanDefinition("tb2", bd);
 
+		// 通过 PropertyPlaceholderConfigurer 类实现占位符的替换
 		PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
 		Properties props = new Properties();
 		props.setProperty("age", "98");
@@ -391,6 +401,8 @@ public class PropertyResourceConfigurerTests {
 		props.setProperty("key4", "mykey4");
 		props.setProperty("parent", "parent1");
 		ppc.setProperties(props);
+
+		// 替换占位符
 		ppc.postProcessBeanFactory(factory);
 
 		TestBean tb1 = (TestBean) factory.getBean("tb1");
@@ -436,6 +448,8 @@ public class PropertyResourceConfigurerTests {
 		ppc.postProcessBeanFactory(factory);
 
 		TestBean tb = (TestBean) factory.getBean("tb");
+
+		//System.getProperty("os.name") 获取到的是系统属性
 		assertEquals(System.getProperty("os.name"), tb.getCountry());
 	}
 
@@ -463,6 +477,7 @@ public class PropertyResourceConfigurerTests {
 		Properties props = new Properties();
 		props.put("os.name", "myos");
 		ppc.setProperties(props);
+		// 指定了属性的获取模式
 		ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_OVERRIDE);
 		ppc.postProcessBeanFactory(factory);
 
@@ -511,7 +526,7 @@ public class PropertyResourceConfigurerTests {
 				.addPropertyValue("name", "${ref}").getBeanDefinition());
 
 		PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-		ppc.setIgnoreUnresolvablePlaceholders(true);
+		ppc.setIgnoreUnresolvablePlaceholders(true);//忽略没有解析到的 placeholder
 		ppc.postProcessBeanFactory(factory);
 
 		TestBean tb = (TestBean) factory.getBean("tb");
@@ -552,6 +567,7 @@ public class PropertyResourceConfigurerTests {
 		factory.registerBeanDefinition("tb", genericBeanDefinition(TestBean.class)
 				.addPropertyValue("name", "${my${key}key}").getBeanDefinition());
 
+		// 可以替换 占位符内部的占位符，即占位符可以进行嵌套使用
 		PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
 		Properties props = new Properties();
 		props.put("key", "new");
@@ -566,6 +582,8 @@ public class PropertyResourceConfigurerTests {
 	@Test
 	public void testPropertyPlaceholderConfigurerWithPlaceholderInAlias() {
 		factory.registerBeanDefinition("tb", genericBeanDefinition(TestBean.class).getBeanDefinition());
+
+		// 给tb注册了带有占位符的别名
 		factory.registerAlias("tb", "${alias}");
 
 		PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
@@ -605,6 +623,7 @@ public class PropertyResourceConfigurerTests {
 		PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
 		Properties props = new Properties();
 		props.setProperty("age", "99");
+		//循环引用
 		props.setProperty("var", "${m}");
 		props.setProperty("m", "${var}");
 		ppc.setProperties(props);
@@ -763,6 +782,7 @@ public class PropertyResourceConfigurerTests {
 			return props;
 		}
 
+		// 用于属性的注入
 		public void setHeldProperties(Properties props) {
 			this.props = props;
 		}

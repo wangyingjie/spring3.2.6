@@ -39,6 +39,9 @@ import static org.springframework.tests.TestResourceUtils.*;
  * @author Juergen Hoeller
  * @author Rick Evans
  * @author Chris Beams
+ *
+ * 利用 ObjectFactory 来创建目标对象的测试用例
+ *
  */
 public class ObjectFactoryCreatingFactoryBeanTests {
 

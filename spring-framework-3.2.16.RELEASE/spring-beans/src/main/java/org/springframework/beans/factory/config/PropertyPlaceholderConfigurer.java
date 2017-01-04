@@ -156,12 +156,14 @@ public class PropertyPlaceholderConfigurer extends PlaceholderConfigurerSupport 
 	protected String resolvePlaceholder(String placeholder, Properties props, int systemPropertiesMode) {
 		String propVal = null;
 		if (systemPropertiesMode == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+			// 指定从系统环境变量中获取 value
 			propVal = resolveSystemProperty(placeholder);
 		}
-		if (propVal == null) {
+		if (propVal == null) {//从配置文件中获取占位符标识的值
 			propVal = resolvePlaceholder(placeholder, props);
 		}
 		if (propVal == null && systemPropertiesMode == SYSTEM_PROPERTIES_MODE_FALLBACK) {
+			//如果从配置文件中未获取值则从系统环境变量中获取
 			propVal = resolveSystemProperty(placeholder);
 		}
 		//postProcessBeanFactory();
@@ -181,7 +183,7 @@ public class PropertyPlaceholderConfigurer extends PlaceholderConfigurerSupport 
 	 * @return the resolved value, of {@code null} if none
 	 * @see #setSystemPropertiesMode
 	 *
-	 * placeholder��ռλ��
+	 * placeholder：占位符
 	 *
 	 */
 	protected String resolvePlaceholder(String placeholder, Properties props) {

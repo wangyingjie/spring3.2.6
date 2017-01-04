@@ -95,6 +95,10 @@ public class PropertyPlaceholderConfigurerTests {
 		Resource resource = new ClassPathResource("PropertyPlaceholderConfigurerTests.properties", this.getClass());
 		pc.setLocation(resource);
 		pc.postProcessBeanFactory(bf);
+
+		Object testBean = bf.getBean("testBean");
+
+		System.out.println(testBean);
 	}
 
 	@Test
@@ -114,7 +118,7 @@ public class PropertyPlaceholderConfigurerTests {
 
 	@Test
 	public void resolveFromLocalProperties() {
-		tearDown(); // eliminate entries from system props/environment
+		tearDown(); // eliminate (vt. 消除；排除) entries from system props/environment
 		registerWithGeneratedName(p1BeanDef, bf);
 		ppc.postProcessBeanFactory(bf);
 		TestBean bean = bf.getBean(TestBean.class);
@@ -132,6 +136,7 @@ public class PropertyPlaceholderConfigurerTests {
 	@Test
 	public void setSystemSystemPropertiesMode_toOverride_andResolveFromSystemProperties() {
 		registerWithGeneratedName(p1BeanDef, bf);
+		// 设置属性替换模式
 		ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_OVERRIDE);
 		ppc.postProcessBeanFactory(bf);
 		TestBean bean = bf.getBean(TestBean.class);

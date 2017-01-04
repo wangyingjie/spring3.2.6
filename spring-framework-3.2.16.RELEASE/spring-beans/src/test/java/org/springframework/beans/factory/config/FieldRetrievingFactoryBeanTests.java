@@ -34,6 +34,8 @@ import org.springframework.tests.sample.beans.TestBean;
  * @author Juergen Hoeller
  * @author Chris Beams
  * @since 31.07.2004
+ *
+ * 类的属性检索  bean 工厂测试类
  */
 public final class FieldRetrievingFactoryBeanTests {
 
