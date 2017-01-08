@@ -87,7 +87,7 @@ public class StringUtilsTests {
 	}
 
 	@Test
-	public void testTrimLeadingWhitespace() throws Exception {
+	public void testTrimLeadingWhitespace() throws Exception {//去除首部空格
 		assertEquals(null, StringUtils.trimLeadingWhitespace(null));
 		assertEquals("", StringUtils.trimLeadingWhitespace(""));
 		assertEquals("", StringUtils.trimLeadingWhitespace(" "));
@@ -100,7 +100,7 @@ public class StringUtilsTests {
 	}
 
 	@Test
-	public void testTrimTrailingWhitespace() throws Exception {
+	public void testTrimTrailingWhitespace() throws Exception {//去除尾部空格
 		assertEquals(null, StringUtils.trimTrailingWhitespace(null));
 		assertEquals("", StringUtils.trimTrailingWhitespace(""));
 		assertEquals("", StringUtils.trimTrailingWhitespace(" "));
@@ -375,7 +375,7 @@ public class StringUtilsTests {
 	}
 
 	@Test
-	public void testConcatenateStringArrays() {
+	public void testConcatenateStringArrays() {//两字符串数组合并
 		String[] input1 = new String[] {"myString2"};
 		String[] input2 = new String[] {"myString1", "myString2"};
 		String[] result = StringUtils.concatenateStringArrays(input1, input2);
@@ -390,7 +390,7 @@ public class StringUtilsTests {
 	}
 
 	@Test
-	public void testMergeStringArrays() {
+	public void testMergeStringArrays() {// 相同元素合并
 		String[] input1 = new String[] {"myString2"};
 		String[] input2 = new String[] {"myString1", "myString2"};
 		String[] result = StringUtils.mergeStringArrays(input1, input2);

@@ -60,6 +60,7 @@ public class CollectionUtilsTests {
 		List<Comparable<?>> list = new LinkedList<Comparable<?>>();
 		list.add("value3");
 
+		//将集合与数组元素的集合合并
 		CollectionUtils.mergeArrayIntoCollection(arr, list);
 		assertEquals("value3", list.get(0));
 		assertEquals("value1", list.get(1));
@@ -79,7 +80,7 @@ public class CollectionUtilsTests {
 	}
 
 	@Test
-	public void testMergePropertiesIntoMap() {
+	public void testMergePropertiesIntoMap() {// properties 与 map集合合并
 		Properties defaults = new Properties();
 		defaults.setProperty("prop1", "value1");
 		Properties props = new Properties(defaults);

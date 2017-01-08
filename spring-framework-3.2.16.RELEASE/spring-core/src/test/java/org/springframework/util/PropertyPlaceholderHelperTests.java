@@ -58,7 +58,7 @@ public class PropertyPlaceholderHelperTests {
 	}
 
 	@Test
-	public void testRecurseInPlaceholder() {
+	public void testRecurseInPlaceholder() {// 嵌套的占位符替换
 		String text = "foo=${b${inner}}";
 		Properties props = new Properties();
 		props.setProperty("bar", "bar");

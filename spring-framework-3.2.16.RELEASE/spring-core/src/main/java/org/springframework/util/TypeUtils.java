@@ -36,7 +36,7 @@ public abstract class TypeUtils {
 
 	/**
 	 * Check if the right-hand side type may be assigned to the left-hand side
-	 * type following the Java generics rules.
+	 * type following the Java generics rules.  检查右侧类型可能被分配到左边遵循Java泛型类型规则。
 	 * @param lhsType the target type
 	 * @param rhsType the value type that should be assigned to the target type
 	 * @return true if rhs is assignable to lhs

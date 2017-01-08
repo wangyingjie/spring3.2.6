@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  * @author Juergen Hoeller
  * @author Johan Gorter
  */
-public class PatternMatchUtilsTests {
+public class PatternMatchUtilsTests {//正则匹配工具类
 
 	@Test
 	public void testTrivial() {

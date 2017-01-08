@@ -89,6 +89,7 @@ public class ReflectionUtilsTests {
 		Method getName = TestObject.class.getMethod("getName", (Class[]) null);
 		Method setName = TestObject.class.getMethod("setName", String.class);
 
+		// 执行某个对象上的某个方法
 		Object name = ReflectionUtils.invokeMethod(getName, bean);
 		assertEquals("Incorrect name returned", rob, name);
 

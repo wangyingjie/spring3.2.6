@@ -45,7 +45,7 @@ public class LinkedCaseInsensitiveMapTests {
 	}
 
 	@Test
-	public void putWithOverlappingKeys() {
+	public void putWithOverlappingKeys() {//忽略 key 大小写
 		map.put("key", "value1");
 		map.put("KEY", "value2");
 		map.put("Key", "value3");

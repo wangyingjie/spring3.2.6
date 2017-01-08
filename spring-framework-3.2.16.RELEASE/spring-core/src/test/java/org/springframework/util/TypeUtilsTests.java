@@ -33,6 +33,8 @@ import org.junit.Test;
  *
  * @author Juergen Hoeller
  * @author Chris Beams
+ *
+ * 属性类型测试工具类
  */
 public class TypeUtilsTests {
 

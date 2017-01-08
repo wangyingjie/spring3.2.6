@@ -163,7 +163,7 @@ public class ClassUtilsTests {
 
 	@Test
 	public void testGetPackageName() {
-		assertEquals("java.lang", ClassUtils.getPackageName(String.class));
+		assertEquals("java.lang", ClassUtils.getPackageName(String.class));//获取类的包名
 		assertEquals(getClass().getPackage().getName(), ClassUtils.getPackageName(getClass()));
 	}
 
