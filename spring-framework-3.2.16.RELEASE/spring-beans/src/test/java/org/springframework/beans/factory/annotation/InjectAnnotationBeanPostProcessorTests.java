@@ -204,6 +204,8 @@ public class InjectAnnotationBeanPostProcessorTests {
 
 	@Test
 	public void testConstructorResourceInjectionWithMultipleCandidatesAsCollection() {
+
+		// 构造方法依赖的属性自动完成注入
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		AutowiredAnnotationBeanPostProcessor bpp = new AutowiredAnnotationBeanPostProcessor();
 		bpp.setBeanFactory(bf);

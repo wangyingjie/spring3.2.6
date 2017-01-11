@@ -842,6 +842,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				autowiredBeanNames.addAll(matchingBeans.keySet());
 			}
 			TypeConverter converter = (typeConverter != null ? typeConverter : getTypeConverter());
+			// 解析依赖属性
 			return converter.convertIfNecessary(matchingBeans.values(), type);
 		}
 		else if (Map.class.isAssignableFrom(type) && type.isInterface()) {
